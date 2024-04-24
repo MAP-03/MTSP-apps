@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "743142802789",
+    "project_id": "mtsp-fa9ff",
+    "storage_bucket": "mtsp-fa9ff.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:743142802789:android:76c882b279b7108f4c8d8c",
+        "android_client_info": {
+          "package_name": "com.example.mtsp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAacL4jwzScGB96zV_rfzc6w6rsJOsydLY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
