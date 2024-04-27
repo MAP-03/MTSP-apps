@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:mtsp/view/login/signin.dart';
-import 'textfield.dart';
+import 'package:mtsp/view/login/sign_in.dart';
+import 'text_field.dart';
 
 class LoginPage extends StatelessWidget {
   //Controller
@@ -99,7 +99,7 @@ class LoginPage extends StatelessWidget {
 
               //New Account
               Padding(
-                padding: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.only(bottom: 15),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
