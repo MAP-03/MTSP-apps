@@ -17,8 +17,9 @@ class _LoginPageState extends State<LoginPage> {
 
   //function
   void signInUser() async {
-    //loading
-    showDialog(
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
+    /* showDialog(
       context: context,
       builder: (context) {
         return const Center(child: CircularProgressIndicator());
@@ -34,14 +35,14 @@ class _LoginPageState extends State<LoginPage> {
         
       }
     }
-    Navigator.pop(context);
+    Navigator.pop(context); */
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white, //Color(0xff274472),
-        body: SafeArea(
+        body: Container(
             child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,

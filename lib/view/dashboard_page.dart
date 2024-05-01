@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/view/profile/user_profile_page.dart';
 import 'package:mtsp/widgets/drawer.dart';
+import 'package:mtsp/global.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -48,11 +49,11 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ],
-            backgroundColor: Color(0xff06142F),
+            backgroundColor: primaryColor,
           ),
         ),
       ),
-      backgroundColor: Color(0xff06142F),
+      backgroundColor: primaryColor,
       drawer: CustomDrawer(),
       body: Stack(
         children: [
@@ -97,7 +98,7 @@ class _HomePageState extends State<HomePage> {
               width: double.infinity,
               height: height * 0.5,
               decoration: BoxDecoration(
-                color: Color(0xff12223C),
+                color: secondaryColor,
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
               ),
               child: Column(
@@ -110,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                         width: 110,
                         height: 150,
                         decoration: BoxDecoration(
-                          color: Color(0xff06142F),
+                          color: primaryColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
@@ -125,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                         width: 110,
                         height: 150,
                         decoration: BoxDecoration(
-                          color: Color(0xff06142F),
+                          color: primaryColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
@@ -140,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                         width: 110,
                         height: 150,
                         decoration: BoxDecoration(
-                          color: Color(0xff06142F),
+                          color: primaryColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
@@ -161,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                         width: 110,
                         height: 150,
                         decoration: BoxDecoration(
-                          color: Color(0xff06142F),
+                          color: primaryColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
@@ -176,7 +177,7 @@ class _HomePageState extends State<HomePage> {
                         width: 110,
                         height: 150,
                         decoration: BoxDecoration(
-                          color: Color(0xff06142F),
+                          color: primaryColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
@@ -191,7 +192,7 @@ class _HomePageState extends State<HomePage> {
                         width: 110,
                         height: 150,
                         decoration: BoxDecoration(
-                          color: Color(0xff06142F),
+                          color: primaryColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(

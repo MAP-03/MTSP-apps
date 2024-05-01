@@ -21,11 +21,13 @@ class CustomDrawer extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Color(0xff06142F),
                   ),
-                  child: Text(
-                    'MTSP',
-                    style: GoogleFonts.oswald(
-                      color: Colors.white,
-                      fontSize: 30,
+                  child: Center(
+                    child: Text(
+                      'MTSP',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 30,
+                      ),
                     ),
                   ),
                 ),
