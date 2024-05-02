@@ -1,8 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mtsp/view/ekhairat/ekhairat.dart';
 import 'package:mtsp/view/profile/user_profile_page.dart';
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:mtsp/global.dart';
@@ -107,49 +110,64 @@ class _HomePageState extends State<HomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Container(
-                        width: 110,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset('assets/svg/ekhairat.svg', width: 100),
-                            Text('E-Khairat', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white)),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 110,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset('assets/svg/berita.svg', width: 100),
-                            Text('Berita Masjid', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white)),
-                          ],
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/ekhairat');
+                        },
+                        child: Container(
+                          width: 110,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: primaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset('assets/svg/ekhairat.svg', width: 100),
+                              Text('E-Khairat', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white)),
+                            ],
+                          ),
                         ),
                       ),
-                      Container(
-                        width: 110,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(10),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/berita');
+                        },
+                        child: Container(
+                          width: 110,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: primaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset('assets/svg/berita.svg', width: 100),
+                              Text('Berita Masjid', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white)),
+                            ],
+                          ),
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset('assets/svg/infaq.svg', width: 100),
-                            Text('Infaq', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white)),
-                          ],
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/infaq');
+                        },
+                        child: Container(
+                          width: 110,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: primaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset('assets/svg/infaq.svg', width: 100),
+                              Text('Infaq', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white)),
+                            ],
+                          ),
                         ),
                       )
                     ],
@@ -158,49 +176,64 @@ class _HomePageState extends State<HomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Container(
-                        width: 110,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset('assets/svg/azan.svg', width: 100),
-                            Text('Waktu Azan', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white)),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 110,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset('assets/svg/kalendar.svg', width: 100),
-                            Text('Kalendar', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white)),
-                          ],
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/azan');
+                        },
+                        child: Container(
+                          width: 110,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: primaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset('assets/svg/azan.svg', width: 100),
+                              Text('Waktu Azan', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white)),
+                            ],
+                          ),
                         ),
                       ),
-                      Container(
-                        width: 110,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(10),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/kalendar');
+                        },
+                        child: Container(
+                          width: 110,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: primaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset('assets/svg/kalendar.svg', width: 100),
+                              Text('Kalendar', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white)),
+                            ],
+                          ),
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset('assets/svg/aduan.svg', width: 100),
-                            Text('Aduan Dan Cadangan', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white), textAlign: TextAlign.center,),
-                          ],
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/aduan');
+                        },
+                        child: Container(
+                          width: 110,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            color: primaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset('assets/svg/aduan.svg', width: 100),
+                              Text('Aduan Dan Cadangan', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white), textAlign: TextAlign.center,),
+                            ],
+                          ),
                         ),
                       )
                     ],
