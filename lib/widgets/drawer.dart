@@ -8,6 +8,7 @@ import 'package:mtsp/view/login/authentication_page.dart';
 class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final currentRoute = ModalRoute.of(context)!.settings.name;
     return Drawer(
       width: 200,
       backgroundColor: Color(0xff12223C),
@@ -21,83 +22,98 @@ class CustomDrawer extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Color(0xff06142F),
                   ),
-                  child: Text(
-                    'MTSP',
-                    style: GoogleFonts.oswald(
-                      color: Colors.white,
-                      fontSize: 30,
+                  child: Center(
+                    child: Text(
+                      'MTSP',
+                      style: GoogleFonts.oswald(
+                        color: Colors.white,
+                        fontSize: 30,
+                      ),
                     ),
                   ),
                 ),
                 ListTile(
                   title: Text(
-                    'E-Khairat',
+                    'Home',
                     style: GoogleFonts.poppins(
-                      color: Colors.white,
+                      color: currentRoute == '/home' ? Colors.blue : Colors.white,
                       fontSize: 16,
                     ),
                   ),
                   onTap: () {
+                    Navigator.pushNamed(context, '/home');
+                  },
+                ),
+                ListTile(
+                  title: Text(
+                    'E-Khairat',
+                    style: GoogleFonts.poppins(
+                      color: currentRoute == '/ekhairat' ? Colors.blue : Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/ekhairat');
                   },
                 ),
                 ListTile(
                   title: Text(
                     'Berita Masjid',
                     style: GoogleFonts.poppins(
-                      color: Colors.white,
+                      color: currentRoute == '/berita' ? Colors.blue : Colors.white,
                       fontSize: 16,
                     ),
                   ),
                   onTap: () {
-                    // Handle Berita Masjid tap
+                    Navigator.pushNamed(context, '/berita');
                   },
                 ),
                 ListTile(
                   title: Text(
                     'Infaq',
                     style: GoogleFonts.poppins(
-                      color: Colors.white,
+                      color: currentRoute == '/infaq' ? Colors.blue : Colors.white,
                       fontSize: 16,
                     ),
                   ),
                   onTap: () {
-                    // Handle Infaq tap
+                    Navigator.pushNamed(context, '/infaq');
                   },
                 ),
                 ListTile(
                   title: Text(
                     'Waktu Azan',
                     style: GoogleFonts.poppins(
-                      color: Colors.white,
+                      color: currentRoute == '/azan' ? Colors.blue : Colors.white,
                       fontSize: 16,
                     ),
                   ),
                   onTap: () {
-                    // Handle Waktu Azan tap
+                    Navigator.pushNamed(context, '/azan');
                   },
                 ),
                 ListTile(
                   title: Text(
                     'Kalendar',
                     style: GoogleFonts.poppins(
-                      color: Colors.white,
+                      color: currentRoute == '/kalendar' ? Colors.blue : Colors.white,
                       fontSize: 16,
                     ),
                   ),
                   onTap: () {
-                    // Handle Kalendar tap
+                    Navigator.pushNamed(context, '/kalendar');
                   },
                 ),
                 ListTile(
                   title: Text(
                     'Aduan/Cadangan',
                     style: GoogleFonts.poppins(
-                      color: Colors.white,
+                      color: currentRoute == '/aduan' ? Colors.blue : Colors.white,
                       fontSize: 16,
                     ),
                   ),
                   onTap: () {
-                    // Handle Aduan/Cadangan tap
+                    Navigator.pushNamed(context, '/aduan');
                   },
                 ),
                 ListTile(
