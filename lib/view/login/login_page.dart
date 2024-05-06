@@ -1,8 +1,10 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, use_build_context_synchronously
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mtsp/services/auth_service.dart';
 import 'package:mtsp/view/login/sign_in.dart';
 import 'text_field.dart';
 
@@ -132,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
 
-                const SizedBox(height: 100),
+                const SizedBox(height: 25.0),
 
                 //Log Masuk Button
                 SignInComponents(
@@ -140,7 +142,66 @@ class _LoginPageState extends State<LoginPage> {
                   message: 'Log Masuk'
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 25),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 0.5,
+                          color: Colors.white
+                        )
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0
+                        ),
+                        child: Text(
+                          'atau log masuk melalui',
+                          style: TextStyle(color: Colors.white),
+                        )
+                      ),
+
+                      Expanded(
+                        child: Divider(
+                          thickness: 0.5,
+                          color: Colors.white
+                        )
+                      ),
+                    ]
+                  )
+                ),
+
+                const SizedBox(height: 15),
+
+                GestureDetector(
+                  onTap: () => AuthService().signInWithGoogle(),
+                  child: Container(
+                    height: 70.0,
+                    width: 70.0,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      border: Border.all(
+                        color: Colors.white,
+                      ),
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'lib/images/Google_logo.png',
+                          height: 45.0,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 15),
 
                 //New Account
                 Padding(
@@ -148,14 +209,14 @@ class _LoginPageState extends State<LoginPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Tiada Akaun ? ', style: TextStyle(fontSize: 15)),
+                      Text('Tiada Akaun ? ', style: TextStyle(fontSize: 15, color: Colors.grey.shade300)),
                       GestureDetector(
                         onTap: widget.onTap,
                         child: Text('Daftar Sekarang',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
-                                color: Colors.blue.shade700)),
+                                color: Colors.blue.shade200)),
                       ),
                     ],
                   ),

@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mtsp/services/auth_service.dart';
 import 'package:mtsp/view/login/sign_in.dart';
 import 'text_field.dart';
 
@@ -158,7 +159,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   obscureText: true,
                 ),
 
-                const SizedBox(height: 100),
+                const SizedBox(height: 30.0),
 
                 //Log Masuk Button
                 SignInComponents(
@@ -166,7 +167,66 @@ class _RegisterPageState extends State<RegisterPage> {
                   message: 'Daftar Akaun'
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 15.0),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 0.5,
+                          color: Colors.white
+                        )
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0
+                        ),
+                        child: Text(
+                          'atau daftar melalui',
+                          style: TextStyle(color: Colors.white),
+                        )
+                      ),
+
+                      Expanded(
+                        child: Divider(
+                          thickness: 0.5,
+                          color: Colors.white
+                        )
+                      ),
+                    ]
+                  )
+                ),
+
+                const SizedBox(height: 15),
+
+                GestureDetector(
+                  onTap: () => AuthService().signInWithGoogle(),
+                  child: Container(
+                    height: 70.0,
+                    width: 70.0,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      border: Border.all(
+                        color: Colors.white,
+                      ),
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'lib/images/Google_logo.png',
+                          height: 45.0,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 15),
 
                 //New Account
                 Padding(
@@ -174,14 +234,14 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Sudah mempunyai akaun ? ', style: TextStyle(fontSize: 15)),
+                      Text('Sudah mempunyai akaun ? ', style: TextStyle(fontSize: 15, color: Colors.white)),
                       GestureDetector(
                         onTap: widget.onTap,
                         child: Text('Log masuk',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
-                                color: Colors.blue.shade700)),
+                                color: Colors.blue.shade400)),
                       ),
                     ],
                   ),
