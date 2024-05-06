@@ -36,7 +36,8 @@ class MyApp extends StatelessWidget {
         ),
       ),
       routes: {
-        '/login': (context) => LoginPage(),
+        /* '/login': (context) => LoginPage(onTap: ),
+        '/register': (context) => RegisterPage(onTap: ), */
         '/home' : (context) => HomePage(),
         '/ekhairat' : (context) => Ekhairat(),
         '/berita' : (context) => Berita(),
