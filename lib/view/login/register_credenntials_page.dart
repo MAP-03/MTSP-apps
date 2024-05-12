@@ -18,6 +18,8 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   //Controller
+  final fullNameController = TextEditingController();
+  final phoneNumberController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -41,7 +43,9 @@ class _RegisterPageState extends State<RegisterPage> {
             .collection("Users")
             .doc(userCredential.user!.email)
             .set({
-              'username' : emailController.text.split('@')[0]
+              'username' : emailController.text.split('@')[0],
+              'fullname' : fullNameController.text,
+              'phoneNumber' : phoneNumberController.text,
             });
 
       } else {
@@ -97,7 +101,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
             
-                  const SizedBox(height: 120),
+                  const SizedBox(height: 200),
             
                   //logo MTSP
                   Center(
@@ -110,6 +114,44 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
             
                   const SizedBox(height: 30),
+            
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25, bottom: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text('Nama Penuh',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20)),
+                      ],
+                    ),
+                  ),
+            
+                  //fullName Container
+                  TextFieldComponents(
+                    controller: fullNameController,
+                    hintText: 'Ali bin Abu',
+                    obscureText: false,
+                  ),
+            
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25, bottom: 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text('No. Telefon',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20)),
+                      ],
+                    ),
+                  ),
+            
+                  //Email Container
+                  TextFieldComponents(
+                    controller: phoneNumberController,
+                    hintText: '012 3456789',
+                    obscureText: false,
+                  ),
             
                   //text "Email"
                   Padding(
