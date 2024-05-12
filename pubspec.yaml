@@ -40,6 +40,9 @@ dependencies:
   firebase_auth: ^4.19.4
   google_fonts: ^6.2.1
   flutter_svg: ^2.0.10+1
+  fluttertoast: ^8.2.2
+  memory_cache: ^1.2.0
+  contained_tab_bar_view: ^0.8.0
 
 dev_dependencies:
   flutter_test:
