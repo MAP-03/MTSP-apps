@@ -5,6 +5,7 @@ import 'package:mtsp/view/dashboard_page.dart';
 import 'package:mtsp/auth/authentication_page.dart';
 import 'package:mtsp/view/profile/user_update_profile_page.dart';
 import 'package:mtsp/widgets/profile_menu.dart';
+import 'package:mtsp/widgets/toast.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -89,11 +90,11 @@ class _ProfileState extends State<Profile> {
                     width: 200,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => UpdateProfile(),
-                          ),
+                              builder: (context) => UpdateProfile()),
+                          (route) => false,
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -134,21 +135,22 @@ class _ProfileState extends State<Profile> {
                   const Divider(),
                   const SizedBox(height: 10),
                   ProfileMenuWidget(
-                    title: 'Padam akaun',
-                    icon: Icons.delete,
+                    title: 'Log Keluar',
+                    icon: Icons.logout,
                     //backgroundColor: Colors.red,
                     endIcon: false,
                     textColor: Colors.red,
                     onPress: () async {
                       await FirebaseAuth.instance.signOut();
                       if (FirebaseAuth.instance.currentUser == null) {
+                        showToast(message: 'Log Keluar Berjaya!');
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => AuthPage()),
                         );
                       } else {
-                        print('Sign out failed!');
+                        showToast(message: 'Log Keluar Gagal!');
                       }
                     }, // Single function call},
                   ),
@@ -160,9 +162,12 @@ class _ProfileState extends State<Profile> {
               child: Text('Error ${snapshot.error}'),
             );
           }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          else{
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          
         },
       ),
     );
