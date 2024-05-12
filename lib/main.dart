@@ -12,7 +12,7 @@ import 'package:mtsp/view/dashboard_page.dart';
 import 'package:mtsp/view/ekhairat/ekhairat.dart';
 import 'package:mtsp/view/infaq/infaq.dart';
 import 'package:mtsp/view/kalendar/kalendar.dart';
-import 'package:mtsp/view/login/authentication_page.dart';
+import 'package:mtsp/auth/authentication_page.dart';
 import 'view/login/login_page.dart';
 //import 'package:flutter/foundation.dart';
 //import 'firebase_options.dart';

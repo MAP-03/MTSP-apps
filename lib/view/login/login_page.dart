@@ -5,8 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mtsp/services/auth_service.dart';
-import 'package:mtsp/view/login/sign_in.dart';
-import 'text_field.dart';
+import 'package:mtsp/widgets/sign_in.dart';
+import '../../widgets/text_field.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;

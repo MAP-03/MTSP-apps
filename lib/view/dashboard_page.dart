@@ -11,14 +11,20 @@ import 'package:mtsp/view/profile/user_profile_page.dart';
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:mtsp/global.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   HomePage({super.key});
 
-  final user = FirebaseAuth.instance.currentUser!;
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
+    
     var height = MediaQuery.of(context).size.height;
     return Scaffold(
       key: _scaffoldKey,
