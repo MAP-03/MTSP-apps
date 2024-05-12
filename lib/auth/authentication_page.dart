@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mtsp/view/dashboard_page.dart';
+import 'package:mtsp/auth/login_or_register.dart';
 import 'package:mtsp/view/login/login_page.dart';
 
 class AuthPage extends StatelessWidget {
@@ -14,11 +15,11 @@ class AuthPage extends StatelessWidget {
           builder: (context, snapshot) {
             //user already login
             if (snapshot.hasData) {
-              return Dashboard();
+              return HomePage();
             }
             //user has not login
             else {
-              return LoginPage();
+              return LoginRegisterPage();
             }
           }),
     );
