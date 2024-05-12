@@ -123,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Text('Lupa Kata Laluan',
                           style: TextStyle(
-                              fontSize: 15, color: Colors.grey.shade100)),
+                              fontSize: 15, color: Colors.grey.shade100, decoration: TextDecoration.underline, decorationColor: Colors.grey.shade100)),
                     ],
                   ),
                 ),

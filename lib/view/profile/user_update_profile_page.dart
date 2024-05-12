@@ -2,12 +2,15 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mtsp/auth/authentication_page.dart';
+import 'package:mtsp/auth/login_or_register.dart';
 import 'package:mtsp/view/kalendar/kalendar.dart';
 import 'package:mtsp/view/login/login_page.dart';
 import 'package:mtsp/view/profile/user_profile_page.dart';
+import 'package:mtsp/widgets/toast.dart';
 
 
 
@@ -21,43 +24,11 @@ class UpdateProfile extends StatefulWidget {
 class _UpdateProfileState extends State<UpdateProfile> {
   final currentUser = FirebaseAuth.instance.currentUser!;
 
-  Future<void> _deleteAccount(BuildContext context) async {
-    print('Attempting to delete account...');
-    try {
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        print('User is not authenticated');
-        return;
-      }
-
-      // Delete the user's account
-      await user.delete();
-      print('Account deleted successfully');
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => AuthPage()),
-      );
-    } catch (e) {
-      print('Error deleting account: ${e.toString()}');
-      showDialog(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            title: Text("Error"),
-            content: Text("Failed to delete account. Please try again."),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(dialogContext);
-                },
-                child: Text("OK"),
-              ),
-            ],
-          );
-        },
-      );
-    }
+  void _deleteAccount() async {
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(currentUser.email)
+        .delete();
   }
 
   @override
@@ -138,21 +109,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
                         labelStyle: TextStyle(color: Colors.white)),
                   ),
                   const SizedBox(height: 20),
-                  SizedBox(
-                    width: 200,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        backgroundColor: Colors.white,
-                      ),
-                      child: const Text('Update',
-                          style: TextStyle(color: Colors.black)),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
                   Row(
                     children: [
                       Text.rich(
@@ -171,22 +127,45 @@ class _UpdateProfileState extends State<UpdateProfile> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 40),
                   SizedBox(
                     width: 200,
+                    height: 40,
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Trigger account deletion
-                        _deleteAccount(context);
-                      },
+                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
-                        backgroundColor: Colors.red, // Delete button color
+                        backgroundColor: Colors.white,
                       ),
-                      child: const Text(' Padam Akaun',
-                          style: TextStyle(color: Colors.white)),
+                      child: const Text('Update',
+                          style: TextStyle(color: Colors.black)),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: () {
+                      _deleteAccount();
+                      FirebaseAuth.instance.currentUser!.delete().then((value) => {
+                          showToast(message: "Akaun berjaya dipadam"),
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => AuthPage()),
+                          ),
+                      });
+                    },
+                    child: Container(
+                      width: 200,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: const Color(0xffFF0000),
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      child: Center(
+                        child: const Text(' Padam Akaun',
+                            style: TextStyle(color: Colors.white)),
+                      ),
                     ),
                   ),
                 ],
