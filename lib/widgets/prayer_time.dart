@@ -178,23 +178,24 @@ String timePresenter(DateTime dateTime){
 }
 
 
-String getCurrentPrayerTime(PrayerTimes prayerTimes) {
+String getNextPrayerTime(PrayerTimes prayerTimes) {
   DateTime now = DateTime.now();
 
   // Determine which prayer time it currently is
-  if (now.isBefore(prayerTimes.fajr!)) {
-    return timePresenter(prayerTimes.fajr!.toLocal());
-  } else if (now.isBefore(prayerTimes.sunrise!)) {
-    return timePresenter(prayerTimes.fajr!.toLocal());
-  } else if (now.isBefore(prayerTimes.dhuhr!)) {
-    return timePresenter(prayerTimes.sunrise!.toLocal());
-  } else if (now.isBefore(prayerTimes.asr!)) {
-    return timePresenter(prayerTimes.dhuhr!.toLocal());
-  } else if (now.isBefore(prayerTimes.maghrib!)) {
-    return timePresenter(prayerTimes.asr!.toLocal());
-  } else if (now.isBefore(prayerTimes.isha!)) {
-    return timePresenter(prayerTimes.maghrib!.toLocal());
-  } else {
-    return timePresenter(prayerTimes.isha!.toLocal());
-  }
+if (now.isBefore(prayerTimes.fajr!)) {
+  return timePresenter(prayerTimes.fajr!.toLocal());
+} else if (now.isBefore(prayerTimes.sunrise!)) {
+  return timePresenter(prayerTimes.sunrise!.toLocal());
+} else if (now.isBefore(prayerTimes.dhuhr!)) {
+  return timePresenter(prayerTimes.dhuhr!.toLocal());
+} else if (now.isBefore(prayerTimes.asr!)) {
+  return timePresenter(prayerTimes.asr!.toLocal());
+} else if (now.isBefore(prayerTimes.maghrib!)) {
+  return timePresenter(prayerTimes.maghrib!.toLocal());
+} else if (now.isBefore(prayerTimes.isha!)) {
+  return timePresenter(prayerTimes.isha!.toLocal());
+} else {
+  return timePresenter(prayerTimes.fajr!.add(Duration(days: 1)).toLocal());
+}
+
 }

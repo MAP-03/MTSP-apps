@@ -291,7 +291,7 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            prayerTimes.currentPrayer(date: date),
+                            prayerTimes.nextPrayer(),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 15,
@@ -300,7 +300,7 @@ class _HomePageState extends State<HomePage> {
                           ),
           SizedBox(height: 5), // Added SizedBox for spacing
           Text(
-            getCurrentPrayerTime(prayerTimes), // Replace with your desired text
+            getNextPrayerTime(prayerTimes), // Replace with your desired text
             style: TextStyle(
               color: Colors.white,
               fontSize: 20, // Adjust the font size as needed
