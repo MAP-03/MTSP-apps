@@ -3,11 +3,10 @@
 import 'package:flutter/material.dart';
 
 class SignInComponents extends StatelessWidget {
-  final Function() ? onTap;
-  const SignInComponents({
-    super.key,
-    required this.onTap
-  });
+  final Function()? onTap;
+  String message;
+
+  SignInComponents({super.key, required this.onTap, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -16,14 +15,14 @@ class SignInComponents extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 15),
         decoration: BoxDecoration(
-          color: Color(0xff050A30),
-          borderRadius: BorderRadius.circular(10)),
+            color: Color(0xff050A30), borderRadius: BorderRadius.circular(10)),
         child: Text(
-          "Log Masuk",
+          message,
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-          ),),
+          ),
+        ),
       ),
     );
   }
