@@ -174,6 +174,13 @@ class _ProfileState extends State<Profile> {
             );
           }
       ),
+      
+    ],
+  ),
+),
+
+       backgroundColor:const Color(0xff06142F),
+
     );
   }
 }
