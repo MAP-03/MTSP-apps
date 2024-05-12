@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mtsp/services/auth_service.dart';
 import 'package:mtsp/widgets/sign_in.dart';
+import 'package:mtsp/widgets/toast.dart';
 import '../../widgets/text_field.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -18,18 +19,18 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   //Controller
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  bool isSigningUp = false;
 
   //function
   void signUpUser() async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
+    
+    setState(() {
+      isSigningUp = true;
+    });
 
     try {
       if (passwordController.text == confirmPasswordController.text) {
@@ -41,38 +42,26 @@ class _RegisterPageState extends State<RegisterPage> {
             .collection("Users")
             .doc(userCredential.user!.email)
             .set({
-              'username' : emailController.text.split('@')[0]
+              'username' : emailController.text.split('@')[0],
+              'email': emailController.text,
+              'phoneNumber': '-',
             });
 
       } else {
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                  backgroundColor: Colors.blueGrey,
-                  title: Center(
-                      child: Text(
-                    'Kata Laluan tidak sepadan',
-                    style: TextStyle(color: Colors.white),
-                  )));
-            });
+         showToast(message: 'Kata laluan tidak sama');
       }
 
-      Navigator.pop(context);
-    } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
+      setState(() {
+        isSigningUp = false;
+      });
 
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-                backgroundColor: Colors.blueGrey,
-                title: Center(
-                    child: Text(
-                  style: TextStyle(color: Colors.white),
-                  e.code,
-                )));
-          });
+    } on FirebaseAuthException catch (e) {
+
+      setState(() {
+        isSigningUp = false;
+      });
+
+      showToast(message: e.code);
     }
   }
 
@@ -177,8 +166,26 @@ class _RegisterPageState extends State<RegisterPage> {
             
                   const SizedBox(height: 30.0),
             
-                  //Log Masuk Button
-                  SignInComponents(onTap: signUpUser, message: 'Daftar Akaun'),
+                  GestureDetector(
+                    onTap: () => signUpUser(),
+                    child: Container(
+                      width: 250,
+                      padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 15),
+                      decoration: BoxDecoration(
+                          color: Color(0xff050A30), borderRadius: BorderRadius.circular(10)),
+                      child: Center(
+                        child: isSigningUp
+                            ? CircularProgressIndicator()
+                            : Text(
+                              'Daftar',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                      ),
+                    ),
+                  ),
             
                   const SizedBox(height: 15.0),
             

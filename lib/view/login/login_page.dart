@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mtsp/services/auth_service.dart';
 import 'package:mtsp/widgets/sign_in.dart';
+import 'package:mtsp/widgets/toast.dart';
 import '../../widgets/text_field.dart';
 
 class LoginPage extends StatefulWidget {
@@ -20,35 +21,28 @@ class _LoginPageState extends State<LoginPage> {
   //Controller
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool isSigningIn = false;
 
   //function
   void signInUser() async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
-
+    setState(() {
+      isSigningIn = true;
+    });
+    
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
 
-      Navigator.pop(context);
+      setState(() {
+        isSigningIn = false;
+      });
+      
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
+        showToast(message: e.code);
 
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-                backgroundColor: Colors.blueGrey,
-                title: Center(
-                    child: Text(
-                  style: TextStyle(color: Colors.white),
-                  e.code,
-                )));
-          });
+        setState(() {
+        isSigningIn = false;
+      });
     }
   }
 
@@ -136,11 +130,26 @@ class _LoginPageState extends State<LoginPage> {
 
                 const SizedBox(height: 25.0),
 
-                //Log Masuk Button
-                SignInComponents(
-                  onTap: signInUser,
-                  message: 'Log Masuk'
-                ),
+                GestureDetector(
+                    onTap: () => signInUser(),
+                    child: Container(
+                      width: 250,
+                      padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 15),
+                      decoration: BoxDecoration(
+                          color: Color(0xff050A30), borderRadius: BorderRadius.circular(10)),
+                      child: Center(
+                        child: isSigningIn
+                            ? CircularProgressIndicator()
+                            : Text(
+                              'Log Masuk',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                      ),
+                    ),
+                  ),
 
                 const SizedBox(height: 25),
 
