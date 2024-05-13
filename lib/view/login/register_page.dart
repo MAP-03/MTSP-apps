@@ -45,6 +45,7 @@ class _RegisterPageState extends State<RegisterPage> {
               'username' : emailController.text.split('@')[0],
               'email': emailController.text,
               'phoneNumber': '-',
+              'timestamp' : DateTime.now(),
             });
 
       } else {
