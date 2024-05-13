@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:adhan_dart/adhan_dart.dart';
@@ -128,20 +130,25 @@ secondToHour(int seconds){
                       ),
               ),
             ),
-            if (widget.isNextPrayer)
-              StreamBuilder(
+            widget.isNextPrayer
+            ? StreamBuilder(
                 stream: remainsTime(),
                 builder: (context, snapshot) {
-                    // Display the remaining time if data is available
-                    return Text(
-                      '${snapshot.data??''}',
+                  // Display the remaining time if data is available
+                  return Container(
+                    width: 50,
+                    child: Text(
+                      '${snapshot.data ?? ''}',
                       style: TextStyle(
                         fontSize: 10,
                         color: Colors.white,
                       ),
-                    );
-                  },   
-              ),
+                    ),
+                  );
+                },   
+              )
+            : SizedBox(width: 50),
+              
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(right: 30),
@@ -178,23 +185,23 @@ String timePresenter(DateTime dateTime){
 }
 
 
-String getCurrentPrayerTime(PrayerTimes prayerTimes) {
+String getNextPrayerTime(PrayerTimes prayerTimes) {
   DateTime now = DateTime.now();
 
-  // Determine which prayer time it currently is
   if (now.isBefore(prayerTimes.fajr!)) {
     return timePresenter(prayerTimes.fajr!.toLocal());
   } else if (now.isBefore(prayerTimes.sunrise!)) {
-    return timePresenter(prayerTimes.fajr!.toLocal());
-  } else if (now.isBefore(prayerTimes.dhuhr!)) {
     return timePresenter(prayerTimes.sunrise!.toLocal());
-  } else if (now.isBefore(prayerTimes.asr!)) {
+  } else if (now.isBefore(prayerTimes.dhuhr!)) {
     return timePresenter(prayerTimes.dhuhr!.toLocal());
-  } else if (now.isBefore(prayerTimes.maghrib!)) {
+  } else if (now.isBefore(prayerTimes.asr!)) {
     return timePresenter(prayerTimes.asr!.toLocal());
-  } else if (now.isBefore(prayerTimes.isha!)) {
+  } else if (now.isBefore(prayerTimes.maghrib!)) {
     return timePresenter(prayerTimes.maghrib!.toLocal());
-  } else {
+  } else if (now.isBefore(prayerTimes.isha!)) {
     return timePresenter(prayerTimes.isha!.toLocal());
+  } else {
+    // If it's after Isha, return Fajr of the next day
+    return timePresenter(prayerTimes.fajr!.add(const Duration(days: 1)).toLocal());
   }
 }

@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
     // Initialize the PrayerTimes instance with the required parameters
    coordinates = Coordinates(1.5638129487418682, 103.61735116456667);
     date = DateTime.now();
-    params = CalculationMethod.Singapore();
+    params = CalculationMethod.Malaysia();
     params.madhab = Madhab.Shafi;
     
   }
@@ -277,57 +277,89 @@ class _HomePageState extends State<HomePage> {
                 width: 300,
                 height: 80, // Increased height to accommodate the additional text
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    gradient: LinearGradient(
-                      end: Alignment(0.97, -0.26),
-                      begin: Alignment(-0.97, 0.26),
-                      colors: [Color(0xFF62CFF4), Color(0xFF2C67F2)],
-                    ),
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                    end: Alignment(0.97, -0.26),
+                    begin: Alignment(-0.97, 0.26),
+                    colors: [Color(0xFF62CFF4), Color(0xFF2C67F2)],
                   ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
                   child: Row( // Use Row instead of Center
                     mainAxisAlignment: MainAxisAlignment.start, // Center the content horizontally
                     children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Row(
                         children: [
-                          Text(
-                            prayerTimes.currentPrayer(date: date),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          SizedBox(width: 10), // Added SizedBox for spacing
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                prayerTimes.nextPrayer(),
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              SizedBox(height: 5), // Added SizedBox for spacing
+                              Text(
+                                getNextPrayerTime(prayerTimes), // Replace with your desired text
+                                style: GoogleFonts.notoSans(
+                                  color: Color(0xFFD9D9D9),
+                                  fontSize: 24, // Adjust the font size as needed
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1.20,
+                                ),
+                              ),
+                            ],
                           ),
-          SizedBox(height: 5), // Added SizedBox for spacing
-          Text(
-            getCurrentPrayerTime(prayerTimes), // Replace with your desired text
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20, // Adjust the font size as needed
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-      SizedBox(width: 10), // Added SizedBox for spacing between texts
-       Row(
-         children: [
-           Padding(
-            padding: EdgeInsets.only(left: 40), // Add left padding to move the text a bit to the right
-            child: Text(
-              "${_hijriCalendar.hDay} ${hijri[_hijriCalendar.hMonth-1]}  ${_hijriCalendar.hYear} AH\n${months[date.month-1]} ${date.day}, ${date.year}", // Replace with your desired text
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 12, // Adjust the font size as needed
-                fontWeight: FontWeight.bold,
+                        ],
+                      ),
+                     // Added SizedBox for spacing between texts
+                      Row(
+                        children: [
+                          Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 15), // Add left padding to move the text a bit to the right
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      "${_hijriCalendar.hDay} ${hijri[_hijriCalendar.hMonth-1]}  ${_hijriCalendar.hYear} AH", // First text
+                                      style: GoogleFonts.notoSans(
+                                        color: Color(0xFFD9D9D9),
+                                        fontSize: 12, // Adjust the font size as needed
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      "${months[date.month-1]} ${date.day}, ${date.year}", // Second text
+                                      style: GoogleFonts.notoSans(
+                                        color: Color(0xFFD9D9D9),
+                                        fontSize: 10, // Adjust the font size as needed
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                               SizedBox(height: 10),
+                            ],                      
+                          ),
+                         
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-           ),
-         ],
-       )
-    ],
-  ),
-),
+
 
             ],
           ),
