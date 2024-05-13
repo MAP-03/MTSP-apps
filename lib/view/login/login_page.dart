@@ -21,25 +21,29 @@ class _LoginPageState extends State<LoginPage> {
   //Controller
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool isSigningIn = false;
 
   //function
   void signInUser() async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
-
+    setState(() {
+      isSigningIn = true;
+    });
+    
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
 
-      Navigator.pop(context);
+      setState(() {
+        isSigningIn = false;
+      });
+      
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
 
       showToast(message: e.code.replaceAll('-', ' '));
+
+        setState(() {
+        isSigningIn = false;
+      });
     }
   }
 
@@ -120,15 +124,33 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Text('Lupa Kata Laluan',
                           style: TextStyle(
-                              fontSize: 15, color: Colors.grey.shade100)),
+                              fontSize: 15, color: Colors.grey.shade100, decoration: TextDecoration.underline, decorationColor: Colors.grey.shade100)),
                     ],
                   ),
                 ),
 
                 const SizedBox(height: 25.0),
 
-                //Log Masuk Button
-                SignInComponents(onTap: signInUser, message: 'Log Masuk'),
+                GestureDetector(
+                    onTap: () => signInUser(),
+                    child: Container(
+                      width: 250,
+                      padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 15),
+                      decoration: BoxDecoration(
+                          color: Color(0xff050A30), borderRadius: BorderRadius.circular(10)),
+                      child: Center(
+                        child: isSigningIn
+                            ? CircularProgressIndicator()
+                            : Text(
+                              'Log Masuk',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                      ),
+                    ),
+                  ),
 
                 const SizedBox(height: 25),
 
