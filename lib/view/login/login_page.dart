@@ -38,7 +38,8 @@ class _LoginPageState extends State<LoginPage> {
       });
       
     } on FirebaseAuthException catch (e) {
-        showToast(message: e.code);
+
+      showToast(message: e.code.replaceAll('-', ' '));
 
         setState(() {
         isSigningIn = false;
@@ -154,35 +155,19 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 25),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Row(
-                    children: [
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Row(children: [
                       Expanded(
-                        child: Divider(
-                          thickness: 0.5,
-                          color: Colors.white
-                        )
-                      ),
-
+                          child: Divider(thickness: 0.5, color: Colors.white)),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0
-                        ),
-                        child: Text(
-                          'atau log masuk melalui',
-                          style: TextStyle(color: Colors.white),
-                        )
-                      ),
-
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Text(
+                            'atau log masuk melalui',
+                            style: TextStyle(color: Colors.white),
+                          )),
                       Expanded(
-                        child: Divider(
-                          thickness: 0.5,
-                          color: Colors.white
-                        )
-                      ),
-                    ]
-                  )
-                ),
+                          child: Divider(thickness: 0.5, color: Colors.white)),
+                    ])),
 
                 const SizedBox(height: 15),
 
@@ -218,7 +203,9 @@ class _LoginPageState extends State<LoginPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Tiada Akaun ? ', style: TextStyle(fontSize: 15, color: Colors.grey.shade300)),
+                      Text('Tiada Akaun ? ',
+                          style: TextStyle(
+                              fontSize: 15, color: Colors.grey.shade300)),
                       GestureDetector(
                         onTap: widget.onTap,
                         child: Text('Daftar Sekarang',
