@@ -31,9 +31,8 @@ class _AzanState extends State<Azan> {
     super.initState();
     coordinates = Coordinates(1.5638129487418682, 103.61735116456667);
     date = DateTime.now();
-    params = CalculationMethod.Singapore();
+    params = CalculationMethod.Malaysia();
     params.madhab = Madhab.Shafi;
-  //  prayerTimes = PrayerTimes(coordinates, date, params, precision: true);
   }
   
 
@@ -150,7 +149,8 @@ class _AzanState extends State<Azan> {
               azanName: 'Subuh',
               isAlarmOn: true,
               isCurrentPrayer:prayerTimes.fajr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.dhuhr!.toLocal()),
-              isNextPrayer: prayerTimes.isha!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.fajr!.add(const Duration(days: 1)).toLocal()),
+              isNextPrayer: DateTime.now().isAfter(prayerTimes.fajr!.add(const Duration(days: -1)).toLocal()) && DateTime.now().isBefore(prayerTimes.fajr!.add(const Duration(days: 0)).toLocal()),
+
               prayerTimes: prayerTimes,
              
               
