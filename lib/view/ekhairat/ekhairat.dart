@@ -1,10 +1,13 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/global.dart';
+import 'package:mtsp/services/ekhairat_service.dart';
 import 'package:mtsp/view/ekhairat/daftar_ahli.dart';
+import 'package:mtsp/view/ekhairat/semak_ahli.dart';
 import 'package:mtsp/widgets/drawer.dart';
 
 class Ekhairat extends StatefulWidget {
@@ -16,6 +19,21 @@ class Ekhairat extends StatefulWidget {
 
 class _EkhairatState extends State<Ekhairat> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool isAhli = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkAhli();
+  }
+
+  void checkAhli() async {
+    final bool ahli = await EkhairatService().checkAhli(FirebaseAuth.instance.currentUser!.email);
+    setState(() {
+      isAhli = ahli;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,15 +99,20 @@ class _EkhairatState extends State<Ekhairat> {
                 ),
                 child: Center(
                   child: Text(
-                    'Lebih Lanjut',
-                    style: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
+                    'LEBIH LANJUT',
+                    style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
                   ),
                 ),
               ),
               const SizedBox(width: 15),
               GestureDetector(
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => DaftarAhli()));
+                  if(isAhli){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SemakAhli()));
+                  }
+                  else{
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => DaftarAhli()));
+                  }
                 },
                 child: Container(
                   width: 130,
@@ -101,9 +124,15 @@ class _EkhairatState extends State<Ekhairat> {
                     ),
                   ),
                   child: Center(
-                    child: Text(
-                      'Daftar Ahli',
-                      style: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
+                    child: 
+                    isAhli
+                    ? Text(
+                      'SEMAK AHLI',
+                      style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
+                    )
+                    : Text(
+                      'DAFTAR AHLI',
+                      style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
                     ),
                   ),
                 ),

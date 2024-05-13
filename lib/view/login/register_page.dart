@@ -38,6 +38,8 @@ class _RegisterPageState extends State<RegisterPage> {
             .createUserWithEmailAndPassword(
                 email: emailController.text, password: passwordController.text);
 
+        showToast(message: 'Pendaftaran Berjaya!');
+
         FirebaseFirestore.instance
             .collection("Users")
             .doc(userCredential.user!.email)

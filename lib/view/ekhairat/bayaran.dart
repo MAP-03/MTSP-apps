@@ -8,6 +8,8 @@ import 'package:memory_cache/memory_cache.dart';
 import 'package:mtsp/global.dart';
 import 'package:mtsp/models/ahli.dart';
 import 'package:mtsp/models/tanggungan.dart';
+import 'package:mtsp/services/ekhairat_service.dart';
+import 'package:mtsp/view/dashboard_page.dart';
 import 'package:mtsp/widgets/toast.dart';
 
 class BayaranPage extends StatefulWidget {
@@ -251,7 +253,12 @@ class _BayaranPageState extends State<BayaranPage> {
        bottomSheet: GestureDetector(
         onTap: () {
           if (isChecked) {
-            //bayar
+            //sepatutnya bayar dulu
+            ahli!.tarikhDaftar = DateTime.now();
+            EkhairatService().addAhli(ahli!);
+            showToast(message: 'Pendaftaran berjaya');
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+
           } else {
             showToast(message: 'Sila setuju dengan syarat dan terma yang dikenakan');
           }
