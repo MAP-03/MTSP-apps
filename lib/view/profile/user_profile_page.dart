@@ -90,7 +90,7 @@ class _ProfileState extends State<Profile> {
                     width: 200,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pushAndRemoveUntil(
+                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
                               builder: (context) => UpdateProfile()),

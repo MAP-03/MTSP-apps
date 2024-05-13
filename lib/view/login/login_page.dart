@@ -33,6 +33,8 @@ class _LoginPageState extends State<LoginPage> {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
 
+      showToast(message: 'Log Masuk Berjaya!');
+
       setState(() {
         isSigningIn = false;
       });
