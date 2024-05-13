@@ -9,6 +9,7 @@ class Ahli{
   final String emergencyPhone;
   List<Tanggungan> tanggungan = [];
   String pelan = '';
+  DateTime tarikhDaftar = DateTime.now();
 
   Ahli({
     required this.name, 
@@ -18,4 +19,18 @@ class Ahli{
     required this.phone, 
     required this.emergencyPhone,
   });
+
+  Map<String, dynamic> toJson(){
+    return {
+      'name': name,
+      'email': email,
+      'ic': ic,
+      'alamat': alamat,
+      'phone': phone,
+      'emergencyPhone': emergencyPhone,
+      'tanggungan': tanggungan.map((e) => e.toMap()).toList(),
+      'pelan': pelan
+    };
+  }
+  
 }
