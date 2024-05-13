@@ -3,9 +3,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:mtsp/view/profile/user_profile_page.dart';
 
 class UpdateProfile extends StatefulWidget {
@@ -17,6 +14,31 @@ class UpdateProfile extends StatefulWidget {
 
 class _UpdateProfileState extends State<UpdateProfile> {
   final currentUser = FirebaseAuth.instance.currentUser!;
+  final usersCollection = FirebaseFirestore.instance.collection('Users');
+
+  final newUserNameController = TextEditingController();
+  final newFullNameController = TextEditingController();
+  final newTelephoneController = TextEditingController();
+
+  void updateProfileDetail() {
+    if (newUserNameController.text != currentUser.email!) {
+      usersCollection
+          .doc(currentUser.email)
+          .update({'username': newUserNameController.text});
+    }
+
+    if (newUserNameController.text != currentUser.email!) {
+      usersCollection
+          .doc(currentUser.email)
+          .update({'fullName': newUserNameController.text});
+    }
+    if (newUserNameController.text != currentUser.email!) {
+      usersCollection
+          .doc(currentUser.email)
+          .update({'username': newUserNameController.text});
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +107,21 @@ class _UpdateProfileState extends State<UpdateProfile> {
                           Form(
                             child: Column(children: [
                               TextFormField(
+                                controller: newUserNameController,
+                                style: TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                    label: Text('Username'),
+                                    prefixIcon:
+                                        Icon(Icons.person, color: Colors.white),
+                                    labelStyle: TextStyle(color: Colors.white),
+                                    hintText: userData['username'],
+                                    hintStyle: TextStyle(color: Colors.white)),
+                                /* onChanged: (value) {
+                                  newValue = value;
+                                }, */
+                              ),
+                              TextFormField(
+                                controller: newFullNameController,
                                 style: TextStyle(color: Colors.white),
                                 decoration: InputDecoration(
                                     label: Text('Nama Penuh'),
@@ -98,6 +135,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                 }, */
                               ),
                               TextFormField(
+                                  controller: newTelephoneController,
                                   style: TextStyle(color: Colors.white),
                                   decoration: InputDecoration(
                                       label: Text('No. Telefon'),
@@ -115,8 +153,9 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                     prefixIcon:
                                         Icon(Icons.email, color: Colors.white),
                                     labelStyle: TextStyle(color: Colors.white),
-                                    hintText: currentUser.email,
+                                    hintText: userData['email'],
                                     hintStyle: TextStyle(color: Colors.white)),
+                                readOnly: true,
                               ),
                               /* TextFormField(
                                 style: TextStyle(color: Colors.white),
@@ -131,12 +170,13 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                 width: 200,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    Navigator.push(
+                                    updateProfileDetail();
+                                    /* Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => UpdateProfile(),
                                       ),
-                                    );
+                                    ); */
                                   },
                                   style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
@@ -150,7 +190,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                       style: TextStyle(color: Colors.black)),
                                 ),
                               ),
-                              const SizedBox(height: 270),
+                              const SizedBox(height: 210),
                             ]),
                           ),
                         ],

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mtsp/services/auth_service.dart';
 import 'package:mtsp/widgets/sign_in.dart';
+import 'package:mtsp/widgets/toast.dart';
 import '../../widgets/text_field.dart';
 
 class LoginPage extends StatefulWidget {
@@ -38,17 +39,7 @@ class _LoginPageState extends State<LoginPage> {
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
 
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-                backgroundColor: Colors.blueGrey,
-                title: Center(
-                    child: Text(
-                  style: TextStyle(color: Colors.white),
-                  e.code,
-                )));
-          });
+      showToast(message: e.code.replaceAll('-', ' '));
     }
   }
 
@@ -137,43 +128,24 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 25.0),
 
                 //Log Masuk Button
-                SignInComponents(
-                  onTap: signInUser,
-                  message: 'Log Masuk'
-                ),
+                SignInComponents(onTap: signInUser, message: 'Log Masuk'),
 
                 const SizedBox(height: 25),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Row(
-                    children: [
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Row(children: [
                       Expanded(
-                        child: Divider(
-                          thickness: 0.5,
-                          color: Colors.white
-                        )
-                      ),
-
+                          child: Divider(thickness: 0.5, color: Colors.white)),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0
-                        ),
-                        child: Text(
-                          'atau log masuk melalui',
-                          style: TextStyle(color: Colors.white),
-                        )
-                      ),
-
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Text(
+                            'atau log masuk melalui',
+                            style: TextStyle(color: Colors.white),
+                          )),
                       Expanded(
-                        child: Divider(
-                          thickness: 0.5,
-                          color: Colors.white
-                        )
-                      ),
-                    ]
-                  )
-                ),
+                          child: Divider(thickness: 0.5, color: Colors.white)),
+                    ])),
 
                 const SizedBox(height: 15),
 
@@ -209,7 +181,9 @@ class _LoginPageState extends State<LoginPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Tiada Akaun ? ', style: TextStyle(fontSize: 15, color: Colors.grey.shade300)),
+                      Text('Tiada Akaun ? ',
+                          style: TextStyle(
+                              fontSize: 15, color: Colors.grey.shade300)),
                       GestureDetector(
                         onTap: widget.onTap,
                         child: Text('Daftar Sekarang',
