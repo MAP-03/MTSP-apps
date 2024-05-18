@@ -326,7 +326,7 @@ class _HomePageState extends State<HomePage> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(left: 15), // Add left padding to move the text a bit to the right
+                                padding: EdgeInsets.only(left: 5), // Add left padding to move the text a bit to the right
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
