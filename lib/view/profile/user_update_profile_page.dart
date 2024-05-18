@@ -1,20 +1,14 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mtsp/auth/authentication_page.dart';
-import 'package:mtsp/auth/login_or_register.dart';
-import 'package:mtsp/view/kalendar/kalendar.dart';
-import 'package:mtsp/view/login/login_page.dart';
 import 'package:mtsp/view/profile/user_profile_page.dart';
 import 'package:mtsp/widgets/toast.dart';
 
-
-
 class UpdateProfile extends StatefulWidget {
-  const UpdateProfile({Key? key}) : super(key: key);
+  const UpdateProfile({super.key});
 
   @override
   State<UpdateProfile> createState() => _UpdateProfileState();
@@ -45,15 +39,16 @@ class _UpdateProfileState extends State<UpdateProfile> {
           .doc(currentUser.email)
           .update({'username': newUserNameController.text});
     }
-
   }
 
-  void _deleteAccount() async {
+   void _deleteAccount() async {
     await FirebaseFirestore.instance
         .collection("Users")
         .doc(currentUser.email)
         .delete();
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -65,15 +60,14 @@ class _UpdateProfileState extends State<UpdateProfile> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => Profile(),
-              ),
+              MaterialPageRoute(builder: (context) => Profile()),
             );
           },
         ),
         title:
             Text("Edit Profile", style: const TextStyle(color: Colors.white)),
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: const Color(0xff06142F),
       ),
       body: StreamBuilder<DocumentSnapshot>(
