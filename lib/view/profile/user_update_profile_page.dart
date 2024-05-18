@@ -41,7 +41,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
     }
   }
 
-   void _deleteAccount() async {
+  void _deleteAccount() async {
     await FirebaseFirestore.instance
         .collection("Users")
         .doc(currentUser.email)
@@ -229,12 +229,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                     child: ElevatedButton(
                                       onPressed: () {
                                         updateProfileDetail();
-                                        /* Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => UpdateProfile(),
-                                          ),
-                                        ); */
                                       },
                                       style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(

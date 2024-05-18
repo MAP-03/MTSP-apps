@@ -12,7 +12,6 @@ import 'package:mtsp/widgets/drawer.dart';
 import 'package:mtsp/global.dart';
 import 'package:mtsp/view/azan/azan.dart';
 import 'package:mtsp/widgets/prayer_time.dart';
-
   
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -34,9 +33,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     // Initialize the PrayerTimes instance with the required parameters
-   coordinates = Coordinates(1.5638129487418682, 103.61735116456667);
+    coordinates = Coordinates(1.5638129487418682, 103.61735116456667);
     date = DateTime.now();
-    params = CalculationMethod.Malaysia();
+    //params = CalculationMethod.Malaysia();
     params.madhab = Madhab.Shafi;
     
   }
