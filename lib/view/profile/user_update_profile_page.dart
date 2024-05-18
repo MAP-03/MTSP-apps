@@ -41,7 +41,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
     }
   }
 
-   void _deleteAccount() async {
+  void _deleteAccount() async {
     await FirebaseFirestore.instance
         .collection("Users")
         .doc(currentUser.email)
@@ -71,203 +71,248 @@ class _UpdateProfileState extends State<UpdateProfile> {
         backgroundColor: const Color(0xff06142F),
       ),
       body: StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection("Users")
-              .doc(currentUser.email)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            else if (!snapshot.hasData || snapshot.data!.data() == null) {
-              return Center(
-                child: Text('No user data available'),
-              );
-            } 
-            else if (snapshot.hasData) {
-              final userData = snapshot.data!.data() as Map<String, dynamic>;
+        stream: FirebaseFirestore.instance.collection("Users").doc(currentUser.email).snapshots(),
+        builder: (context, snapshot) {
+          final userData = snapshot.data!.data() as Map<String, dynamic>;
 
-              return SingleChildScrollView(
-                child: Container(
-                  //height: MediaQuery.of(context).size.height,
-                  padding: EdgeInsets.all(kDefaultFontSize),
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Stack(
+                  children: [
+                    SizedBox(
+                      width: 120,
+                      height: 120,
+                      child: CircleAvatar(
+                        backgroundImage: AssetImage('assets/images/user.png'),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        width: 35,
+                        height: 35,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: const Icon(Icons.camera_alt, color: Colors.black),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 50),
+                Form(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
+                      TextFormField(
+                        decoration: const InputDecoration(
+                            labelText: "Nama Penuh",
+                            prefixIcon: Icon(Icons.person, color: Colors.white),
+                            labelStyle: TextStyle(color: Colors.white)),
+                      ),
+                      TextFormField(
+                        decoration: const InputDecoration(
+                            labelText: "No. Phone",
+                            prefixIcon: Icon(Icons.phone, color: Colors.white),
+                            labelStyle: TextStyle(color: Colors.white)),
+                      ),
+                      TextFormField(
+                        decoration: const InputDecoration(
+                            labelText: "E-Mail",
+                            prefixIcon: Icon(Icons.email, color: Colors.white),
+                            labelStyle: TextStyle(color: Colors.white)),
+                      ),
+                      TextFormField(
+                        decoration: const InputDecoration(
+                            labelText: "Kata Laluan",
+                            prefixIcon: Icon(Icons.password, color: Colors.white),
+                            labelStyle: TextStyle(color: Colors.white)),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
                         children: [
-                          Stack(
+                          Column(
                             children: [
-                              const SizedBox(
-                                width: 120,
-                                height: 120,
-                                child: CircleAvatar(
-                                  backgroundImage:
-                                      AssetImage('assets/images/user.png'),
-                                ),
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Container(
-                                    width: 35,
-                                    height: 35,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(100),
+                              Stack(
+                                children: [
+                                  const SizedBox(
+                                    width: 120,
+                                    height: 120,
+                                    child: CircleAvatar(
+                                      backgroundImage:
+                                          AssetImage('assets/images/user.png'),
                                     ),
-                                    child: const Icon(Icons.camera_alt,
-                                        color: Colors.black)),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 50),
-                          Form(
-                            child: Column(children: [
-                              TextFormField(
-                                controller: newUserNameController,
-                                style: TextStyle(color: Colors.white),
-                                decoration: InputDecoration(
-                                    label: Text('Username'),
-                                    prefixIcon:
-                                        Icon(Icons.person, color: Colors.white),
-                                    labelStyle: TextStyle(color: Colors.white),
-                                    hintText: userData['username'],
-                                    hintStyle: TextStyle(color: Colors.white)),
-                                /* onChanged: (value) {
-                                  newValue = value;
-                                }, */
-                              ),
-                              TextFormField(
-                                controller: newFullNameController,
-                                style: TextStyle(color: Colors.white),
-                                decoration: InputDecoration(
-                                    label: Text('Nama Penuh'),
-                                    prefixIcon:
-                                        Icon(Icons.person, color: Colors.white),
-                                    labelStyle: TextStyle(color: Colors.white),
-                                    hintText: userData['fullname'],
-                                    hintStyle: TextStyle(color: Colors.white)),
-                                /* onChanged: (value) {
-                                  newValue = value;
-                                }, */
-                              ),
-                              TextFormField(
-                                  controller: newTelephoneController,
-                                  style: TextStyle(color: Colors.white),
-                                  decoration: InputDecoration(
-                                      label: Text('No. Telefon'),
-                                      prefixIcon: Icon(Icons.phone,
-                                          color: Colors.white),
-                                      labelStyle:
-                                          TextStyle(color: Colors.white),
-                                      hintText: userData['phoneNumber'],
-                                      hintStyle:
-                                          TextStyle(color: Colors.white))),
-                              TextFormField(
-                                style: TextStyle(color: Colors.white),
-                                decoration: InputDecoration(
-                                    label: Text('Email'),
-                                    prefixIcon:
-                                        Icon(Icons.email, color: Colors.white),
-                                    labelStyle: TextStyle(color: Colors.white),
-                                    hintText: userData['email'],
-                                    hintStyle: TextStyle(color: Colors.white)),
-                                readOnly: true,
-                              ),
-                              /* TextFormField(
-                                style: TextStyle(color: Colors.white),
-                                decoration: InputDecoration(
-                                    label: Text('password'),
-                                    prefixIcon: Icon(Icons.password,
-                                        color: Colors.white),
-                                    labelStyle: TextStyle(color: Colors.white)),
-                              ), */
-                              const SizedBox(height: 20),
-                              SizedBox(
-                                width: 200,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    updateProfileDetail();
-                                    /* Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => UpdateProfile(),
-                                      ),
-                                    ); */
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          30.0), // Adjust the radius as needed
-                                    ),
-                                    backgroundColor:
-                                        Colors.white, // Background color
                                   ),
-                                  child: const Text('Update',
-                                      style: TextStyle(color: Colors.black)),
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                               GestureDetector(
-                                  onTap: () {
-                                    _deleteAccount();
-                                    FirebaseAuth.instance.currentUser!.delete().then((value) => {
-                                        showToast(message: "Akaun berjaya dipadam"),
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => AuthPage()),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                        width: 35,
+                                        height: 35,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(100),
                                         ),
-                                    });
-                                  },
-                                  child: Container(
+                                        child: const Icon(Icons.camera_alt,
+                                            color: Colors.black)),
+                                  )
+                                ],
+                              ),
+                              const SizedBox(height: 50),
+                              Form(
+                                child: Column(children: [
+                                  TextFormField(
+                                    controller: newUserNameController,
+                                    style: TextStyle(color: Colors.white),
+                                    decoration: InputDecoration(
+                                        label: Text('Username'),
+                                        prefixIcon:
+                                            Icon(Icons.person, color: Colors.white),
+                                        labelStyle: TextStyle(color: Colors.white),
+                                        hintText: userData['username'],
+                                        hintStyle: TextStyle(color: Colors.white)),
+                                    /* onChanged: (value) {
+                                      newValue = value;
+                                    }, */
+                                  ),
+                                  TextFormField(
+                                    controller: newFullNameController,
+                                    style: TextStyle(color: Colors.white),
+                                    decoration: InputDecoration(
+                                        label: Text('Nama Penuh'),
+                                        prefixIcon:
+                                            Icon(Icons.person, color: Colors.white),
+                                        labelStyle: TextStyle(color: Colors.white),
+                                        hintText: userData['fullname'],
+                                        hintStyle: TextStyle(color: Colors.white)),
+                                    /* onChanged: (value) {
+                                      newValue = value;
+                                    }, */
+                                  ),
+                                  TextFormField(
+                                      controller: newTelephoneController,
+                                      style: TextStyle(color: Colors.white),
+                                      decoration: InputDecoration(
+                                          label: Text('No. Telefon'),
+                                          prefixIcon: Icon(Icons.phone,
+                                              color: Colors.white),
+                                          labelStyle:
+                                              TextStyle(color: Colors.white),
+                                          hintText: userData['phoneNumber'],
+                                          hintStyle:
+                                              TextStyle(color: Colors.white))),
+                                  TextFormField(
+                                    style: TextStyle(color: Colors.white),
+                                    decoration: InputDecoration(
+                                        label: Text('Email'),
+                                        prefixIcon:
+                                            Icon(Icons.email, color: Colors.white),
+                                        labelStyle: TextStyle(color: Colors.white),
+                                        hintText: userData['email'],
+                                        hintStyle: TextStyle(color: Colors.white)),
+                                    readOnly: true,
+                                  ),
+                                  /* TextFormField(
+                                    style: TextStyle(color: Colors.white),
+                                    decoration: InputDecoration(
+                                        label: Text('password'),
+                                        prefixIcon: Icon(Icons.password,
+                                            color: Colors.white),
+                                        labelStyle: TextStyle(color: Colors.white)),
+                                  ), */
+                                  const SizedBox(height: 20),
+                                  SizedBox(
                                     width: 200,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xffFF0000),
-                                      borderRadius: BorderRadius.circular(30.0),
-                                    ),
-                                    child: Center(
-                                      child: const Text(' Padam Akaun',
-                                          style: TextStyle(color: Colors.white)),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        updateProfileDetail();
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              30.0), // Adjust the radius as needed
+                                        ),
+                                        backgroundColor:
+                                            Colors.white, // Background color
+                                      ),
+                                      child: const Text('Update',
+                                          style: TextStyle(color: Colors.black)),
                                     ),
                                   ),
+                                  const SizedBox(height: 210),
+                                ]),
+                              ),
+          
+                              Text.rich(
+                                TextSpan(
+                                  text: "Joined ",
+                                  style: TextStyle(color: Colors.white, fontSize: 12),
+                                  children: [
+                                    TextSpan(
+                                        text: "tarikh pengguna buat akaun",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold)),
+                                  ],
                                 ),
-
-                                SizedBox(height: 100),
-
-                            ]),
-                          ),
+                              ),
+                            ],
+                          )
                         ],
                       ),
-                      Text.rich(TextSpan(
-                          text: "Joined",
-                          style:
-                              TextStyle(color: Colors.white, fontSize: 12),
-                          children: [
-                            TextSpan(
-                                text: (" tarikh pengguna buat akaun"),
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold))
-                          ]))
+                      const SizedBox(height: 40),
+                      SizedBox(
+                        width: 200,
+                        height: 40,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            backgroundColor: Colors.white,
+                          ),
+                          child: const Text('Update',
+                              style: TextStyle(color: Colors.black)),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      GestureDetector(
+                        onTap: () {
+                          _deleteAccount();
+                          FirebaseAuth.instance.currentUser!.delete().then((value) => {
+                              showToast(message: "Akaun berjaya dipadam"),
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => AuthPage()),
+                              ),
+                          });
+                        },
+                        child: Container(
+                          width: 200,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: const Color(0xffFF0000),
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          child: Center(
+                            child: const Text(' Padam Akaun',
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text('Error ${snapshot.error}'),
-              );
-            }
-
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }),
+              ],
+            ),
+          );
+        }
+      ),
     );
   }
 }

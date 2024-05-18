@@ -26,12 +26,13 @@ class _AzanState extends State<Azan> {
   late DateTime date;
   late Coordinates coordinates;
   late CalculationParameters params;
+  
   @override
   void initState() {
     super.initState();
     coordinates = Coordinates(1.5638129487418682, 103.61735116456667);
     date = DateTime.now();
-    params = CalculationMethod.Malaysia();
+    //params = CalculationMethod.Malaysia();
     params.madhab = Madhab.Shafi;
   }
   

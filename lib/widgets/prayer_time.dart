@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:adhan_dart/adhan_dart.dart';
 import 'package:mtsp/global.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 class PrayTime extends StatefulWidget {
   const PrayTime({
@@ -73,13 +74,72 @@ secondToHour(int seconds){
   }
 
   void toggleAlarm(String azanName) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isAlarmOnMap[azanName] = !(isAlarmOnMap[azanName] ?? false); // Toggle alarm state, default to false if null
-      prefs.setBool('$azanName' + 'AlarmOn', isAlarmOnMap[azanName] ?? false); // Save the updated alarm state to SharedPreferences
-    });
-  }
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  setState(() {
+    isAlarmOnMap[azanName] = !(isAlarmOnMap[azanName] ?? false); // Toggle alarm state
+    prefs.setBool('$azanName' + 'AlarmOn', isAlarmOnMap[azanName] ?? false); // Save the updated alarm state
 
+    if (isAlarmOnMap[azanName] == true) {
+      // Schedule notification for the azan time
+      DateTime azanTime;
+      switch (azanName) {
+        case 'Subuh':
+          azanTime = widget.prayerTimes.fajr!.toLocal();
+          break;
+        case 'Syuruk':
+          azanTime = widget.prayerTimes.sunrise!.toLocal();
+          break;
+        case 'Zohor':
+          azanTime = widget.prayerTimes.dhuhr!.toLocal();
+          break;
+        case 'Asar':
+          azanTime = widget.prayerTimes.asr!.toLocal();
+          break;
+        case 'Maghrib':
+          azanTime = widget.prayerTimes.maghrib!.toLocal();
+          break;
+        case 'Isyak':
+          azanTime = widget.prayerTimes.isha!.toLocal();
+          break;
+        default:
+          return;
+      }
+      schedulePrayerNotification(azanName, azanTime);
+    } else {
+      // Cancel notification for the azan time
+      cancelPrayerNotification(azanName);
+    }
+  });
+}
+
+  void schedulePrayerNotification(String azanName, DateTime azanTime) {
+  AwesomeNotifications().createNotification(
+    content: NotificationContent(
+      id: azanName.hashCode,
+      channelKey: 'basic_channel',
+      title: 'Prayer Time',
+      body: 'It\'s time for $azanName prayer.',
+      notificationLayout: NotificationLayout.Default,
+    ),
+    schedule: NotificationCalendar.fromDate(date: azanTime),
+  );
+}
+
+void cancelPrayerNotification(String azanName) {
+  AwesomeNotifications().cancel(azanName.hashCode);
+}
+
+/*   void triggerTestNotification() {
+    AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 9999, // Unique ID for the test notification
+        channelKey: 'basic_channel',
+        title: 'Test Notification',
+        body: 'This is a test notification to check if the system works correctly.',
+        notificationLayout: NotificationLayout.Default,
+      ),
+    );
+  } */
   @override
   Widget build(BuildContext context) {
     Color bgColor = widget.isCurrentPrayer ? Colors.blue : primaryColor;
@@ -163,6 +223,11 @@ secondToHour(int seconds){
                 ),
               ),
             ),
+
+/*                         IconButton(
+              icon: Icon(Icons.notification_important, color: Colors.white),
+              onPressed: triggerTestNotification,
+            ), */
           ],
         ),
       ),
