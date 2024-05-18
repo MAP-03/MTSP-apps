@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/global.dart';
+import 'package:mtsp/models/ahli.dart';
+import 'package:mtsp/services/ekhairat_service.dart';
 
 class SemakAhli extends StatefulWidget {
   const SemakAhli({super.key});
@@ -10,6 +12,9 @@ class SemakAhli extends StatefulWidget {
 }
 
 class _SemakAhliState extends State<SemakAhli> {
+  Ahli? ahli;
+  EkhairatService ekhairatService = EkhairatService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
