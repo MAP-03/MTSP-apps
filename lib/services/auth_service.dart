@@ -1,10 +1,18 @@
 // ignore_for_file: unrelated_type_equality_checks
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mtsp/widgets/toast.dart';
 
 class AuthService {
+
+  final FirebaseStorage storage = FirebaseStorage.instance;
+  final usersCollection = FirebaseFirestore.instance.collection('Users');
+
   Future<bool> checkExistingAcount(String? email) async {
     final doc =
         await FirebaseFirestore.instance.collection('Users').doc(email).get();
@@ -55,5 +63,20 @@ class AuthService {
         await FirebaseFirestore.instance.collection('Users').doc(email).get();
 
     return doc.exists;
+  }
+
+  Future<void> saveProfilePicture(String? email, File imageFile) async {
+    try {
+      String imageUrl;
+
+      final storageRef = storage.ref().child('profilePicture/$email');
+      await storageRef.putFile(imageFile);
+      imageUrl = await storageRef.getDownloadURL();
+
+      await usersCollection.doc(email).update({'profileImage': imageUrl});
+
+    } catch (e) {
+      showToast(message: e.toString());
+    }
   }
 }
