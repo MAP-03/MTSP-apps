@@ -44,10 +44,16 @@ class _ProfileState extends State<Profile> {
             .doc(currentUser.email)
             .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final userData =
-                snapshot.data!.data() as Map<String, dynamic>;
-
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (!snapshot.hasData || snapshot.data!.data() == null) {
+            return Center(
+              child: Text('No user data available', style: TextStyle(color: Colors.white)),
+            );
+          } else {
+            final userData = snapshot.data!.data() as Map<String, dynamic>;
             return Center(
               child: Column(
                 children: [
@@ -157,17 +163,7 @@ class _ProfileState extends State<Profile> {
                 ],
               ),
             );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error ${snapshot.error}'),
-            );
           }
-          else{
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          
         },
       ),
     );

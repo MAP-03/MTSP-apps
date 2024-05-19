@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:mtsp/auth/authentication_page.dart';
 import 'package:mtsp/view/profile/user_profile_page.dart';
 import 'package:mtsp/widgets/toast.dart';
@@ -231,6 +232,10 @@ class _UpdateProfileState extends State<UpdateProfile> {
                             text: "Joined ",
                             style: TextStyle(color: Colors.white, fontSize: 12),
                             children: [
+                              TextSpan(
+                                text: Jiffy.parseFromDateTime(userData['timestamp'].toDate()).yMMMMEEEEdjm,
+                                style: TextStyle(color: Colors.white, fontSize: 12),
+                              ),
                               
                             ],
                           ),
