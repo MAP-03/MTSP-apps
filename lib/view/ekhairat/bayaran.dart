@@ -91,7 +91,7 @@ class _BayaranPageState extends State<BayaranPage> {
                       color: Color(0xFF0096FF),
                     ),
                   ),
-                 Container(
+                Container(
                     width: 25,
                     height: 25,
                     decoration: ShapeDecoration(

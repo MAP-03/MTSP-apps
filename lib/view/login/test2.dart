@@ -22,15 +22,6 @@ class _ProfileState extends State<Profile> {
         .collection("Users")
         .doc(currentUser.email)
         .delete();
-
-    showToast(message: "Akaun berjaya dipadam");
-
-    await FirebaseAuth.instance.currentUser!.delete();
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => AuthPage()),
-    );
   }
 
   @override
@@ -71,8 +62,8 @@ class _ProfileState extends State<Profile> {
                         width: 120,
                         height: 120,
                         child: CircleAvatar(
-                          backgroundImage:
-                              AssetImage('lib/images/Google_logo.png'),
+                          backgroundImage: AssetImage(
+                              'lib/images/Google_logo.png'),
                         ),
                       ),
                       Positioned(
@@ -153,6 +144,16 @@ class _ProfileState extends State<Profile> {
                     textColor: Colors.red,
                     onPress: () async {
                       _deleteAccount();
+                      FirebaseAuth.instance.currentUser!
+                          .delete()
+                          .then((value) => {
+                                showToast(message: "Akaun berjaya dipadam"),
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AuthPage()),
+                                ),
+                              });
                     }, // Single function call},
                   ),
                 ],
@@ -163,10 +164,9 @@ class _ProfileState extends State<Profile> {
               child: Text('Error ${snapshot.error}'),
             );
           } else {
-            return AuthPage();
-            /* return const Center(
+            return const Center(
               child: CircularProgressIndicator(),
-            ); */
+            );
           }
         },
       ),

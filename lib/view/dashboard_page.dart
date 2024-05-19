@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
     // Initialize the PrayerTimes instance with the required parameters
     coordinates = Coordinates(1.5638129487418682, 103.61735116456667);
     date = DateTime.now();
-    //params = CalculationMethod.Malaysia();
+    params = CalculationMethod.Singapore();
     params.madhab = Madhab.Shafi;
     
   }
@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {},
               ),
               IconButton(
-                icon: const Icon(Icons.account_circle_rounded, size: 30, color: Colors.white),
+                icon: const Icon(Icons.account_circle_rounded, size: 30, color: Colors.white),// TODO tambah gambar profile
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -317,7 +317,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
-                     // Added SizedBox for spacing between texts
+                      // Added SizedBox for spacing between texts
                       Row(
                         children: [
                           Column(
@@ -348,10 +348,9 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                               ),
-                               SizedBox(height: 10),
-                            ],                      
+                              SizedBox(height: 10),
+                            ],
                           ),
-                         
                         ],
                       ),
                     ],

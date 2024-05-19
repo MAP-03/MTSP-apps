@@ -30,7 +30,7 @@ class AuthService {
 
     final String email = userCredential.user!.email!;
 
-    if (checkExistingAcount(email) == false) {
+    if (checkExistingAcount(email) == true) {
       FirebaseFirestore.instance
           .collection("Users")
           .doc(userCredential.user!.email)

@@ -4,27 +4,29 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mtsp/auth/authentication_page.dart';
 import 'package:mtsp/services/auth_service.dart';
-import 'package:mtsp/view/login/register_credential.dart';
 import 'package:mtsp/widgets/sign_in.dart';
 import 'package:mtsp/widgets/toast.dart';
 import '../../widgets/text_field.dart';
 
-class RegisterPage extends StatefulWidget {
+class RegisterCredentialPage extends StatefulWidget {
+  final String email;
   final Function()? onTap;
-  const RegisterPage({super.key, required this.onTap});
+  const RegisterCredentialPage(
+      {super.key, required this.email, required this.onTap});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<RegisterCredentialPage> createState() => _RegisterCredentialPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _RegisterCredentialPageState extends State<RegisterCredentialPage> {
   //Controller
 
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
-  bool isSigningUp = false;
+  final userNameController = TextEditingController();
+  final fullNameController = TextEditingController();
+  final phoneNumberController = TextEditingController();
+  bool isFill = false;
 
   Future<bool> checkExistingAcount(String? email) async {
     final doc =
@@ -34,46 +36,44 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   //function
-  void signUpUser() async {
+  void registerCredential() async {
     setState(() {
-      isSigningUp = true;
+      isFill = true;
     });
 
     try {
-      if (passwordController.text == confirmPasswordController.text) {
-        UserCredential userCredential = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-                email: emailController.text, password: passwordController.text);
+      if (isFill) {
+        //update username field
+        if (await checkExistingAcount(widget.email)) {
+          FirebaseFirestore.instance
+              .collection("Users")
+              .doc(widget.email)
+              .update({
+            'username': userNameController.text,
+            'fullName': fullNameController.text,
+            'phoneNumber': phoneNumberController.text
+          });
+          // email does not exist
+        }
 
-        showToast(message: 'Pendaftaran Berjaya!');
+        showToast(message: 'Maklumat disimpan, sila log masuk');
 
-        FirebaseFirestore.instance
-            .collection("Users")
-            .doc(userCredential.user!.email)
-            .set({
-          'username': emailController.text.split('@')[0],
-          'email': emailController.text,
-          'phoneNumber': '-',
-          'timestamp': DateTime.now(),
-        });
+        await FirebaseAuth.instance.signOut();
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => RegisterCredentialPage(
-            email: emailController.text,
-            onTap: widget.onTap,
-          )),
+          MaterialPageRoute(builder: (context) => AuthPage()),
         );
       } else {
-        showToast(message: 'Kata laluan tidak sama');
+        showToast(message: 'Sila isi semua maklumat');
       }
 
       setState(() {
-        isSigningUp = false;
+        isFill = false;
       });
     } on FirebaseAuthException catch (e) {
       setState(() {
-        isSigningUp = false;
+        isFill = false;
       });
 
       showToast(message: e.code.replaceAll('-', ' '));
@@ -118,7 +118,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text('Email',
+                      Text('Kata Nama',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)),
                     ],
@@ -127,8 +127,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 //Email Container
                 TextFieldComponents(
-                  controller: emailController,
-                  hintText: 'ali123@gmail.com',
+                  controller: userNameController,
+                  hintText: 'Ali 12',
                   obscureText: false,
                 ),
 
@@ -140,7 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text('Kata Laluan',
+                      Text('Nama Penuh',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)),
                     ],
@@ -149,9 +149,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 //Password Container
                 TextFieldComponents(
-                  controller: passwordController,
-                  hintText: '********',
-                  obscureText: true,
+                  controller: fullNameController,
+                  hintText: 'Ali bin Abu Seman',
+                  obscureText: false,
                 ),
 
                 const SizedBox(height: 10),
@@ -162,7 +162,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text('Ulang Kata Laluan',
+                      Text('Nombor Telefon',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 20)),
                     ],
@@ -171,15 +171,15 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 //Repeat Password Container
                 TextFieldComponents(
-                  controller: confirmPasswordController,
-                  hintText: '********',
-                  obscureText: true,
+                  controller: phoneNumberController,
+                  hintText: '012-3456789',
+                  obscureText: false,
                 ),
 
                 const SizedBox(height: 30.0),
 
                 GestureDetector(
-                  onTap: () => signUpUser(),
+                  onTap: () => registerCredential(),
                   child: Container(
                     width: 250,
                     padding: const EdgeInsets.symmetric(
@@ -188,10 +188,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         color: Color(0xff050A30),
                         borderRadius: BorderRadius.circular(10)),
                     child: Center(
-                      child: isSigningUp
+                      child: isFill
                           ? CircularProgressIndicator()
                           : Text(
-                              'Daftar',
+                              'Simpan Data',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
