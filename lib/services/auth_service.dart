@@ -45,4 +45,15 @@ class AuthService {
     //sign in user
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
+
+  Future<void> resetPassword(String email) async {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  }
+
+  Future<bool> checkEmailInDatabase(String email) async {
+    final doc =
+        await FirebaseFirestore.instance.collection('Users').doc(email).get();
+
+    return doc.exists;
+  }
 }
