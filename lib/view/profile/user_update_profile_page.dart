@@ -1,10 +1,15 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_constructors
+
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:mtsp/auth/authentication_page.dart';
+import 'package:mtsp/services/auth_service.dart';
 import 'package:mtsp/view/profile/user_profile_page.dart';
 import 'package:mtsp/widgets/toast.dart';
 
@@ -18,12 +23,14 @@ class UpdateProfile extends StatefulWidget {
 class _UpdateProfileState extends State<UpdateProfile> {
   final currentUser = FirebaseAuth.instance.currentUser!;
   final usersCollection = FirebaseFirestore.instance.collection('Users');
+  File? imageFile;
+  AuthService authService = AuthService();
 
   final newUserNameController = TextEditingController();
   final newFullNameController = TextEditingController();
   final newTelephoneController = TextEditingController();
 
-  void updateProfileDetail() {
+  void updateProfileDetail() async{
     if (newUserNameController.text.isNotEmpty) {
       usersCollection
           .doc(currentUser.email)
@@ -40,6 +47,10 @@ class _UpdateProfileState extends State<UpdateProfile> {
       usersCollection
           .doc(currentUser.email)
           .update({'phoneNumber': newTelephoneController.text});
+    }
+
+    if (imageFile != null) {
+      authService.saveProfilePicture(currentUser.email, imageFile!);
     }
     
     showToast(message: 'Profile updated successfully');
@@ -96,6 +107,10 @@ class _UpdateProfileState extends State<UpdateProfile> {
             );
           } else {
             final userData = snapshot.data!.data() as Map<String, dynamic>;
+            newUserNameController.text = userData['username'] ?? '';
+            newFullNameController.text = userData['fullName'] ?? '';
+            newTelephoneController.text = userData['phoneNumber'] ?? '';
+
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -105,9 +120,20 @@ class _UpdateProfileState extends State<UpdateProfile> {
                       SizedBox(
                         width: 120,
                         height: 120,
-                        child: CircleAvatar(
-                          backgroundImage: AssetImage('assets/images/user.png'),
-                        ),
+                        child: imageFile != null
+                        ? CircleAvatar(
+                            backgroundImage: FileImage(imageFile!),
+                            radius: 60,
+                            )
+                        : userData['profileImage'] == null
+                          ? CircleAvatar(
+                            backgroundImage: const AssetImage('assets/images/profileMan.png'),
+                            radius: 60,
+                            )
+                          : CircleAvatar(
+                            backgroundImage: NetworkImage(userData['profileImage']),
+                            radius: 60,
+                            ),
                       ),
                       Positioned(
                         bottom: 0,
@@ -119,58 +145,108 @@ class _UpdateProfileState extends State<UpdateProfile> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(100),
                           ),
-                          child: const Icon(Icons.camera_alt, color: Colors.black),
+                          child: GestureDetector(
+                            onTap: () {
+                              FilePicker.platform.pickFiles(
+                              type: FileType.custom,
+                              allowedExtensions: ['jpg', 'png'],
+                              ).then((value) {
+                                if (value != null) {
+                                  setState(() {
+                                    imageFile = File(value.files.single.path!);
+                                  });
+                                }
+                              });
+                            },
+                            child: Icon(Icons.edit, color: Colors.black)),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 40),
                   Form(
                     child: Column(
                       children: [
-                        TextFormField(
-                          controller: newUserNameController,
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            labelText: "Username",
-                            prefixIcon: Icon(Icons.person, color: Colors.white),
-                            labelStyle: TextStyle(color: Colors.white),
-                            hintText: userData['username'],
-                            hintStyle: TextStyle(color: Colors.white),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 20),
+                          child: TextField(
+                            controller: newUserNameController,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.person, color: Colors.blue),
+                              labelText: 'Username',
+                              labelStyle: TextStyle(color: Colors.blue),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(25)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.blue),
+                                borderRadius: BorderRadius.all(Radius.circular(25)),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 45, vertical: 20),
+                            ),
                           ),
                         ),
-                        TextFormField(
-                          controller: newFullNameController,
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            labelText: "Nama Penuh",
-                            prefixIcon: Icon(Icons.person, color: Colors.white),
-                            labelStyle: TextStyle(color: Colors.white),
-                            hintText: userData['fullName'],
-                            hintStyle: TextStyle(color: Colors.white),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 20, top: 2),
+                          child: TextField(
+                            controller: newFullNameController,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.person, color: Colors.blue),
+                              labelText: 'Nama Penuh',
+                              labelStyle: TextStyle(color: Colors.blue),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(25)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.blue),
+                                borderRadius: BorderRadius.all(Radius.circular(25)),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 45, vertical: 20),
+                            ),
                           ),
                         ),
-                        TextFormField(
-                          controller: newTelephoneController,
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            labelText: "No. Telefon",
-                            prefixIcon: Icon(Icons.phone, color: Colors.white),
-                            labelStyle: TextStyle(color: Colors.white),
-                            hintText: userData['phoneNumber'],
-                            hintStyle: TextStyle(color: Colors.white),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 20, top: 2),
+                          child: TextField(
+                            controller: newTelephoneController,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.phone, color: Colors.blue),
+                              labelText: 'No. Telefon',
+                              labelStyle: TextStyle(color: Colors.blue),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(25)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.blue),
+                                borderRadius: BorderRadius.all(Radius.circular(25)),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 45, vertical: 20),
+                            ),
                           ),
                         ),
-                        TextFormField(
-                          style: TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            labelText: "Email",
-                            prefixIcon: Icon(Icons.email, color: Colors.white),
-                            labelStyle: TextStyle(color: Colors.white),
-                            hintText: userData['email'],
-                            hintStyle: TextStyle(color: Colors.white),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 10, top: 2),
+                          child: TextField(
+                            style: const TextStyle(color: Colors.white),
+                            decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.email, color: Colors.blue),
+                              labelText: 'Email',
+                              labelStyle: TextStyle(color: Colors.blue),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(25)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.blue),
+                                borderRadius: BorderRadius.all(Radius.circular(25)),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 45, vertical: 20),
+                            ),
+                            readOnly: true,
+                            controller: TextEditingController()..text = userData['email'] ?? '',
                           ),
-                          readOnly: true,
                         ),
                         const SizedBox(height: 20),
                         SizedBox(
@@ -189,7 +265,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                         ),
                         const SizedBox(height: 20),
                         GestureDetector(
-                          onTap:() {
+                          onTap: () {
                             showDialog(
                               context: context,
                               builder: (context) {
@@ -211,7 +287,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                 );
                               },
                             );
-                          
                           },
                           child: Container(
                             width: 200,
@@ -236,7 +311,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                 text: Jiffy.parseFromDateTime(userData['timestamp'].toDate()).yMMMMEEEEdjm,
                                 style: TextStyle(color: Colors.white, fontSize: 12),
                               ),
-                              
                             ],
                           ),
                         ),
