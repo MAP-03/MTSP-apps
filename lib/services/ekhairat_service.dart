@@ -29,6 +29,7 @@ class EkhairatService {
       emergencyPhone: doc['emergencyPhone'],
     )..tanggungan = (doc['tanggungan'] as List).map((e) => Tanggungan.fromMap(e)).toList()
      ..pelan = doc['pelan']
-     ..tarikhDaftar = doc['tarikhDaftar'];
+     ..tarikhDaftar = doc['tarikhDaftar']
+     ..status = doc['status'];
   }
 }
