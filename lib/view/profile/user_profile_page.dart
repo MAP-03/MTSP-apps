@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mtsp/view/dashboard_page.dart';
@@ -68,10 +69,21 @@ class _ProfileState extends State<Profile> {
                         backgroundImage: const AssetImage('assets/images/profileMan.png'),
                         radius: 60,
                       )
-                    : CircleAvatar(
-                        backgroundImage: NetworkImage(userData['profileImage']),
-                        radius: 60,
-                      ),
+                    : GestureDetector(
+                        onTap: () {
+                          showImageViewer(
+                            doubleTapZoomable: true,
+                              context,
+                              NetworkImage(
+                                userData['profileImage'],
+                              ),
+                          );
+                        },
+                      child: CircleAvatar(
+                          backgroundImage: NetworkImage(userData['profileImage']),
+                          radius: 60,
+                        ),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Text(userData['username'],
