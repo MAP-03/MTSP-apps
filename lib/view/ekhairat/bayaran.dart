@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, sized_box_for_whitespace
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -254,7 +255,7 @@ class _BayaranPageState extends State<BayaranPage> {
         onTap: () {
           if (isChecked) {
             //sepatutnya bayar dulu
-            ahli!.tarikhDaftar = DateTime.now();
+            ahli!.tarikhDaftar = Timestamp.now();
             EkhairatService().addAhli(ahli!);
             showToast(message: 'Pendaftaran berjaya');
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));

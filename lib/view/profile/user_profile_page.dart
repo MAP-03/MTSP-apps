@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -59,35 +61,32 @@ class _ProfileState extends State<Profile> {
             .doc(currentUser.email)
             .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (!snapshot.hasData || snapshot.data!.data() == null) {
+            return Center(
+              child: Text('No user data available', style: TextStyle(color: Colors.white)),
+            );
+          } else {
             final userData = snapshot.data!.data() as Map<String, dynamic>;
-
             return Center(
               child: Column(
                 children: [
-                  Stack(
-                    children: [
-                      const SizedBox(
-                        width: 120,
-                        height: 120,
-                        child: CircleAvatar(
-                          backgroundImage:
-                              AssetImage('lib/images/Google_logo.png'),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                            width: 35,
-                            height: 35,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            child: const Icon(Icons.edit, color: Colors.black)),
+                  SizedBox(
+                    width: 120,
+                    height: 120,
+                    child: 
+                    userData['profileImage'] == null
+                    ? CircleAvatar(
+                        backgroundImage: const AssetImage('assets/images/profileMan.png'),
+                        radius: 60,
                       )
-                    ],
+                    : CircleAvatar(
+                        backgroundImage: NetworkImage(userData['profileImage']),
+                        radius: 60,
+                      ),
                   ),
                   const SizedBox(height: 10),
                   Text(userData['username'],
@@ -114,7 +113,8 @@ class _ProfileState extends State<Profile> {
                           borderRadius: BorderRadius.circular(
                               30.0), // Adjust the radius as needed
                         ),
-                        backgroundColor: Colors.white, // Background color
+                        backgroundColor:
+                            Colors.blue, // Background color
                       ),
                       child: const Text('Edit Profile',
                           style: TextStyle(color: Colors.black)),
@@ -158,15 +158,6 @@ class _ProfileState extends State<Profile> {
                 ],
               ),
             );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error ${snapshot.error}'),
-            );
-          } else {
-            return AuthPage();
-            /* return const Center(
-              child: CircularProgressIndicator(),
-            ); */
           }
         },
       ),
