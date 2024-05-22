@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -130,10 +131,21 @@ class _UpdateProfileState extends State<UpdateProfile> {
                             backgroundImage: const AssetImage('assets/images/profileMan.png'),
                             radius: 60,
                             )
-                          : CircleAvatar(
-                            backgroundImage: NetworkImage(userData['profileImage']),
-                            radius: 60,
-                            ),
+                          : GestureDetector(
+                            onTap: () {
+                              showImageViewer(
+                                doubleTapZoomable: true,
+                                context,
+                                NetworkImage(
+                                  userData['profileImage'],
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(userData['profileImage']),
+                              radius: 60,
+                              ),
+                          ),
                       ),
                       Positioned(
                         bottom: 0,
