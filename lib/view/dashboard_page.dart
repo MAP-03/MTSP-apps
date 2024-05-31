@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'package:flutter/cupertino.dart';
+import 'package:hijri/hijri_calendar.dart';
+import 'package:adhan_dart/adhan_dart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,19 +10,39 @@ import 'package:mtsp/view/ekhairat/ekhairat.dart';
 import 'package:mtsp/view/profile/user_profile_page.dart';
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:mtsp/global.dart';
-
+import 'package:mtsp/view/azan/azan.dart';
+import 'package:mtsp/widgets/prayer_time.dart';
+  
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
+  
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  HijriCalendar _hijriCalendar = HijriCalendar.now();
+  late PrayerTimes prayerTimes;
+  late DateTime date;
+  late Coordinates coordinates;
+  late CalculationParameters params;
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the PrayerTimes instance with the required parameters
+    coordinates = Coordinates(1.5638129487418682, 103.61735116456667);
+    date = DateTime.now();
+    params = CalculationMethod.Malaysia();
+    params.madhab = Madhab.Shafi;
+    
+  }
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
+    prayerTimes = PrayerTimes(coordinates, date, params, precision: true);
     return Scaffold(
       key: _scaffoldKey,
       appBar: PreferredSize(
@@ -41,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {},
               ),
               IconButton(
-                icon: const Icon(Icons.account_circle_rounded, size: 30, color: Colors.white),
+                icon: const Icon(Icons.account_circle_rounded, size: 30, color: Colors.white),// TODO tambah gambar profile
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -105,8 +126,9 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
               ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  SizedBox(height: 50),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -253,16 +275,91 @@ class _HomePageState extends State<HomePage> {
             children: [
               Container(
                 width: 300,
-                height: 90,
+                height: 80, // Increased height to accommodate the additional text
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   gradient: LinearGradient(
                     end: Alignment(0.97, -0.26),
                     begin: Alignment(-0.97, 0.26),
                     colors: [Color(0xFF62CFF4), Color(0xFF2C67F2)],
-                    ),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Row( // Use Row instead of Center
+                    mainAxisAlignment: MainAxisAlignment.start, // Center the content horizontally
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(width: 10), // Added SizedBox for spacing
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                prayerTimes.nextPrayer(),
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              SizedBox(height: 5), // Added SizedBox for spacing
+                              Text(
+                                getNextPrayerTime(prayerTimes), // Replace with your desired text
+                                style: GoogleFonts.notoSans(
+                                  color: Color(0xFFD9D9D9),
+                                  fontSize: 24, // Adjust the font size as needed
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1.20,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      // Added SizedBox for spacing between texts
+                      Row(
+                        children: [
+                          Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 5), // Add left padding to move the text a bit to the right
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      "${_hijriCalendar.hDay} ${hijri[_hijriCalendar.hMonth-1]}  ${_hijriCalendar.hYear} AH", // First text
+                                      style: GoogleFonts.notoSans(
+                                        color: Color(0xFFD9D9D9),
+                                        fontSize: 12, // Adjust the font size as needed
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      "${months[date.month-1]} ${date.day}, ${date.year}", // Second text
+                                      style: GoogleFonts.notoSans(
+                                        color: Color(0xFFD9D9D9),
+                                        fontSize: 10, // Adjust the font size as needed
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
+
+
             ],
           ),
         ),
