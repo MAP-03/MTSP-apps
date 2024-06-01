@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mtsp/services/auth_service.dart';
+import 'package:mtsp/view/login/forgot_password.dart';
 import 'package:mtsp/widgets/sign_in.dart';
 import 'package:mtsp/widgets/toast.dart';
 import '../../widgets/text_field.dart';
@@ -121,13 +122,16 @@ class _LoginPageState extends State<LoginPage> {
                 //text "Lupa Kata Laluan"
                 Padding(
                   padding: const EdgeInsets.only(right: 25, top: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text('Lupa Kata Laluan',
-                          style: TextStyle(
-                              fontSize: 15, color: Colors.grey.shade100, decoration: TextDecoration.underline, decorationColor: Colors.grey.shade100)),
-                    ],
+                  child: GestureDetector(
+                    onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => ForgotPassword())),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text('Lupa Kata Laluan',
+                            style: TextStyle(
+                                fontSize: 15, color: Colors.grey.shade100, decoration: TextDecoration.underline, decorationColor: Colors.grey.shade100)),
+                      ],
+                    ),
                   ),
                 ),
 

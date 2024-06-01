@@ -27,6 +27,7 @@ class _AzanState extends State<Azan> {
   late DateTime date;
   late Coordinates coordinates;
   late CalculationParameters params;
+  
   @override
   void initState() {
     super.initState();
