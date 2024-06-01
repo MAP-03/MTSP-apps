@@ -3,11 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:mtsp/global.dart';
+import 'package:mtsp/services/berita_service.dart';
 
 class AddEventPage extends StatefulWidget {
-  final Function addEvent;
-
-  AddEventPage({required this.addEvent});
+  AddEventPage({Key? key}) : super(key: key);
 
   @override
   _AddEventPageState createState() => _AddEventPageState();
@@ -21,6 +20,7 @@ class _AddEventPageState extends State<AddEventPage> {
   TimeOfDay? _time;
   String _location = '';
   File? _image;
+  BeritaService beritaService = BeritaService();
 
   Future<void> _pickImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -230,16 +230,9 @@ class _AddEventPageState extends State<AddEventPage> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    widget.addEvent({
-                      'title': _title,
-                      'description': _description,
-                      'date': _date,
-                      'time': _time,
-                      'location': _location,
-                      'image': _image,
-                    });
-                    Navigator.pop(context);
+                    _formKey.currentState!.save(); // Save the form data
+                    beritaService.AddEvent(_title, _description, _date, _time, _location, _image);
+                    Navigator.pushNamed(context, '/home');
                   }
                 },
                 child: Text('Save Event'),

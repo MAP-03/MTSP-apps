@@ -1,12 +1,12 @@
-//Berita (User)
 
-// ignore_for_file: prefer_const_constructors, use_super_parameters, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/global.dart';
 import 'package:mtsp/widgets/drawer.dart';
 import 'detail_page.dart';
+import 'add_event_page.dart';  // Import the AddEventPage
 
 class Berita extends StatefulWidget {
   const Berita({Key? key}) : super(key: key);
@@ -168,74 +168,26 @@ class _BeritaState extends State<Berita> {
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                navigateToDetail(
-                  'Ceramah Parenting “Ibu Bapa Gemilang, Anak Cemerlang” oleh Prof Madya DR Mohd Nor Mamat',
-                  '9 Disember 2023 (Ahad)',
-                  'Ceramah ini akan membahas isi penting tentang parenting yang pasti memberi manfaat kepada kita semua dalam meningkatkan pemahaman tentang pendidikan anak.',
-                  'lib/images/Prof Madya Mohd Nor.jpg',
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Color.fromRGBO(255, 255, 255, 1),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                          image: DecorationImage(
-                            image: AssetImage('lib/images/Prof Madya Mohd Nor.jpg'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 16.0),
+                      SizedBox(height: 8.0),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Icon(
-                            Icons.access_time,
-                            color: Colors.black,
-                            size: 24,
+                          TextButton(
+                            onPressed: () {
+                              // Handle edit
+                            },
+                            child: Text(
+                              'EDIT',
+                              style: TextStyle(color: Colors.blue),
+                            ),
                           ),
-                          SizedBox(width: 8.0),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '9 Disember 2023 (Ahad)',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                SizedBox(height: 8.0),
-                                Text(
-                                  'Ceramah Parenting “Ibu Bapa Gemilang, Anak Cemerlang” oleh Prof Madya DR Mohd Nor Mamat',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
+                          TextButton(
+                            onPressed: () {
+                              // Handle delete
+                            },
+                            child: Text(
+                              'DELETE',
+                              style: TextStyle(color: Colors.red),
                             ),
                           ),
                         ],
@@ -245,8 +197,47 @@ class _BeritaState extends State<Berita> {
                 ),
               ),
             ),
+            // Add more GestureDetector widgets for other events
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (context) => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.event),
+                  title: Text('Add Event'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddEventPage()),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.article),
+                  title: Text('Add News'),
+                  onTap: () {
+                    // Handle Add News
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.announcement),
+                  title: Text('Add Announcement'),
+                  onTap: () {
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.white,
       ),
     );
   }
