@@ -1,4 +1,7 @@
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mtsp/view/dashboard_page.dart';
@@ -17,22 +20,37 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   final currentUser = FirebaseAuth.instance.currentUser!;
 
+  void _deleteAccount() async {
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(currentUser.email)
+        .delete();
+
+    showToast(message: "Akaun berjaya dipadam");
+
+    await FirebaseAuth.instance.currentUser!.delete();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => AuthPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xff06142F),
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(),
-              ),
-            );
-          },
-        ),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(),
+                ),
+              );
+            }),
         title: const Text('Profile', style: TextStyle(color: Colors.white)),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -57,30 +75,30 @@ class _ProfileState extends State<Profile> {
             return Center(
               child: Column(
                 children: [
-                  Stack(
-                    children: [
-                      const SizedBox(
-                        width: 120,
-                        height: 120,
-                        child: CircleAvatar(
-                          backgroundImage:
-                              AssetImage('assets/images/user.png'),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                            width: 35,
-                            height: 35,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            child: const Icon(Icons.edit,
-                                color: Colors.black)),
+                  SizedBox(
+                    width: 120,
+                    height: 120,
+                    child: 
+                    userData['profileImage'] == null
+                    ? CircleAvatar(
+                        backgroundImage: const AssetImage('assets/images/profileMan.png'),
+                        radius: 60,
                       )
-                    ],
+                    : GestureDetector(
+                        onTap: () {
+                          showImageViewer(
+                            doubleTapZoomable: true,
+                              context,
+                              NetworkImage(
+                                userData['profileImage'],
+                              ),
+                          );
+                        },
+                      child: CircleAvatar(
+                          backgroundImage: NetworkImage(userData['profileImage']),
+                          radius: 60,
+                        ),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Text(userData['username'],
@@ -89,27 +107,26 @@ class _ProfileState extends State<Profile> {
                           fontSize: 20,
                           fontWeight: FontWeight.bold)),
                   Text(currentUser.email!,
-                      style: const TextStyle(
-                          color: Colors.white, fontSize: 15)),
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 15)),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: 200,
                     child: ElevatedButton(
                       onPressed: () {
-                         Navigator.pushAndRemoveUntil(
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => UpdateProfile()),
-                          (route) => false,
                         );
                       },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(30.0), // Adjust the radius as needed
+                          borderRadius: BorderRadius.circular(
+                              30.0), // Adjust the radius as needed
                         ),
                         backgroundColor:
-                            Colors.white, // Background color
+                            Colors.blue, // Background color
                       ),
                       child: const Text('Edit Profile',
                           style: TextStyle(color: Colors.black)),
@@ -141,23 +158,13 @@ class _ProfileState extends State<Profile> {
                   const Divider(),
                   const SizedBox(height: 10),
                   ProfileMenuWidget(
-                    title: 'Log Keluar',
+                    title: 'Padam Akaun',
                     icon: Icons.logout,
                     //backgroundColor: Colors.red,
                     endIcon: false,
                     textColor: Colors.red,
                     onPress: () async {
-                      await FirebaseAuth.instance.signOut();
-                      if (FirebaseAuth.instance.currentUser == null) {
-                        showToast(message: 'Log Keluar Berjaya!');
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AuthPage()),
-                        );
-                      } else {
-                        showToast(message: 'Log Keluar Gagal!');
-                      }
+                      _deleteAccount();
                     }, // Single function call},
                   ),
                 ],

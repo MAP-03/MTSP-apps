@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {},
               ),
               IconButton(
-                icon: const Icon(Icons.account_circle_rounded, size: 30, color: Colors.white),
+                icon: const Icon(Icons.account_circle_rounded, size: 30, color: Colors.white),// TODO tambah gambar profile
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -126,8 +126,9 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
               ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  SizedBox(height: 50),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -317,7 +318,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
-                     // Added SizedBox for spacing between texts
+                      // Added SizedBox for spacing between texts
                       Row(
                         children: [
                           Column(
@@ -348,10 +349,9 @@ class _HomePageState extends State<HomePage> {
                                   ],
                                 ),
                               ),
-                               SizedBox(height: 10),
-                            ],                      
+                              SizedBox(height: 10),
+                            ],
                           ),
-                         
                         ],
                       ),
                     ],
