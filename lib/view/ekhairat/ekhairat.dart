@@ -5,9 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/global.dart';
+import 'package:mtsp/services/auth_service.dart';
 import 'package:mtsp/services/ekhairat_service.dart';
 import 'package:mtsp/view/ekhairat/daftar_ahli.dart';
 import 'package:mtsp/view/ekhairat/semak_ahli.dart';
+import 'package:mtsp/view/ekhairat/senarai_ahli.dart';
 import 'package:mtsp/widgets/drawer.dart';
 
 class Ekhairat extends StatefulWidget {
@@ -20,12 +22,23 @@ class Ekhairat extends StatefulWidget {
 class _EkhairatState extends State<Ekhairat> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isAhli = false;
+  String? role;
+  AuthService authService = AuthService();
+  final Map<String, dynamic> userData = {}; 
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     checkAhli();
+    setState(() {
+      authService.getCurrentUserData().then((value) {
+        setState(() {
+          userData.addAll(value);
+          role = userData['role'];
+        });
+      });
+    });
   }
 
   void checkAhli() async {
@@ -107,11 +120,16 @@ class _EkhairatState extends State<Ekhairat> {
               const SizedBox(width: 15),
               GestureDetector(
                 onTap: () {
-                  if(isAhli){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SemakAhli()));
+                  if(role == 'user'){
+                    if(isAhli){
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => SemakAhli()));
+                    }
+                    else{
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => DaftarAhli()));
+                    }
                   }
                   else{
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => DaftarAhli()));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SenaraiAhli()));
                   }
                 },
                 child: Container(
@@ -125,13 +143,18 @@ class _EkhairatState extends State<Ekhairat> {
                   ),
                   child: Center(
                     child: 
-                    isAhli
-                    ? Text(
-                      'SEMAK AHLI',
-                      style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
-                    )
+                    role == 'user' 
+                    ? isAhli
+                      ? Text(
+                        'SEMAK AHLI',
+                        style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
+                      )
+                      : Text(
+                        'DAFTAR AHLI',
+                        style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
+                      )
                     : Text(
-                      'DAFTAR AHLI',
+                      'SENARAI AHLI',
                       style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
                     ),
                   ),
