@@ -54,6 +54,7 @@ dependencies:
   file_picker: ^6.1.1
   firebase_storage: ^11.6.5
   easy_image_viewer: ^1.4.1
+  slide_countdown: ^1.6.1
 
 dev_dependencies:
   flutter_test:

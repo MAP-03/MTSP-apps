@@ -55,6 +55,7 @@ class _RegisterPageState extends State<RegisterPage> {
           'email': emailController.text,
           'phoneNumber': '-',
           'timestamp': DateTime.now(),
+          'role' : 'user',
         });
 
         Navigator.pushReplacement(
