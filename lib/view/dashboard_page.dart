@@ -11,7 +11,7 @@ import 'package:mtsp/view/profile/user_profile_page.dart';
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:mtsp/global.dart';
 import 'package:mtsp/view/azan/azan.dart';
-import 'package:mtsp/widgets/prayer_time.dart';
+import 'package:mtsp/view/azan/prayer_time.dart';
 
   
 class HomePage extends StatefulWidget {

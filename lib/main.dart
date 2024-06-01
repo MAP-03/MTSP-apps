@@ -7,13 +7,13 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:mtsp/firebase_options.dart';
 import 'package:mtsp/view/aduan/aduan.dart';
 import 'package:mtsp/view/azan/azan.dart';
+import 'package:mtsp/view/azan/notification_controller.dart';
 import 'package:mtsp/view/berita/berita.dart';
 import 'package:mtsp/view/dashboard_page.dart';
 import 'package:mtsp/view/ekhairat/ekhairat.dart';
 import 'package:mtsp/view/infaq/infaq.dart';
 import 'package:mtsp/view/kalendar/kalendar.dart';
 import 'package:mtsp/auth/authentication_page.dart';
-import 'package:mtsp/notification_controller.dart';
 import 'view/login/login_page.dart';
 //import 'package:flutter/foundation.dart';
 //import 'firebase_options.dart';
@@ -22,7 +22,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,);
-  await AwesomeNotifications().initialize(
+   await AwesomeNotifications().initialize(
     null,
     [
       NotificationChannel(
@@ -46,14 +46,14 @@ void main() async {
   if (!isAllowedToSendNotification) {
     await AwesomeNotifications().requestPermissionToSendNotifications();
   }
-
   runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
+
   @override
   State<MyApp> createState() => _MyAppState();
-}
+} 
 
 class _MyAppState extends State<MyApp> {
 
@@ -69,6 +69,7 @@ void initState() {
       NotificationController.onDismissActionReceivedMethod
       );
   super.initState();
+  
 
 }
   @override
@@ -92,7 +93,7 @@ void initState() {
         '/kalendar' : (context) => Kalendar(),
         '/aduan' : (context) => Aduan(),
       },
-      home: AuthPage(),
+      home:  AuthPage(),
     );
   }
 }

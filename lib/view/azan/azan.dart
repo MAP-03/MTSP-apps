@@ -7,7 +7,8 @@ import 'package:mtsp/global.dart';
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:mtsp/widgets/prayer_time.dart';
+import 'package:mtsp/view/azan/prayer_time.dart';
+
 
 class Azan extends StatefulWidget {
   
@@ -35,7 +36,6 @@ class _AzanState extends State<Azan> {
     params.madhab = Madhab.Shafi;
   }
   
-
   @override
   Widget build(BuildContext context) {
     prayerTimes = PrayerTimes(coordinates, date, params, precision: true);
@@ -148,9 +148,8 @@ class _AzanState extends State<Azan> {
               azanTime:timePresenter(prayerTimes.fajr!.toLocal()),
               azanName: 'Subuh',
               isAlarmOn: true,
-              isCurrentPrayer:prayerTimes.fajr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.dhuhr!.toLocal()),
-              isNextPrayer: DateTime.now().isAfter(prayerTimes.fajr!.add(const Duration(days: -1)).toLocal()) && DateTime.now().isBefore(prayerTimes.fajr!.add(const Duration(days: 0)).toLocal()),
-
+              isCurrentPrayer:prayerTimes.fajr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.sunrise!.toLocal()),
+              isNextPrayer: false,
               prayerTimes: prayerTimes,
              
               
@@ -158,15 +157,15 @@ class _AzanState extends State<Azan> {
             PrayTime(
               azanTime:timePresenter(prayerTimes.sunrise!.toLocal()),            
               azanName: 'Syuruk',
-              isAlarmOn: false,
+              isAlarmOn: true,
               isCurrentPrayer:prayerTimes.sunrise!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.dhuhr!.toLocal()),
-              isNextPrayer:prayerTimes.fajr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.dhuhr!.toLocal()),
+              isNextPrayer:prayerTimes.fajr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.sunrise!.toLocal()),
               prayerTimes: prayerTimes,
             ),
             PrayTime(
               azanTime:timePresenter(prayerTimes.dhuhr!.toLocal()),
               azanName: 'Zohor',
-              isAlarmOn: false,
+              isAlarmOn: true,
               isCurrentPrayer:prayerTimes.dhuhr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.asr!.toLocal()),
               isNextPrayer:prayerTimes.sunrise!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.dhuhr!.toLocal()),
               prayerTimes: prayerTimes,
@@ -174,7 +173,7 @@ class _AzanState extends State<Azan> {
              PrayTime(
               azanTime:timePresenter(prayerTimes.asr!.toLocal()),
               azanName: 'Asar',
-              isAlarmOn: false,
+              isAlarmOn: true,
               isCurrentPrayer:prayerTimes.asr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.maghrib!.toLocal()),
               isNextPrayer:prayerTimes.dhuhr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.asr!.toLocal()),
               prayerTimes: prayerTimes,
@@ -182,7 +181,7 @@ class _AzanState extends State<Azan> {
              PrayTime(
               azanTime:timePresenter(prayerTimes.maghrib!.toLocal()),
               azanName: 'Maghrib',
-              isAlarmOn: false,
+              isAlarmOn: true,
               isCurrentPrayer:prayerTimes.maghrib!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.isha!.toLocal()),
               isNextPrayer: prayerTimes.asr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.maghrib!.toLocal()),
               prayerTimes: prayerTimes,
@@ -190,7 +189,7 @@ class _AzanState extends State<Azan> {
              PrayTime(
               azanTime:timePresenter(prayerTimes.isha!.toLocal()),
               azanName: 'Isyak',
-              isAlarmOn: false,
+              isAlarmOn: true,
               isCurrentPrayer:prayerTimes.isha!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.fajr!.add(const Duration(days: 1)).toLocal()),
               isNextPrayer: prayerTimes.maghrib!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.isha!.toLocal()),
               prayerTimes: prayerTimes,
