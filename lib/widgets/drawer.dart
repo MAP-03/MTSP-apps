@@ -33,12 +33,21 @@ class CustomDrawer extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  title: Text(
-                    'Home',
-                    style: GoogleFonts.poppins(
-                      color: currentRoute == '/home' ? Colors.blue : Colors.white,
-                      fontSize: 16,
-                    ),
+                  title: Row(
+                    children: [
+                      Icon(
+                        Icons.home,
+                        color: currentRoute == '/home' ? Colors.blue : Colors.white,
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        'Home',
+                        style: GoogleFonts.poppins(
+                          color: currentRoute == '/home' ? Colors.blue : Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
                   ),
                   onTap: () {
                     Navigator.pushNamed(context, '/home');
