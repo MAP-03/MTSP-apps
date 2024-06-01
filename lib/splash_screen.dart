@@ -1,7 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/auth/authentication_page.dart';
 
@@ -14,7 +11,7 @@ class SplashScreen extends StatelessWidget {
     Future<void> delayedFunction() async {
       await Future.delayed(const Duration(seconds: 3));
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => AuthPage()),
+        MaterialPageRoute(builder: (context) => const AuthPage()),
         (route) => false,
       );
     }
@@ -46,7 +43,7 @@ class SplashScreen extends StatelessWidget {
               RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
-                      text: "Cintailah Masjid,\nSeagung ",
+                      text: "Jika syurga yang dicari,\nJadikanlah ",
                       style: GoogleFonts.manrope(
                           fontSize: 24,
                           color: Colors.black,
@@ -54,11 +51,11 @@ class SplashScreen extends StatelessWidget {
                           height: 152 / 100),
                       children: const [
                         TextSpan(
-                            text: "Cintanya",
+                            text: "Masjid",
                             style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w800)),
-                        TextSpan(text: "\nAllah!")
+                        TextSpan(text: "\nteman sejati")
                       ]))
             ],
           )),
