@@ -6,7 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:mtsp/firebase_options.dart';
 import 'package:mtsp/splash_screen.dart';
-import 'package:mtsp/view/aduan/aduan.dart';
+import 'package:mtsp/view/aduan/aduan_page.dart';
 import 'package:mtsp/view/azan/azan.dart';
 import 'package:mtsp/view/berita/berita.dart';
 import 'package:mtsp/view/dashboard_page.dart';
@@ -91,7 +91,7 @@ void initState() {
         '/infaq' : (context) => Infaq(),
         '/azan' : (context) => Azan(),
         '/kalendar' : (context) => Kalendar(),
-        '/aduan' : (context) => Aduan(),
+        '/aduan' : (context) => AduanPage(),
       },
       home: SplashScreen(),
     );
