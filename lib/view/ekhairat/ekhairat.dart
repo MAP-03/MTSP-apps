@@ -31,14 +31,6 @@ class _EkhairatState extends State<Ekhairat> {
     // TODO: implement initState
     super.initState();
     checkAhli();
-    setState(() {
-      authService.getCurrentUserData().then((value) {
-        setState(() {
-          userData.addAll(value);
-          role = userData['role'];
-        });
-      });
-    });
   }
 
   void checkAhli() async {
@@ -120,17 +112,14 @@ class _EkhairatState extends State<Ekhairat> {
               const SizedBox(width: 15),
               GestureDetector(
                 onTap: () {
-                  if(role == 'user'){
-                    if(isAhli){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => SemakAhli()));
-                    }
-                    else{
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => DaftarAhli()));
-                    }
+                  
+                  if(isAhli){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SemakAhli()));
                   }
                   else{
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SenaraiAhli()));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => DaftarAhli()));
                   }
+                  
                 },
                 child: Container(
                   width: 130,
@@ -143,8 +132,7 @@ class _EkhairatState extends State<Ekhairat> {
                   ),
                   child: Center(
                     child: 
-                    role == 'user' 
-                    ? isAhli
+                    isAhli
                       ? Text(
                         'SEMAK AHLI',
                         style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
@@ -153,10 +141,6 @@ class _EkhairatState extends State<Ekhairat> {
                         'DAFTAR AHLI',
                         style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
                       )
-                    : Text(
-                      'SENARAI AHLI',
-                      style: GoogleFonts.poppins(fontSize: 14, color: Colors.white),
-                    ),
                   ),
                 ),
               ),

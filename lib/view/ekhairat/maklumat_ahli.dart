@@ -35,7 +35,7 @@ class _MaklumatAhliState extends State<MaklumatAhli> {
 
   String getExpiryDate(Ahli ahli) {
     DateTime registrationDate = ahli.tarikhDaftar.toDate();
-    int duration = ahli.pelan == 'BULANAN' ? 1 : 12;
+    int duration = ahli.pelan == 'Bulanan' ? 1 : 12;
     return Jiffy.parseFromDateTime(registrationDate).add(months: duration).yMMMMd.toString();
   }
 

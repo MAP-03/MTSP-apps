@@ -150,6 +150,86 @@ class _SenaraiAhliState extends State<SenaraiAhli> {
       : Column(
         children: [
           const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SizedBox(width: 10),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.people, size: 30, color: Colors.blue),
+                        SizedBox(height: 5),
+                        Text('Jumlah Ahli', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.white)),
+                        Text(filteredAhliList.length.toString(), style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.pending_actions, size: 30, color: Colors.blue),
+                        SizedBox(height: 5),
+                        Text('Pending', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.white)),
+                        Text(filteredAhliList.where((element) => element.status == 'PENDING').length.toString(), style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                      ],
+                    ),
+                  )
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.money, size: 30, color: Colors.blue),
+                        SizedBox(height: 5),
+                        Text('Jumlah Tabung', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.white)),
+                        Text('RM 100', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                      ],
+                    ),
+                  
+                  ),
+                ),
+              ),
+              SizedBox(width: 10),
+            ],
+          ),
+          const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Row(
