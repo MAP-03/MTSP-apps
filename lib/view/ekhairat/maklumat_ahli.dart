@@ -10,15 +10,16 @@ import 'package:mtsp/models/ahli.dart';
 import 'package:mtsp/models/tanggungan.dart';
 import 'package:mtsp/services/ekhairat_service.dart';
 
-class SemakAhli extends StatefulWidget {
-  const SemakAhli({super.key});
+class MaklumatAhli extends StatefulWidget {
+  const MaklumatAhli({super.key, required this.ahli});
+
+  final Ahli? ahli;
 
   @override
-  State<SemakAhli> createState() => _SemakAhliState();
+  State<MaklumatAhli> createState() => _MaklumatAhliState();
 }
 
-class _SemakAhliState extends State<SemakAhli> {
-  Ahli? ahli;
+class _MaklumatAhliState extends State<MaklumatAhli> {
   EkhairatService ekhairatService = EkhairatService();
   bool isLoading = true;
   String? expiredDate;
@@ -26,13 +27,10 @@ class _SemakAhliState extends State<SemakAhli> {
   @override
   void initState() {
     super.initState();
-    ekhairatService.getAhli(FirebaseAuth.instance.currentUser!.email).then((value) {
       setState(() {
-        ahli = value;
         isLoading = false;
-        expiredDate = getExpiryDate(ahli!);
+        expiredDate = getExpiryDate(widget.ahli!);
       });
-    });
   }
 
   String getExpiryDate(Ahli ahli) {
@@ -83,10 +81,10 @@ class _SemakAhliState extends State<SemakAhli> {
                           children: [
                             Icon(Icons.card_membership, color: Colors.blue, size: 30),
                             SizedBox(width: 10),
-                            Text('Pelan', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                            Text('Pelan', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
                           ],
                         ),
-                        Text(ahli!.pelan, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
+                        Text(widget.ahli!.pelan, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
                       ],
                     ),
                     SizedBox(height: 20),
@@ -98,7 +96,7 @@ class _SemakAhliState extends State<SemakAhli> {
                           children: [
                             Icon(Icons.date_range, color: Colors.blue, size: 30),
                             SizedBox(width: 10),
-                            Text('Tamat Tempoh', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                            Text('Tamat Tempoh', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
                           ],
                         ),
                         Text(expiredDate!, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
@@ -145,10 +143,10 @@ class _SemakAhliState extends State<SemakAhli> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: ahli!.status == 'PENDING' ? Color(0xffE8D427) : ahli!.status == 'EXPIRED' ? Colors.red : Colors.green,
+                  color: widget.ahli!.status == 'PENDING' ? Color(0xffE8D427) : widget.ahli!.status == 'EXPIRED' ? Colors.red : Colors.green,
                   borderRadius: BorderRadius.circular(25),
                 ),
-                child: Text(ahli!.status, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black, letterSpacing: 1.8))
+                child: Text(widget.ahli!.status, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black, letterSpacing: 1.8))
               ),
             ],
           ),
@@ -165,11 +163,11 @@ class _SemakAhliState extends State<SemakAhli> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 10),
-            buildDataRow('Nama', ahli!.name),
-            buildDataRow('No. Kad Pengenalan', ahli!.ic),
-            buildDataRow('Alamat', ahli!.alamat),
-            buildDataRow('No. Telefon', ahli!.phone),
-            buildDataRow('No. Telefon Kecemasan', ahli!.emergencyPhone),
+            buildDataRow('Nama', widget.ahli!.name),
+            buildDataRow('No. Kad Pengenalan', widget.ahli!.ic),
+            buildDataRow('Alamat', widget.ahli!.alamat),
+            buildDataRow('No. Telefon', widget.ahli!.phone),
+            buildDataRow('No. Telefon Kecemasan', widget.ahli!.emergencyPhone),
           ],
         ),
       ),
@@ -182,7 +180,7 @@ class _SemakAhliState extends State<SemakAhli> {
         child: Padding(
           padding: const EdgeInsets.only(top: 20),
           child: Column(
-            children: ahli!.tanggungan.asMap().entries.map((entry) {
+            children: widget.ahli!.tanggungan.asMap().entries.map((entry) {
               int index = entry.key + 1;
               Tanggungan tanggungan = entry.value;
               return Padding(
@@ -230,12 +228,12 @@ class _SemakAhliState extends State<SemakAhli> {
                   label,
                   style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
                 ),
-                SizedBox(height: 5),
+                SizedBox(height: 4),
                 Text(
                   data,
                   overflow: TextOverflow.ellipsis, 
                   maxLines: 3, 
-                  style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white),
+                  style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w300, color: Colors.white),
                 ),
                 SizedBox(height: 10),
               ],
