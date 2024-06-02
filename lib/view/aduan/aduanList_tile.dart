@@ -1,29 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:mtsp/models/aduan.dart';
 
 class AduanListTile extends StatelessWidget {
-  const AduanListTile({super.key});
+  final Aduan aduan;
+  final void Function() onTap;
+
+  const AduanListTile({
+    super.key,
+    required this.aduan,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(25.0),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          children: [
-            // Aduan Type
-            Text('Aduan'),
-
-            // Aduan Subject
-            Text('Aduan Subject'),
-
-            Text('Aduan Tarikh'),
-          ],
+    return GestureDetector(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Container(
+          width: 350,
+          height: 75,
+          // padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Color(0xffD9D9D9),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // Aduan Type
+              Text(aduan.type),
+      
+              // Aduan Subject
+              Text(aduan.subject),
+      
+              const Text('MM/DD/YYYY'),
+            ],
+          ),
         ),
-        decoration: BoxDecoration(
-          color: Color(0xffD9D9D9),
-          borderRadius: BorderRadius.circular(10),
-        )
       ),
     );
   }

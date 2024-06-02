@@ -18,16 +18,16 @@ class SubmitButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: 250,
+        height: 50,
         decoration: BoxDecoration(
           color: buttonColor,
           borderRadius: BorderRadius.circular(50),
         ),
-        padding: const EdgeInsets.all(20),
         child: Center(
           child: Text(
             text.toUpperCase(),
             style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-            textAlign: TextAlign.center,
           ),
         ),
       ),
