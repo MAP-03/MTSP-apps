@@ -79,4 +79,16 @@ class AuthService {
       showToast(message: e.toString());
     }
   }
+
+  Future<Map<String, dynamic>> getCurrentUserData() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final doc = await usersCollection.doc(currentUser!.email).get();
+
+    if (doc.exists) {
+      final userData = doc.data() as Map<String, dynamic>;
+      return userData;
+    } else {
+      throw Exception('User not found');
+    }
+  }
 }
