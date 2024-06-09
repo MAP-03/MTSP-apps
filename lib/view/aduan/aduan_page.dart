@@ -24,9 +24,18 @@ class _AduanPageState extends State<AduanPage> {
   final List<Aduan> _aduanList = [
     Aduan(type: 'Aduan 1', subject: 'Aduan Subject', comment: 'Aduan Comment'),
     Aduan(type: 'Aduan 2', subject: 'Aduan Subject', comment: 'Aduan Comment'),
-    Aduan(type: 'Cadangan 1', subject: 'Aduan Subject', comment: 'Cadangan Comment'),
-    Aduan(type: 'Cadangan 2', subject: 'Cadangan Subject', comment: 'Cadangan Comment'),
-    Aduan(type: 'Cadangan 3', subject: 'Cadangan Subject', comment: 'Cadangan Comment'),
+    Aduan(
+        type: 'Cadangan 1',
+        subject: 'Aduan Subject',
+        comment: 'Cadangan Comment'),
+    Aduan(
+        type: 'Cadangan 2',
+        subject: 'Cadangan Subject',
+        comment: 'Cadangan Comment'),
+    Aduan(
+        type: 'Cadangan 3',
+        subject: 'Cadangan Subject',
+        comment: 'Cadangan Comment'),
   ];
 
   void navigateToAduanForm() {
@@ -56,7 +65,11 @@ class _AduanPageState extends State<AduanPage> {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppBar(
-          title: Text('Aduan & Cadangan', style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+          title: Text('Aduan & Cadangan',
+              style: GoogleFonts.poppins(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white)),
           leading: IconButton(
             icon: const Icon(Icons.menu, color: Colors.white, size: 30),
             onPressed: () {
@@ -84,19 +97,32 @@ class _AduanPageState extends State<AduanPage> {
               children: [
                 //search bar
                 SizedBox(
-                  width: 250,
+                  width: 260,
+                  height: 30,
                   child: TextField(
                     controller: _textController,
+                    style:
+                        GoogleFonts.poppins(fontSize: 14, color: Colors.black),
+                    textAlignVertical: TextAlignVertical.bottom,
                     decoration: InputDecoration(
                       hintText: 'Search',
-                      hintStyle: GoogleFonts.poppins(color: const Color(0xFFB5ADAD)),
+                      hintStyle:
+                          GoogleFonts.poppins(fontSize: 14, color: Colors.grey),
                       filled: true,
                       fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.blue, width: 2),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(15),
                       ),
                       suffixIcon: IconButton(
-                        icon: const Icon(Icons.clear, color: primaryColor),
+                        alignment: Alignment.centerRight,
+                        icon: const Icon(
+                            size: 14, Icons.clear, color: Colors.grey),
                         onPressed: () {
                           _textController.clear();
                         },
@@ -104,23 +130,23 @@ class _AduanPageState extends State<AduanPage> {
                     ),
                   ),
                 ),
-                
+
                 //filter icon
                 IconButton(
-                  icon: const Icon(Icons.filter_list, color: Colors.white),
+                  icon: const Icon(size: 25, Icons.filter_list, color: Colors.white),
                   onPressed: () {},
                 ),
-                    
+
                 //search icon
                 IconButton(
-                  icon: const Icon(Icons.search, color: Colors.white),
+                  icon: const Icon(size: 25, Icons.search, color: Colors.white),
                   onPressed: () {},
                 ),
               ],
             ),
-        
+
             const SizedBox(height: 20),
-        
+
             //list of aduan
             Expanded(
               child: Container(
@@ -138,9 +164,9 @@ class _AduanPageState extends State<AduanPage> {
                 ),
               ),
             ),
-        
+
             const SizedBox(height: 20),
-        
+
             //add button
             SubmitButton(
               text: 'Tambah Baru',
