@@ -91,7 +91,7 @@ void initState() {
         '/berita' : (context) => Berita(),
         '/infaq' : (context) => Infaq(),
         '/azan' : (context) => Azan(),
-        '/kalendar' : (context) => Kalendar(),
+        /* '/kalendar' : (context) => Kalendar(), */
         '/aduan' : (context) => Aduan(),
       },
       home: SplashScreen(),
