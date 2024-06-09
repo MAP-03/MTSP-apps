@@ -20,22 +20,6 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   final currentUser = FirebaseAuth.instance.currentUser!;
 
-  void _deleteAccount() async {
-    await FirebaseFirestore.instance
-        .collection("Users")
-        .doc(currentUser.email)
-        .delete();
-
-    showToast(message: "Akaun berjaya dipadam");
-
-    await FirebaseAuth.instance.currentUser!.delete();
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => AuthPage()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,13 +142,19 @@ class _ProfileState extends State<Profile> {
                   const Divider(),
                   const SizedBox(height: 10),
                   ProfileMenuWidget(
-                    title: 'Padam Akaun',
+                    title: 'Log Keluar',
                     icon: Icons.logout,
-                    //backgroundColor: Colors.red,
                     endIcon: false,
                     textColor: Colors.red,
                     onPress: () async {
-                      _deleteAccount();
+                      await FirebaseAuth.instance.signOut();
+                      if (FirebaseAuth.instance.currentUser == null) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => AuthPage()),
+                        );
+                      } else { 
+                      }
                     }, // Single function call},
                   ),
                 ],
