@@ -1,4 +1,4 @@
-
+// Berita (Admin)
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/global.dart';
 import 'package:mtsp/widgets/drawer.dart';
 import 'detail_page.dart';
-import 'add_event_page.dart';  // Import the AddEventPage
+import 'add_event_page.dart';
 
 class Berita extends StatefulWidget {
   const Berita({Key? key}) : super(key: key);
@@ -174,7 +174,6 @@ class _BeritaState extends State<Berita> {
                         children: [
                           TextButton(
                             onPressed: () {
-                              // Handle edit
                             },
                             child: Text(
                               'EDIT',
@@ -197,7 +196,6 @@ class _BeritaState extends State<Berita> {
                 ),
               ),
             ),
-            // Add more GestureDetector widgets for other events
           ],
         ),
       ),
@@ -223,7 +221,6 @@ class _BeritaState extends State<Berita> {
                   leading: Icon(Icons.article),
                   title: Text('Add News'),
                   onTap: () {
-                    // Handle Add News
                   },
                 ),
                 ListTile(

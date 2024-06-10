@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, use_super_parameters, library_private_types_in_public_api, prefer_const_constructors_in_immutables
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -232,7 +234,7 @@ class _AddEventPageState extends State<AddEventPage> {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save(); // Save the form data
                     beritaService.AddEvent(_title, _description, _date, _time, _location, _image);
-                    Navigator.pushNamed(context, '/home');
+                    Navigator.pushNamed(context, '/berita');
                   }
                 },
                 child: Text('Save Event'),
@@ -244,3 +246,4 @@ class _AddEventPageState extends State<AddEventPage> {
     );
   }
 }
+ 
