@@ -30,6 +30,4 @@ class BeritaService {
     }
     return '';
   }
-
-  uploadImage(File image, String title) {}
 }
