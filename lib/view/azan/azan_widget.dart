@@ -7,7 +7,7 @@ import 'package:mtsp/global.dart';
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:mtsp/view/azan/prayer_time.dart';
+import 'package:mtsp/view/azan/waktu_solat.dart';
 
 
 class Azan extends StatefulWidget {
