@@ -14,11 +14,11 @@ class Ahli{
   Timestamp tarikhDaftar = Timestamp.now();
 
   Ahli({
-    required this.name, 
-    required this.email, 
-    required this.ic, 
-    required this.alamat, 
-    required this.phone, 
+    required this.name,
+    required this.email,
+    required this.ic,
+    required this.alamat,
+    required this.phone,
     required this.emergencyPhone,
   });
 
