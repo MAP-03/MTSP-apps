@@ -127,6 +127,18 @@ class CustomDrawer extends StatelessWidget {
                 ),
                 ListTile(
                   title: Text(
+                    'Forum',
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/forum');
+                  },
+                ),
+                ListTile(
+                  title: Text(
                     'Cari Kami',
                     style: GoogleFonts.poppins(
                       color: Colors.white,

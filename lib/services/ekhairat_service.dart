@@ -32,4 +32,28 @@ class EkhairatService {
      ..tarikhDaftar = doc['tarikhDaftar']
      ..status = doc['status'];
   }
+
+  Future<void> updateAhli(Ahli ahli) async{
+    await _firestore.collection('ahli').doc(ahli.email).update(ahli.toJson());
+  }
+
+  Future<void> deleteAhli(String? email) async{
+    await _firestore.collection('ahli').doc(email).delete();
+  }
+
+  Future<List<Ahli>> getAllAhli() async{
+    final snapshot = await _firestore.collection('ahli').get();
+    return snapshot.docs.map((e) => Ahli(
+      name: e['name'],
+      email: e['email'],
+      ic: e['ic'],
+      alamat: e['alamat'],
+      phone: e['phone'],
+      emergencyPhone: e['emergencyPhone'],
+    )..tanggungan = (e['tanggungan'] as List).map((e) => Tanggungan.fromMap(e)).toList()
+     ..pelan = e['pelan']
+     ..tarikhDaftar = e['tarikhDaftar']
+     ..status = e['status']).toList();
+  }
+
 }
