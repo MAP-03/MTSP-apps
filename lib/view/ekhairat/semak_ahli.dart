@@ -21,17 +21,24 @@ class _SemakAhliState extends State<SemakAhli> {
   Ahli? ahli;
   EkhairatService ekhairatService = EkhairatService();
   bool isLoading = true;
+  String? expiredDate;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     ekhairatService.getAhli(FirebaseAuth.instance.currentUser!.email).then((value) {
       setState(() {
         ahli = value;
         isLoading = false;
+        expiredDate = getExpiryDate(ahli!);
       });
     });
+  }
+
+  String getExpiryDate(Ahli ahli) {
+    DateTime registrationDate = ahli.tarikhDaftar.toDate();
+    int duration = ahli.pelan == 'Bulanan' ? 1 : 12;
+    return Jiffy.parseFromDateTime(registrationDate).add(months: duration).yMMMMd.toString();
   }
 
   @override
@@ -59,66 +66,92 @@ class _SemakAhliState extends State<SemakAhli> {
       ? Center(child: CircularProgressIndicator()) 
       : Column(
         children: [
-          SizedBox(height: 20),
-          Row(
-            children: [
-              SizedBox(width: 15),
-              Text('Pelan : ', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
-              Text(ahli!.pelan, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white)),
-            ],
-          ),
-          SizedBox(height: 20),
-          Row(
-            children: [
-              SizedBox(width: 15),
-              Text('Tempoh Keahlian : ', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
-            ],
-          ),
-
-           Container(
-              width: double.infinity,
-              height: 400,
-              padding: EdgeInsets.only(left: 15, right: 15),
-              margin: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: primaryColor,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.white),
-              ),
-              child: ContainedTabBarView(
-                  tabs: [
-                    Text('Ahli', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
-                    Text('Tanggungan', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
-                  ],
-                  tabBarProperties: TabBarProperties(
-                    
-                    indicator: ContainerTabIndicator(
-                      radius: BorderRadius.circular(10.0),
-                      width: 195,
-                      color: Colors.blueGrey,
+          Padding(
+            padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
+            child: Card(
+              color: primaryColor,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(Icons.card_membership, color: Colors.blue, size: 30),
+                            SizedBox(width: 10),
+                            Text('Pelan', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                          ],
+                        ),
+                        Text(ahli!.pelan, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
+                      ],
                     ),
-                  ),
-                  views: [
-                    _buildAhliTab(),
-                    _buildTanggunganTab(),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(Icons.date_range, color: Colors.blue, size: 30),
+                            SizedBox(width: 10),
+                            Text('Tamat Tempoh', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                          ],
+                        ),
+                        Text(expiredDate!, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
+                      ],
+                    ),
                   ],
                 ),
+              ),
             ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Status  :  ', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: ahli!.status == 'PENDING' ? Color(0xffE8D427) : ahli!.status == 'EXPIRED' ? Colors.red : Colors.green,
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Text(ahli!.status, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w300, color: Colors.black, letterSpacing: 1.8))
+          ),
+          Container(
+            width: double.infinity,
+            height: 400,
+            padding: EdgeInsets.only(left: 15, right: 15),
+            margin: EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: primaryColor,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white),
+            ),
+            child: ContainedTabBarView(
+              tabs: [
+                Text('Ahli', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
+                Text('Tanggungan', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
+              ],
+              tabBarProperties: TabBarProperties(
+                indicator: ContainerTabIndicator(
+                  radius: BorderRadius.circular(10.0),
+                  width: 195,
+                  color: Colors.blueGrey,
                 ),
+              ),
+              views: [
+                _buildAhliTab(),
+                _buildTanggunganTab(),
               ],
             ),
+          ),
+          SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Status  :  ', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: ahli!.status == 'PENDING' ? Color(0xffE8D427) : ahli!.status == 'EXPIRED' ? Colors.red : Colors.green,
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: Text(ahli!.status, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black, letterSpacing: 1.8))
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -143,46 +176,45 @@ class _SemakAhliState extends State<SemakAhli> {
     );
   }
 
- Widget _buildTanggunganTab() {
-  return Scrollbar(
-    child: SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20),
-        child: Column(
-          children: ahli!.tanggungan.asMap().entries.map((entry) {
-            int index = entry.key + 1;
-            Tanggungan tanggungan = entry.value;
-            return Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 150,
-                    height: 38,
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.cyan[700],
-                      borderRadius: BorderRadius.circular(10),
+  Widget _buildTanggunganTab() {
+    return Scrollbar(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: Column(
+            children: ahli!.tanggungan.asMap().entries.map((entry) {
+              int index = entry.key + 1;
+              Tanggungan tanggungan = entry.value;
+              return Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 150,
+                      height: 38,
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.cyan[700],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Text('Tanggungan $index', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white)),
+                      ),
                     ),
-                    child: Center(
-                      child: Text('Tanggungan $index', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white)),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  buildDataRow('Nama', tanggungan.name),
-                  buildDataRow('No. Kad Pengenalan', tanggungan.ic),
-                  buildDataRow('Hubungan', tanggungan.hubungan),
-                ],
-              ),
-            );
-          }).toList(),
+                    SizedBox(height: 10),
+                    buildDataRow('Nama', tanggungan.name),
+                    buildDataRow('No. Kad Pengenalan', tanggungan.ic),
+                    buildDataRow('Hubungan', tanggungan.hubungan),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget buildDataRow(String label, String data) {
     return Row(
@@ -198,6 +230,7 @@ class _SemakAhliState extends State<SemakAhli> {
                   label,
                   style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
                 ),
+                SizedBox(height: 5),
                 Text(
                   data,
                   overflow: TextOverflow.ellipsis, 

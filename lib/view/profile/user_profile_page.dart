@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mtsp/view/dashboard_page.dart';
@@ -18,22 +19,6 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   final currentUser = FirebaseAuth.instance.currentUser!;
-
-  void _deleteAccount() async {
-    await FirebaseFirestore.instance
-        .collection("Users")
-        .doc(currentUser.email)
-        .delete();
-
-    showToast(message: "Akaun berjaya dipadam");
-
-    await FirebaseAuth.instance.currentUser!.delete();
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => AuthPage()),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,10 +68,21 @@ class _ProfileState extends State<Profile> {
                         backgroundImage: const AssetImage('assets/images/profileMan.png'),
                         radius: 60,
                       )
-                    : CircleAvatar(
-                        backgroundImage: NetworkImage(userData['profileImage']),
-                        radius: 60,
-                      ),
+                    : GestureDetector(
+                        onTap: () {
+                          showImageViewer(
+                            doubleTapZoomable: true,
+                              context,
+                              NetworkImage(
+                                userData['profileImage'],
+                              ),
+                          );
+                        },
+                      child: CircleAvatar(
+                          backgroundImage: NetworkImage(userData['profileImage']),
+                          radius: 60,
+                        ),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Text(userData['username'],
@@ -146,13 +142,19 @@ class _ProfileState extends State<Profile> {
                   const Divider(),
                   const SizedBox(height: 10),
                   ProfileMenuWidget(
-                    title: 'Padam Akaun',
+                    title: 'Log Keluar',
                     icon: Icons.logout,
-                    //backgroundColor: Colors.red,
                     endIcon: false,
                     textColor: Colors.red,
                     onPress: () async {
-                      _deleteAccount();
+                      await FirebaseAuth.instance.signOut();
+                      if (FirebaseAuth.instance.currentUser == null) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => AuthPage()),
+                        );
+                      } else { 
+                      }
                     }, // Single function call},
                   ),
                 ],
