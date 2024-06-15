@@ -18,7 +18,8 @@ class BeritaUser extends StatefulWidget {
 class _BeritaUserState extends State<BeritaUser> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  void navigateToDetail(String title, String date, String description, String imageUrl) {
+  void navigateToDetail(
+      String title, String date, String description, String imageUrl) {
     Navigator.push(
       context,
       PageRouteBuilder(
@@ -35,7 +36,8 @@ class _BeritaUserState extends State<BeritaUser> {
           const end = Offset.zero;
           const curve = Curves.ease;
 
-          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
           return SlideTransition(
             position: animation.drive(tween),
@@ -92,7 +94,8 @@ class _BeritaUserState extends State<BeritaUser> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Text(
                 'Dapatkan Informasi terkini seputar kegiatan di masjid',
                 style: GoogleFonts.poppins(
@@ -127,7 +130,8 @@ class _BeritaUserState extends State<BeritaUser> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0),
                           image: DecorationImage(
-                            image: AssetImage('lib/images/Ustaz Kazim Elias.jpg'),
+                            image:
+                                AssetImage('lib/images/Ustaz Kazim Elias.jpg'),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -199,7 +203,8 @@ class _BeritaUserState extends State<BeritaUser> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.0),
                           image: DecorationImage(
-                            image: AssetImage('lib/images/Prof Madya Mohd Nor.jpg'),
+                            image: AssetImage(
+                                'lib/images/Prof Madya Mohd Nor.jpg'),
                             fit: BoxFit.cover,
                           ),
                         ),
