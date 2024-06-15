@@ -6,28 +6,33 @@ import 'package:mtsp/widgets/toast.dart';
 
 class BeritaService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage storage = FirebaseStorage.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
-  Future<String> AddEvent(String title, String description, DateTime? date, TimeOfDay? time, String location, File? image) async {
+  Future<void> addEvent(String title, String description, DateTime? date, TimeOfDay? time, String location, File? image) async {
+    String imageUrl = '';
     if (image != null) {
-      String imageUrl;
+      try {
+        final storageRef = _storage.ref().child('event_images/${title}_${DateTime.now().toIso8601String()}');
+        TaskSnapshot snapshot = await storageRef.putFile(image);
+        imageUrl = await snapshot.ref.getDownloadURL();
+      } catch (e) {
+        showToast(message: 'Error uploading image: $e');
+        return;
+      }
+    }
 
-      final storageRef = storage.ref().child('event/$title');
-      await storageRef.putFile(image);
-      imageUrl = await storageRef.getDownloadURL();
-
-      _firestore.collection('Berita').doc(title).set({
+    try {
+      await _firestore.collection('Berita').doc(title).set({
         'title': title,
         'description': description,
-        'date': date,
-        'time': time,
+        'date': date != null ? Timestamp.fromDate(date) : null,
+        'time': time != null ? '${time.hour}:${time.minute}' : null,
         'location': location,
         'imageLink': imageUrl,
       });
-
-      showToast(message: 'Berita berjaya dihantar');
-      return imageUrl;
+      showToast(message: 'Event successfully added');
+    } catch (e) {
+      showToast(message: 'Error saving event: $e');
     }
-    return '';
   }
 }
