@@ -99,11 +99,7 @@ flutter:
     - lib/images/
     - assets/images/
     - assets/svg/
-<<<<<<< HEAD
-    - assets/
-=======
     - assets/icons/
->>>>>>> 3667b7be9919e0f536a00b8cc0a09feb3d0e803b
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

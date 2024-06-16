@@ -34,7 +34,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await dotenv.load(fileName: "assets/.env");
+  //await dotenv.load(fileName: "assets/.env");
   Stripe.publishableKey = "pk_test_51OJWJGK4kvnq6xon7sAiBo0H0QmchNFML4vQjoSp1kZvlNDKWhPSEn2RUvniiOcOdfxtg0rSbZGD7MrwgEbRbVii00gSgX0cZG"; //TODO try check balik
   //Stripe.publishableKey = dotenv.env['PUBLISH_KEY']!;
   

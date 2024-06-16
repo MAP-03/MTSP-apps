@@ -7,17 +7,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
-import 'package:mtsp/models/infaqModel.dart';
+import 'package:mtsp/models/butiranInfaq.dart';
 import 'package:stripe_checkout/stripe_checkout.dart';
 
 class StripeService {
-  static Future<dynamic> createPaymentIntent(InfaqModel infaq) async {
+  static Future<dynamic> createPaymentIntent(ButiranInfaq infaq) async {
     try {
       //Request body
       Map<String, dynamic> body = {
         'amount': infaq.getAmaun(),
         'currency': 'myr',
-        'payment_method_types[]': infaq.getPaymentMthod()
+        'payment_method_types[]': infaq.getPaymentMethod()
       };
 
       //Make post request to Stripe
@@ -39,11 +39,12 @@ class StripeService {
     }
   }
 
-  static void displayPaymentSheet(infaq) async {
+  static void displayPaymentSheet(ButiranInfaq infaq) async {
     try {
-      await Stripe.instance.presentPaymentSheet().then((value) {
-        infaq.setStatus('Berjaya');
-      }).onError((error, stackTrace) {
+      await Stripe.instance
+          .presentPaymentSheet()
+          .then((value) {})
+          .onError((error, stackTrace) {
         infaq.setStatus('Gagal');
         throw Exception(error);
       });
@@ -54,7 +55,7 @@ class StripeService {
     }
   }
 
-  static Future<void> makePayment(InfaqModel infaq) async {
+  static Future<void> makePayment(ButiranInfaq infaq) async {
     try {
       Map<String, dynamic> paymentIntent;
 
@@ -71,11 +72,15 @@ class StripeService {
           .then((value) => null);
 
       displayPaymentSheet(infaq);
-      infaq.setStatus('Berjaya');
-      print(infaq.toJson());
 
+      if (paymentIntent['status'] == 'succeeded') {
+        infaq.setStatus('Berjaya');
+      } else {
+        infaq.setStatus('Gagal');
+      }
+
+      print("Payyyyyyment intent " + paymentIntent['status']);
     } catch (e) {
-      infaq.setStatus('Gagal');
       print(e.toString());
     }
   }

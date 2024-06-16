@@ -1,13 +1,14 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_adjacent_string_concatenation
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_adjacent_string_concatenation, unnecessary_new
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:mtsp/global.dart';
+import 'package:mtsp/models/butiranInfaq.dart';
 import 'package:mtsp/models/infaqModel.dart';
-import 'package:mtsp/services/infaqModel_service.dart';
+import 'package:mtsp/services/infaq_service.dart';
 import 'package:mtsp/services/stripe_service.dart';
-import 'package:mtsp/view/infaq/checkout.dart';
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:mtsp/widgets/text_field.dart';
 
@@ -19,7 +20,6 @@ class Infaq extends StatefulWidget {
 }
 
 class _InfaqState extends State<Infaq> {
-
   final currentUser = FirebaseAuth.instance.currentUser!;
   double infaqAmount = 0;
   double amount = 0;
@@ -33,6 +33,32 @@ class _InfaqState extends State<Infaq> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  InfaqModel? infaqModel; // Add this line
+  List<ButiranInfaq> butiranList = [];
+  List<ButiranInfaq> orderButiranList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchInfaqModel(); // Call the method to fetch the InfaqModel
+  }
+
+  void fetchInfaqModel() async {
+    if (InfaqService().checkInfaq(currentUser.email!) != true) {
+      infaqModel = await InfaqService().getInfaqByEmail(currentUser.email);
+      butiranList = infaqModel!.getButiranInfaqList();
+      butiranList.sort((a, b) => b.tarikh.compareTo(a.tarikh));
+      orderButiranList = List.from(butiranList);
+    } else {
+      infaqModel = InfaqModel(email: currentUser.email!);
+      InfaqService().createInfaq(infaqModel!);
+    }
+
+    print("done fetching data");
+
+    print(infaqModel?.toJson());
+  }
+
   void donate() async {
     setState(() {
       isProcessing = true;
@@ -42,6 +68,13 @@ class _InfaqState extends State<Infaq> {
     button2 = false;
     amount = 0;
     pay = false;
+
+    /* if (InfaqService().checkInfaq(currentUser.email!) != true) {
+      infaqModel = await InfaqService().getInfaqByEmail(currentUser.email);
+    } else {
+      infaqModel = InfaqModel(email: currentUser.email!);
+      InfaqService().createInfaq(infaqModel);
+    } */
 
     if (infaqAmount != 0) {
       amount = infaqAmount;
@@ -65,22 +98,21 @@ class _InfaqState extends State<Infaq> {
     });
 
     if (pay) {
+      ButiranInfaq butiranInfaq = new ButiranInfaq(
+          infaqId: '',
+          amaun: amount.toString(),
+          tarikh: DateTime.now(),
+          status: 'Diproses',
+          paymentMethod: paymentType.toLowerCase());
 
-      InfaqModel infaq = InfaqModel(
-        email: currentUser.email!,
-        infaqId: '',
-        amaun: amount.toString(),
-        tarikh: DateTime.now(),
-        status: 'Diprocess',
-        paymentMethod: paymentType.toLowerCase()
-      );
+      if (infaqModel != null) {
+        infaqModel!.addButiranInfaq(butiranInfaq);
+        InfaqService().updateInfaq(infaqModel!);
+        StripeService.makePayment(butiranInfaq)
+            .then((value) => {InfaqService().updateInfaq(infaqModel!)});
+      }
 
-      StripeService.makePayment(
-        infaq
-      );
-
-      print(infaq.toJson());
-      InfaqService().addInfaqModel(infaq);
+      //print(butiranInfaq.toJson());
 
       infaqAmount = 0;
     }
@@ -309,9 +341,7 @@ class _InfaqState extends State<Infaq> {
                                             color: Colors.grey.shade400))),
                               ),
                             ),
-
                             const SizedBox(height: 5),
-
                             SizedBox(
                               width: 250,
                               height: 50,
@@ -335,9 +365,7 @@ class _InfaqState extends State<Infaq> {
                                 ),
                               ),
                             ),
-
                             const SizedBox(height: 10),
-
                             GestureDetector(
                               onTap: () {
                                 donate();
@@ -365,21 +393,21 @@ class _InfaqState extends State<Infaq> {
                           ]),
                     ),
                   ),
-                  
                 ],
               ),
             ),
             Container(
-              color: Colors.grey,
+              color: Colors.white,
               child: Column(
                 children: [
+                  SizedBox(height: 20),
                   SizedBox(
-                    height: 200,
+                    height: 50,
                     child: Center(
                       child: Text(
-                        'Infaq',
+                        'Sejarah Infaq Anda',
                         style: GoogleFonts.poppins(
-                          fontSize: 30,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -387,18 +415,105 @@ class _InfaqState extends State<Infaq> {
                     ),
                   ),
                   SizedBox(height: 10),
-                  /* Container(
-                    ListView.builder(
-                      itemCount: 5 ,//itemCount: infaqList.length,
-                      itemBuilder: (context, index) { //itemBuilder: (context, index) {
-                        var infaq = infaqList[index];
-                        return ListTile(
-                          title: Text('RM ${infaq.amount}'),
-                          subtitle: Text(infaq.date),
-                          trailing: Text(infaq.status),
-                        );
-                      },
-                    )
+                  Container(
+                          color: Colors.grey[200],
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: const [
+                                Expanded(
+                                  flex: 2,
+                                  child: Center(
+                                    child: Text('Amaun',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                                  )),
+                                Expanded(
+                                  flex: 2,
+                                  child: Center(
+                                    child: Text('Tarikh',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                                  )),
+                                Expanded(
+                                  flex: 2,
+                                  child: Center(
+                                    child: Text('Status',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                                  )),
+                                ],
+                            ),
+                          ),
+                        ),
+                  Container(
+                    height: 350,
+                    child: ListView(
+                      children: [
+                        ...orderButiranList.map(
+                          (butiran) => ListTile(
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                Expanded(
+                                  flex: 2,
+                                  child: Center(
+                                  child: Text(
+                                    butiran.amaun,
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Center(
+                                  child: Text(
+                                    DateFormat('dd-MM-yyyy')
+                                      .format(butiran.tarikh),
+                                    style: TextStyle(fontSize: 15)),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Center(
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 10),
+                                    decoration: BoxDecoration(
+                                    color: butiran.status == "Berjaya"
+                                      ? Colors.green
+                                      : butiran.status == "Diproses"
+                                        ? Color.fromARGB(255, 168, 155, 42)
+                                        : Colors.red,
+                                    borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                    butiran.status,
+                                    style: TextStyle(
+                                      color: Colors.white, fontSize: 15),
+                                    textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  ),
+                                ),
+                                ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  /* ListView(
+                    shrinkWrap: true,
+                    children: butiranList
+                        .map((butiran) => ListTile(
+                              subtitle: Text(
+                                    '${butiran.getAmaun()}\t\t${DateFormat('dd-MM-yyyy').format(butiran.tarikh)}\t\t${butiran.getStatus()}'),
+                            ))
+                        .toList(),
                   ), */
                 ],
               ),
