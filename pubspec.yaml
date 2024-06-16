@@ -54,6 +54,12 @@ dependencies:
   jiffy: ^6.3.1
   file_picker: ^6.1.1
   firebase_storage: ^11.6.5
+  flutter_dotenv: ^5.1.0
+  http: ^1.2.1
+  flutter_stripe: ^10.1.1
+  stripe_checkout: ^1.0.2
+  intl: ^0.19.0
+  uuid: ^4.4.0
   easy_image_viewer: ^1.4.1
   
   jhijri_picker: ^1.0.1

@@ -5,6 +5,8 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:mtsp/firebase_options.dart';
 import 'package:mtsp/services/ekhairat_service.dart';
 import 'package:mtsp/services/forum_service.dart';
@@ -28,9 +30,15 @@ import 'view/login/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  //await dotenv.load(fileName: "assets/.env");
+  Stripe.publishableKey = "pk_test_51OJWJGK4kvnq6xon7sAiBo0H0QmchNFML4vQjoSp1kZvlNDKWhPSEn2RUvniiOcOdfxtg0rSbZGD7MrwgEbRbVii00gSgX0cZG"; //TODO try check balik
+  //Stripe.publishableKey = dotenv.env['PUBLISH_KEY']!;
+  
   await AwesomeNotifications().initialize(
     null,
     [
