@@ -56,4 +56,8 @@ class EkhairatService {
      ..status = e['status']).toList();
   }
 
+  Future<void> updateAhliStatus(String? email, String? status) async{
+    await _firestore.collection('ahli').doc(email).update({'status': status});
+  }
+
 }

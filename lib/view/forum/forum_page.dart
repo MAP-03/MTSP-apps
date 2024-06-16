@@ -107,34 +107,43 @@ class _ForumState extends State<Forum> {
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 5),
                           Row(
                             children: [
-                              Icon(Icons.account_circle, color: Colors.white, size: 30,),
-                    
-                              const SizedBox(width: 10),
-                    
-                              if (forumService.forumData[index]['email'] == FirebaseAuth.instance.currentUser!.email)
-                                Text(
-                                  'You',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
-                                  ),
+                              userData['profileImage'] == null
+                              ? CircleAvatar(
+                                  backgroundImage: const AssetImage('assets/images/profileMan.png'),
+                                  radius: 20,
                                 )
-                              else
-                                Text(
-                                  forumService.forumData[index]['username'],
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
+                              : GestureDetector(
+                                  onTap: () {
+                                    showImageViewer(
+                                      doubleTapZoomable: true,
+                                        context,
+                                        NetworkImage(
+                                          userData['profileImage'],
+                                        ),
+                                    );
+                                  },
+                                child: CircleAvatar(
+                                    backgroundImage: NetworkImage(userData['profileImage']),
+                                    radius: 20,
                                   ),
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                forumService.forumData[index]['username'],
+                                style: GoogleFonts.poppins(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: forumService.forumData[index]['email'] == FirebaseAuth.instance.currentUser!.email
+                                  ? Colors.blue
+                                  : Colors.white,
                                 ),
+                              )
                             ],
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 5),
                           const SizedBox(height: 10, child: Divider(color: Colors.white, height: 10, thickness: 1, indent: 0, endIndent: 0)),
                         ],
                       ),
@@ -146,7 +155,7 @@ class _ForumState extends State<Forum> {
                           Text(
                             forumService.forumData[index]['title'],
                             style: GoogleFonts.poppins(
-                              fontSize: 20,
+                              fontSize: 18,
                               fontWeight: FontWeight.w500,
                               color: Colors.white,
                             ),

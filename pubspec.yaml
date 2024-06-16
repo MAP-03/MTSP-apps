@@ -55,9 +55,18 @@ dependencies:
   file_picker: ^6.1.1
   firebase_storage: ^11.6.5
   easy_image_viewer: ^1.4.1
-  slide_countdown: ^1.6.1
+  
+  jhijri_picker: ^1.0.1
+  hijri_picker: ^3.0.0
+  flutter_localizations:
+    sdk: flutter
+  syncfusion_flutter_datepicker: ^25.2.7
+  intl: ^0.19.0
+  table_calendar: ^3.1.2
+
   provider: ^6.1.1
   intl: ^0.17.0
+
 
 dev_dependencies:
   flutter_test:

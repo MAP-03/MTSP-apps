@@ -10,8 +10,8 @@ import 'package:mtsp/view/ekhairat/ekhairat.dart';
 import 'package:mtsp/view/profile/user_profile_page.dart';
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:mtsp/global.dart';
-import 'package:mtsp/view/azan/azan.dart';
-import 'package:mtsp/widgets/prayer_time.dart';
+import 'package:mtsp/view/azan/azan_widget.dart';
+import 'package:mtsp/view/azan/waktu_solat.dart';
   
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
