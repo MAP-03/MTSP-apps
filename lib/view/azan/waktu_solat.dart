@@ -73,6 +73,36 @@ secondToHour(int seconds){
     });
   }
 
+ void schedulePrayerNotification(String azanName, DateTime azanTime) {
+  AwesomeNotifications().createNotification(
+    content: NotificationContent(
+      id: azanName.hashCode,
+      channelKey: 'basic_channel',
+      title: 'Prayer Time',
+      body: 'It\'s time for $azanName prayer.',
+      notificationLayout: NotificationLayout.Default,
+    ),
+    schedule: NotificationCalendar.fromDate(date: azanTime),
+  );
+
+  DateTime upcomingAzanTime = azanTime.subtract(Duration(hours: 4, minutes: 03));
+    print('Scheduling upcoming notification for $azanName at $upcomingAzanTime'); // Debug statement
+    AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: (azanName + '_upcoming').hashCode,
+        channelKey: 'basic_channel',
+        title: 'Upcoming Prayer Time',
+        body: '$azanName prayer is in 4 hours and 03 minutes.',
+        notificationLayout: NotificationLayout.Default,
+      ),
+      schedule: NotificationCalendar.fromDate(date: upcomingAzanTime),
+    );
+}
+
+void cancelPrayerNotification(String azanName) {
+  AwesomeNotifications().cancel(azanName.hashCode);
+  AwesomeNotifications().cancel((azanName + '_upcoming').hashCode);
+}
   void toggleAlarm(String azanName) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   setState(() {
@@ -104,6 +134,7 @@ secondToHour(int seconds){
         default:
           return;
       }
+      print('Scheduling notification for $azanName at $azanTime');
       schedulePrayerNotification(azanName, azanTime);
     } else {
       // Cancel notification for the azan time
@@ -112,24 +143,7 @@ secondToHour(int seconds){
   });
 }
 
-  void schedulePrayerNotification(String azanName, DateTime azanTime) {
-  AwesomeNotifications().createNotification(
-    content: NotificationContent(
-      id: azanName.hashCode,
-      channelKey: 'basic_channel',
-      title: 'Prayer Time',
-      body: 'It\'s time for $azanName prayer.',
-      notificationLayout: NotificationLayout.Default,
-    ),
-    schedule: NotificationCalendar.fromDate(date: azanTime),
-  );
-}
-
-void cancelPrayerNotification(String azanName) {
-  AwesomeNotifications().cancel(azanName.hashCode);
-}
-
-/*   void triggerTestNotification() {
+ /*   void triggerTestNotification() {
     AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 9999, // Unique ID for the test notification
@@ -139,7 +153,7 @@ void cancelPrayerNotification(String azanName) {
         notificationLayout: NotificationLayout.Default,
       ),
     );
-  } */
+  }  */
   @override
   Widget build(BuildContext context) {
     Color bgColor = widget.isCurrentPrayer ? Colors.blue : primaryColor;
@@ -223,15 +237,11 @@ void cancelPrayerNotification(String azanName) {
                 ),
               ),
             ),
-
-/*                         IconButton(
-              icon: Icon(Icons.notification_important, color: Colors.white),
-              onPressed: triggerTestNotification,
-            ), */
           ],
         ),
       ),
     );
+    
   }
 }
 

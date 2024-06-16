@@ -1,5 +1,6 @@
-// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, prefer_const_literals_to_create_immutables
-import'package:awesome_notifications/awesome_notifications.dart';
+// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, prefer_const_literals_to_create_immutators
+
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,7 +11,8 @@ import 'package:mtsp/services/forum_service.dart';
 import 'package:mtsp/services/role_based_route.dart';
 import 'package:mtsp/splash_screen.dart';
 import 'package:mtsp/view/aduan/aduan_page.dart';
-import 'package:mtsp/view/azan/azan.dart';
+import 'package:mtsp/view/azan/azan_widget.dart';
+import 'package:mtsp/view/azan/notification_controller.dart';
 import 'package:mtsp/view/berita/berita.dart';
 import 'package:mtsp/view/dashboard_page.dart';
 import 'package:mtsp/view/ekhairat/ekhairat.dart';
@@ -18,18 +20,17 @@ import 'package:mtsp/view/ekhairat/senarai_ahli.dart';
 import 'package:mtsp/view/forum/create_forum.dart';
 import 'package:mtsp/view/forum/forum_page.dart';
 import 'package:mtsp/view/infaq/infaq.dart';
-import 'package:mtsp/view/kalendar/kalendar.dart';
+import 'package:mtsp/view/kalendar/kalendar_layout.dart';
 import 'package:mtsp/auth/authentication_page.dart';
 import 'package:mtsp/notification_controller.dart';
 import 'package:provider/provider.dart';
 import 'view/login/login_page.dart';
-//import 'package:flutter/foundation.dart';
-//import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,);
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await AwesomeNotifications().initialize(
     null,
     [
@@ -42,18 +43,21 @@ void main() async {
         ledColor: Colors.white,
       )
     ],
-  channelGroups: [
-    NotificationChannelGroup(
-      channelGroupKey: 'grouped',
-      channelGroupName: 'Grouped notifications',
-      
-    )
-  ]);
-  bool isAllowedToSendNotification = 
-  await AwesomeNotifications().isNotificationAllowed();
+    channelGroups: [
+      NotificationChannelGroup(
+        channelGroupKey: 'grouped',
+        channelGroupName: 'Grouped notifications',
+      )
+    ],
+  );
+  bool isAllowedToSendNotification =
+      await AwesomeNotifications().isNotificationAllowed();
   if (!isAllowedToSendNotification) {
     await AwesomeNotifications().requestPermissionToSendNotifications();
   }
+
+  runApp(MyApp());
+
 
   runApp(
     MultiProvider(
@@ -63,6 +67,7 @@ void main() async {
       child: MyApp()
     )
   );
+
 }
 
 class MyApp extends StatefulWidget {
@@ -71,21 +76,20 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    AwesomeNotifications().setListeners(
+      onActionReceivedMethod: NotificationController.onActionReceivedMethod,
+      onNotificationCreatedMethod:
+          NotificationController.onNotificationCreatedMethod,
+      onNotificationDisplayedMethod:
+          NotificationController.onNotificationDisplayedMethod,
+      onDismissActionReceivedMethod:
+          NotificationController.onDismissActionReceivedMethod,
+    );
+    super.initState();
+  }
 
-@override
-void initState() {
-  AwesomeNotifications().setListeners(
-    onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-    onNotificationCreatedMethod: 
-      NotificationController.onNotificationCreatedMethod,
-    onNotificationDisplayedMethod:
-      NotificationController.onNotificationDisplayedMethod,
-    onDismissActionReceivedMethod:
-      NotificationController.onDismissActionReceivedMethod
-      );
-  super.initState();
-
-}
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -97,6 +101,7 @@ void initState() {
         ),
       ),
       routes: {
+
         /* '/login': (context) => LoginPage(onTap: ),
         '/register': (context) => RegisterPage(onTap: ), */
         '/home' : (context) => HomePage(),
@@ -108,6 +113,7 @@ void initState() {
         '/aduan' : (context) => AduanPage(),
         '/forum': (context) => Forum(),
         '/create_forum': (context) => const CreateForum(),
+
       },
       home: SplashScreen(),
     );
