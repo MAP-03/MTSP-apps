@@ -86,32 +86,43 @@ class _CommentPageState extends State<CommentPage> {
                             title: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const SizedBox(height: 10),
+                                const SizedBox(height: 5),
                                 Row(
                                   children: [
-                                    Icon(Icons.account_circle, color: Colors.white, size: 30),
-                                    const SizedBox(width: 10),
-                                    if (widget.forumData['email'] == FirebaseAuth.instance.currentUser!.email)
-                                      Text(
-                                        'You',
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    else
-                                      Text(
-                                        widget.forumData['username'],
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.white,
-                                        ),
+                                     userData['profileImage'] == null
+                                      ? CircleAvatar(
+                                          backgroundImage: const AssetImage('assets/images/profileMan.png'),
+                                          radius: 20,
+                                        )
+                                      : GestureDetector(
+                                          onTap: () {
+                                            showImageViewer(
+                                              doubleTapZoomable: true,
+                                                context,
+                                                NetworkImage(
+                                                  userData['profileImage'],
+                                                ),
+                                            );
+                                          },
+                                        child: CircleAvatar(
+                                            backgroundImage: NetworkImage(userData['profileImage']),
+                                            radius: 20,
+                                          ),
                                       ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      widget.forumData['username'],
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        color: widget.forumData['email'] == FirebaseAuth.instance.currentUser!.email
+                                        ? Colors.blue
+                                        : Colors.white,
+                                      ),
+                                    )
                                   ],
                                 ),
-                                const SizedBox(height: 10),
+                                const SizedBox(height: 5),
                                 const Divider(color: Colors.white, height: 10, thickness: 1),
                               ],
                             ),
@@ -122,7 +133,7 @@ class _CommentPageState extends State<CommentPage> {
                                 Text(
                                   widget.forumData['title'],
                                   style: GoogleFonts.poppins(
-                                    fontSize: 20,
+                                    fontSize: 18,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
                                   ),
@@ -260,32 +271,43 @@ class _CommentPageState extends State<CommentPage> {
                                       title: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          const SizedBox(height: 10),
+                                          const SizedBox(height: 5),
                                           Row(
                                             children: [
-                                              Icon(Icons.account_circle, color: Colors.white, size: 30),
-                                              const SizedBox(width: 10),
-                                              if (forumService.commentData[index]['email'] == FirebaseAuth.instance.currentUser!.email)
-                                                Text(
-                                                  'You',
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Colors.white,
-                                                  ),
-                                                )
-                                              else
-                                                Text(
-                                                  forumService.commentData[index]['username'],
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Colors.white,
-                                                  ),
+                                               userData['profileImage'] == null
+                                                ? CircleAvatar(
+                                                    backgroundImage: const AssetImage('assets/images/profileMan.png'),
+                                                    radius: 20,
+                                                  )
+                                                : GestureDetector(
+                                                    onTap: () {
+                                                      showImageViewer(
+                                                        doubleTapZoomable: true,
+                                                          context,
+                                                          NetworkImage(
+                                                            userData['profileImage'],
+                                                          ),
+                                                      );
+                                                    },
+                                                  child: CircleAvatar(
+                                                      backgroundImage: NetworkImage(userData['profileImage']),
+                                                      radius: 20,
+                                                    ),
                                                 ),
+                                              const SizedBox(width: 10),
+                                              Text(
+                                                forumService.commentData[index]['username'],
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: forumService.commentData[index]['email'] == FirebaseAuth.instance.currentUser!.email
+                                                  ? Colors.blue
+                                                  : Colors.white,
+                                                ),
+                                              )
                                             ],
                                           ),
-                                          const SizedBox(height: 10),
+                                          const SizedBox(height: 5),
                                           const Divider(color: Colors.white, height: 10, thickness: 1),
                                         ],
                                       ),
