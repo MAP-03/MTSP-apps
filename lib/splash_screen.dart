@@ -3,27 +3,27 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/auth/authentication_page.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  
   @override
   void initState() {
     super.initState();
-    // Navigate to AuthPage after a delay
-    Future.delayed(const Duration(seconds: 3), () {
-      // Ensure the context is still valid before navigation
-      if (mounted) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const AuthPage()),
-          (route) => false,
-        );
-      }
-    });
+    _navigateToAuthPage();
+  }
+
+  Future<void> _navigateToAuthPage() async {
+    await Future.delayed(const Duration(seconds: 3));
+    if (mounted) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const AuthPage()),
+        (route) => false,
+      );
+    }
   }
 
   @override

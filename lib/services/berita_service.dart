@@ -35,4 +35,17 @@ class BeritaService {
       showToast(message: 'Error saving event: $e');
     }
   }
+
+  Future<List<Map<String, dynamic>>> getEvents() async {
+    List<Map<String, dynamic>> events = [];
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('Berita').get();
+      snapshot.docs.forEach((doc) {
+        events.add(doc.data() as Map<String, dynamic>);
+      });
+    } catch (e) {
+      showToast(message: 'Error fetching events: $e');
+    }
+    return events;
+  }
 }
