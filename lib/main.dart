@@ -21,7 +21,6 @@ import 'package:mtsp/view/forum/forum_page.dart';
 import 'package:mtsp/view/infaq/infaq.dart';
 import 'package:mtsp/view/kalendar/kalendar_layout.dart';
 import 'package:mtsp/auth/authentication_page.dart';
-import 'package:mtsp/notification_controller.dart';
 import 'package:provider/provider.dart';
 import 'view/login/login_page.dart';
 
