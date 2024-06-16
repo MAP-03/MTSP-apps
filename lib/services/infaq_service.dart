@@ -10,7 +10,11 @@ class InfaqService {
 
   Future<bool> checkInfaq(String? email) async {
     final doc = await _firestore.collection('infaq').doc(email).get();
-    return doc.exists;
+    if (doc.exists) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   Future<void> createInfaq(InfaqModel infaq) async {
@@ -18,30 +22,25 @@ class InfaqService {
   }
 
   Future<void> updateInfaq(InfaqModel infaq) async {
-    await _firestore.collection('infaq').doc(infaq.email).update(infaq.toJson());
+    await _firestore
+        .collection('infaq')
+        .doc(infaq.email)
+        .update(infaq.toJson());
   }
-
-  /* Future<void> updateStatusInfaq(ButiranInfaq infaq, String email, int id, String status) async {
-    id = id - 1;
-    await _firestore.collection('infaq').doc(email).update({
-      'butiranInfaq.${id.toString()}': infaq.toMap()
-    });
-  } */
 
   Future<List<InfaqModel>> getAllInfaq() async {
     final snapshot = await _firestore.collection('infaq').get();
-    return snapshot.docs.map((e) => InfaqModel(
-      email: e['email'])
-        ..butiranInfaq = (e['butiranInfaq'] as List)
-            .map((e) => ButiranInfaq.fromMap(e))
+    return snapshot.docs
+        .map((e) => InfaqModel(email: e['email'])
+          ..butiranInfaq = (e['butiranInfaq'] as List)
+              .map((e) => ButiranInfaq.fromMap(e))
               .toList())
         .toList();
   }
 
   Future<InfaqModel> getInfaqByEmail(String? email) async {
     final doc = await _firestore.collection('infaq').doc(email).get();
-    return InfaqModel(
-      email: doc['email'])
+    return InfaqModel(email: doc['email'])
       ..butiranInfaq = (doc['butiranInfaq'] as List)
           .map((e) => ButiranInfaq.fromMap(e))
           .toList();

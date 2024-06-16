@@ -41,10 +41,8 @@ class StripeService {
 
   static void displayPaymentSheet(ButiranInfaq infaq) async {
     try {
-      await Stripe.instance
-          .presentPaymentSheet()
-          .then((value) {})
-          .onError((error, stackTrace) {
+      await Stripe.instance.presentPaymentSheet().then((value) {
+      }).onError((error, stackTrace) {
         infaq.setStatus('Gagal');
         throw Exception(error);
       });
@@ -58,6 +56,8 @@ class StripeService {
   static Future<void> makePayment(ButiranInfaq infaq) async {
     try {
       Map<String, dynamic> paymentIntent;
+
+      infaq.setStatus('Diproses');
 
       paymentIntent = await createPaymentIntent(infaq);
 
@@ -73,15 +73,11 @@ class StripeService {
 
       displayPaymentSheet(infaq);
 
-      if (paymentIntent['status'] == 'succeeded') {
-        infaq.setStatus('Berjaya');
-      } else {
-        infaq.setStatus('Gagal');
-      }
-
-      print("Payyyyyyment intent " + paymentIntent['status']);
+      infaq.setStatus('Berjaya');
+      print(infaq.toJson());
     } catch (e) {
       print(e.toString());
+      infaq.setStatus('Gagal');
     }
   }
 }
