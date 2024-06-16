@@ -6,7 +6,6 @@ import FlutterMacOS
 import Foundation
 
 import awesome_notifications
-import awesome_notifications
 import cloud_firestore
 import file_selector_macos
 import firebase_auth
