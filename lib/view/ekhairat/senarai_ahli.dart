@@ -7,6 +7,7 @@ import 'package:mtsp/global.dart';
 import 'package:mtsp/models/ahli.dart';
 import 'package:mtsp/services/ekhairat_service.dart';
 import 'package:mtsp/view/ekhairat/maklumat_ahli.dart';
+import 'package:mtsp/widgets/drawer.dart';
 
 class SenaraiAhli extends StatefulWidget {
   const SenaraiAhli({super.key});
@@ -21,6 +22,7 @@ class _SenaraiAhliState extends State<SenaraiAhli> {
   List<Ahli> filteredAhliList = [];
   bool isLoading = true;
   TextEditingController searchController = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String selectedStatus = 'All';
 
   @override
@@ -127,14 +129,15 @@ class _SenaraiAhliState extends State<SenaraiAhli> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Senarai Ahli', style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: primaryColor,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          icon: const Icon(Icons.menu, color: Colors.white, size: 30),
+            onPressed: () {
+              _scaffoldKey.currentState!.openDrawer();
+            },
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4.0),
@@ -145,6 +148,7 @@ class _SenaraiAhliState extends State<SenaraiAhli> {
         ),
       ),
       backgroundColor: secondaryColor,
+      drawer: CustomDrawer(),
       body: isLoading 
       ? const Center(child: CircularProgressIndicator()) 
       : Column(
@@ -301,7 +305,7 @@ class _SenaraiAhliState extends State<SenaraiAhli> {
                                       Container(
                                         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                         decoration: BoxDecoration(
-                                          color: filteredAhliList[index].status == 'PENDING' ? Color(0xffE8D427) : filteredAhliList[index].status == 'EXPIRED' ? Colors.red : Colors.green,
+                                          color: filteredAhliList[index].status == 'PENDING' ? pendingColor : filteredAhliList[index].status == 'EXPIRED' ? expiredColor : activeColor,
                                           borderRadius: BorderRadius.circular(25),
                                         ),
                                         child: Text(filteredAhliList[index].status, style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w300, color: Colors.black, letterSpacing: 1.8)),

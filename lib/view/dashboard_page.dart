@@ -1,17 +1,21 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:adhan_dart/adhan_dart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jiffy/jiffy.dart';
+import 'package:mtsp/services/berita_service.dart';
+import 'package:mtsp/view/berita/detail_page.dart';
 import 'package:mtsp/view/ekhairat/ekhairat.dart';
 import 'package:mtsp/view/profile/user_profile_page.dart';
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:mtsp/global.dart';
-import 'package:mtsp/view/azan/azan.dart';
-import 'package:mtsp/widgets/prayer_time.dart';
+import 'package:mtsp/view/azan/azan_widget.dart';
+import 'package:mtsp/view/azan/waktu_solat.dart';
   
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,6 +33,11 @@ class _HomePageState extends State<HomePage> {
   late DateTime date;
   late Coordinates coordinates;
   late CalculationParameters params;
+  BeritaService beritaService = BeritaService();
+  List<Map<String, dynamic>> berita = [];
+  int _current = 0;
+  final CarouselController _controller = CarouselController();
+
   @override
   void initState() {
     super.initState();
@@ -37,8 +46,17 @@ class _HomePageState extends State<HomePage> {
     date = DateTime.now();
     params = CalculationMethod.Malaysia();
     params.madhab = Madhab.Shafi;
+    _fetchEvents();
     
   }
+
+  Future<void> _fetchEvents() async {
+    berita = await beritaService.getEvents();
+    setState(() {
+      berita = berita;
+    }); 
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -91,28 +109,95 @@ class _HomePageState extends State<HomePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 318.72,
-                      height: 208.58,
-                      decoration: ShapeDecoration(
-                        image: DecorationImage(
-                        image: AssetImage('assets/images/uai.jpg'),
-                        fit: BoxFit.fill,
-                        ),
-                        shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        ),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 208.58, 
+                            child: CarouselSlider(
+                              items: berita.map((item) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        pageBuilder: (context, animation, secondaryAnimation) => DetailPage(
+                                          title: item['title'],
+                                          date: Jiffy.parseFromDateTime(item['date'].toDate()).yMMMMEEEEd.toString(),
+                                          description: item['description'],
+                                          imageUrl: item['imageLink'],
+                                          headerColor: Color(0xff06142F),
+                                          backgroundColor: Color(0xff06142F),
+                                        ),
+                                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                          const begin = Offset(0.0, 1.0);
+                                          const end = Offset.zero;
+                                          const curve = Curves.ease;
+                                          var tween =
+                                              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                                          return SlideTransition(
+                                            position: animation.drive(tween),
+                                            child: child,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    child: Center(
+                                      child: Image.network(
+                                        item['imageLink'],
+                                        fit: BoxFit.fill,
+                                        width: double.infinity, 
+                                        height: 210,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                              carouselController: _controller,
+                              options: CarouselOptions(
+                                autoPlay: true,
+                                enlargeCenterPage: true,
+                                aspectRatio: 2.0,
+                                disableCenter: true,
+                                onPageChanged: (index, reason) {
+                                  setState(() {
+                                    _current = index;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: berita.asMap().entries.map((entry) {
+                              return GestureDetector(
+                                onTap: () => _controller.animateToPage(entry.key),
+                                child: Container(
+                                  width: 12.0,
+                                  height: 12.0,
+                                  margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      width: 2,
+                                      color: (Theme.of(context).brightness == Brightness.light
+                                              ? Colors.white
+                                              : Colors.black)
+                                          .withOpacity(_current == entry.key ? 0.9 : 0.4),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.circle_outlined, color: Colors.white, size: 15),
-                    Icon(Icons.circle_outlined, color: Colors.grey, size: 15),
-                    Icon(Icons.circle_outlined, color: Colors.grey, size: 15),
                   ],
                 ),
                 

@@ -2,22 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/auth/authentication_page.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  _SplashScreenState createState() => _SplashScreenState();
+}
 
-    Future<void> delayedFunction() async {
-      await Future.delayed(const Duration(seconds: 3));
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _navigateToAuthPage();
+  }
+
+  Future<void> _navigateToAuthPage() async {
+    await Future.delayed(const Duration(seconds: 3));
+    if (mounted) {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const AuthPage()),
         (route) => false,
       );
     }
+  }
 
-    delayedFunction();
-    
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(children: [
         Container(
