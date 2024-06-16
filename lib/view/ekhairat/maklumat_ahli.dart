@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jiffy/jiffy.dart';
@@ -9,6 +8,8 @@ import 'package:mtsp/global.dart';
 import 'package:mtsp/models/ahli.dart';
 import 'package:mtsp/models/tanggungan.dart';
 import 'package:mtsp/services/ekhairat_service.dart';
+import 'package:mtsp/view/ekhairat/senarai_ahli.dart';
+import 'package:mtsp/view/ekhairat/update_ahli.dart';
 
 class MaklumatAhli extends StatefulWidget {
   const MaklumatAhli({super.key, required this.ahli});
@@ -27,10 +28,10 @@ class _MaklumatAhliState extends State<MaklumatAhli> {
   @override
   void initState() {
     super.initState();
-      setState(() {
-        isLoading = false;
-        expiredDate = getExpiryDate(widget.ahli!);
-      });
+    setState(() {
+      isLoading = false;
+      expiredDate = getExpiryDate(widget.ahli!);
+    });
   }
 
   String getExpiryDate(Ahli ahli) {
@@ -43,14 +44,27 @@ class _MaklumatAhliState extends State<MaklumatAhli> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Semak Keahlian', style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+        title: Text('Maklumat Keahlian', style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: primaryColor,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(context, MaterialPageRoute(builder: (context) => SenaraiAhli()));
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit, color: Colors.white),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return UpdateAhli(ahli: widget.ahli!);
+                },
+              );
+            },
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4.0),
           child: Container(
@@ -62,95 +76,148 @@ class _MaklumatAhliState extends State<MaklumatAhli> {
       backgroundColor: secondaryColor,
       body: isLoading 
       ? Center(child: CircularProgressIndicator()) 
-      : Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
-            child: Card(
-              color: primaryColor,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      : SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
+              child: Card(
+                color: primaryColor,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(Icons.card_membership, color: Colors.blue, size: 30),
+                              SizedBox(width: 10),
+                              Text('Pelan', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                            ],
+                          ),
+                          Text(widget.ahli!.pelan, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(Icons.date_range, color: Colors.blue, size: 30),
+                              SizedBox(width: 10),
+                              Text('Tamat Tempoh', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                            ],
+                          ),
+                          Text(expiredDate!, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              height: 400,
+              padding: EdgeInsets.only(left: 15, right: 15),
+              margin: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: primaryColor,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.white),
+              ),
+              child: ContainedTabBarView(
+                tabs: [
+                  Text('Ahli', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
+                  Text('Tanggungan', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
+                ],
+                tabBarProperties: TabBarProperties(
+                  indicator: ContainerTabIndicator(
+                    radius: BorderRadius.circular(10.0),
+                    width: 195,
+                    color: Colors.blueGrey,
+                  ),
+                ),
+                views: [
+                  _buildAhliTab(),
+                  _buildTanggunganTab(),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Status  :  ', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: widget.ahli!.status == 'PENDING' ? pendingColor : widget.ahli!.status == 'EXPIRED' ? expiredColor : activeColor,
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: Text(widget.ahli!.status, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black, letterSpacing: 1.8))
+                ),
+              ],
+            ),
+            SizedBox(height: 30),
+            widget.ahli!.status == 'PENDING'
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      ekhairatService.updateAhliStatus(widget.ahli!.email, 'ACTIVE');
+                      setState(() {
+                        widget.ahli!.status = 'ACTIVE';
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: Size(140, 30),
+                      backgroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Icon(Icons.card_membership, color: Colors.blue, size: 30),
-                            SizedBox(width: 10),
-                            Text('Pelan', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-                          ],
-                        ),
-                        Text(widget.ahli!.pelan, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
+                        Icon(Icons.check, color: Colors.green),
+                        Text('Terima', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.green)),
                       ],
                     ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  ),
+                  SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      ekhairatService.updateAhliStatus(widget.ahli!.email, 'REJECTED');
+                      setState(() {
+                        widget.ahli!.status = 'REJECTED';
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: Size(140, 30),
+                      backgroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Icon(Icons.date_range, color: Colors.blue, size: 30),
-                            SizedBox(width: 10),
-                            Text('Tamat Tempoh', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-                          ],
-                        ),
-                        Text(expiredDate!, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
+                        Icon(Icons.close, color: Colors.red),
+                        Text('Tolak', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.red)),
                       ],
                     ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Container(
-            width: double.infinity,
-            height: 400,
-            padding: EdgeInsets.only(left: 15, right: 15),
-            margin: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: primaryColor,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.white),
-            ),
-            child: ContainedTabBarView(
-              tabs: [
-                Text('Ahli', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
-                Text('Tanggungan', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
-              ],
-              tabBarProperties: TabBarProperties(
-                indicator: ContainerTabIndicator(
-                  radius: BorderRadius.circular(10.0),
-                  width: 195,
-                  color: Colors.blueGrey,
-                ),
-              ),
-              views: [
-                _buildAhliTab(),
-                _buildTanggunganTab(),
-              ],
-            ),
-          ),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Status  :  ', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: widget.ahli!.status == 'PENDING' ? Color(0xffE8D427) : widget.ahli!.status == 'EXPIRED' ? Colors.red : Colors.green,
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: Text(widget.ahli!.status, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black, letterSpacing: 1.8))
-              ),
-            ],
-          ),
-        ],
+                  ),
+                ],
+              )
+            : SizedBox(),
+          ],
+        ),
       ),
     );
   }

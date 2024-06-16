@@ -2,12 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mtsp/models/tanggungan.dart';
 
 class Ahli{
-  final String name;
-  final String email;
-  final String ic;
-  final String alamat;
-  final String phone;
-  final String emergencyPhone;
+  String name;
+  String email;
+  String ic;
+  String alamat;
+  String phone;
+  String emergencyPhone;
   List<Tanggungan> tanggungan = [];
   String pelan = '';
   String status = 'PENDING';

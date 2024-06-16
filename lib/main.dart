@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:mtsp/firebase_options.dart';
+import 'package:mtsp/services/ekhairat_service.dart';
 import 'package:mtsp/services/forum_service.dart';
 import 'package:mtsp/services/role_based_route.dart';
 import 'package:mtsp/splash_screen.dart';
@@ -13,6 +14,7 @@ import 'package:mtsp/view/aduan/aduan_page.dart';
 import 'package:mtsp/view/azan/azan_widget.dart';
 import 'package:mtsp/view/azan/notification_controller.dart';
 import 'package:mtsp/view/berita/berita.dart';
+import 'package:mtsp/view/berita/berita_user.dart';
 import 'package:mtsp/view/dashboard_page.dart';
 import 'package:mtsp/view/ekhairat/ekhairat.dart';
 import 'package:mtsp/view/ekhairat/senarai_ahli.dart';
@@ -104,7 +106,7 @@ class _MyAppState extends State<MyApp> {
         '/register': (context) => RegisterPage(onTap: ), */
         '/home' : (context) => HomePage(),
         '/ekhairat' : (context) => RoleBasedRoute(userPage: Ekhairat(), adminPage: SenaraiAhli()),
-        '/berita' : (context) => Berita(),
+        '/berita' : (context) => RoleBasedRoute(userPage: BeritaUser(), adminPage: Berita()),
         '/infaq' : (context) => Infaq(),
         '/azan' : (context) => Azan(),
         '/kalendar' : (context) => Kalendar(),
