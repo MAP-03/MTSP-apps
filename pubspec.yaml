@@ -71,6 +71,7 @@ dependencies:
 
   provider: ^6.1.1
   carousel_slider: ^4.2.1
+  timezone: ^0.9.3
 
 
 

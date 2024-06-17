@@ -7,49 +7,49 @@ class AcaraService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance; 
 
-  Future<void> addEvent(Event event) async {
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        event = Event(
-          id: event.id,
-          note: event.note,
-          startDate: event.startDate,
-          endDate: event.endDate,
-          color: event.color,
-          userId: user.email!,
-        );
-        await _firestore.collection('Events').doc(event.id).set(event.toJson());
-        showToast(message: 'Acara berjaya disimpan');
-      } else {
-        showToast(message: 'User not logged in');
-      }
-    } catch (e) {
-      showToast(message: 'Error saving event: $e');
+ Future<void> addEvent(Event event) async {
+  try {
+    final user = _auth.currentUser;
+    if (user != null) {
+      event = Event(
+        id: event.id,
+        note: event.note,
+        startDate: event.startDate,
+        endDate: event.endDate,
+        color: event.color,
+        userId: user.email!,
+        creationDate: event.creationDate, // Add current date
+      );
+      await _firestore.collection('Events').doc(event.id).set(event.toJson());
+      showToast(message: 'Acara berjaya disimpan');
+    } else {
+      showToast(message: 'User not logged in');
     }
+  } catch (e) {
+    showToast(message: 'Error saving event: $e');
   }
+}
 
-  Future<List<Event>> getEvents() async {
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        final snapshot = await _firestore
-            .collection('Events')
-            .where('userId', isEqualTo: user.email)
-            .get();
-        return snapshot.docs
-            .map((doc) => Event.fromJson(doc.data() as Map<String, dynamic>))
-            .toList();
-      } else {
-        showToast(message: 'User not logged in');
-        return [];
-      }
-    } catch (e) {
-      showToast(message: 'Error fetching events: $e');
+Future<List<Event>> getEvents() async {
+  try {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final snapshot = await _firestore
+          .collection('Events')
+          .where('userId', isEqualTo: user.email)
+          .get();
+      return snapshot.docs
+          .map((doc) => Event.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
+    } else {
+      showToast(message: 'User not logged in');
       return [];
     }
+  } catch (e) {
+    showToast(message: 'Error fetching events: $e');
+    return [];
   }
-
+}
   Future<void> deleteEvent(String eventId) async {
     try {
       final user = _auth.currentUser;

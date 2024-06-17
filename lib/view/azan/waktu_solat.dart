@@ -1,10 +1,8 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:adhan_dart/adhan_dart.dart';
 import 'package:mtsp/global.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:mtsp/services/notification_service.dart';
 
 class PrayTime extends StatefulWidget {
   const PrayTime({
@@ -15,7 +13,6 @@ class PrayTime extends StatefulWidget {
     required this.isCurrentPrayer,
     required this.isNextPrayer,
     required this.prayerTimes,
-
   }) : super(key: key);
 
   final String azanTime;
@@ -30,38 +27,39 @@ class PrayTime extends StatefulWidget {
 }
 
 class _PrayTimeState extends State<PrayTime> {
-  
- Stream remainsTime() async* {
+  final NotificationService _notificationService = NotificationService();
+
+  Stream remainsTime() async* {
     yield* Stream.periodic(const Duration(seconds: 1), (i) {
-      String nextprayer = widget.prayerTimes.nextPrayer(); // Access widget.prayerTimes instead of prayerTimes
-      DateTime nextPrayerTime = widget.prayerTimes.timeForPrayer(nextprayer)!.toLocal(); // Access widget.prayerTimes instead of prayerTimes
+      String nextprayer = widget.prayerTimes.nextPrayer();
+      DateTime nextPrayerTime = widget.prayerTimes.timeForPrayer(nextprayer)!.toLocal();
       DateTime now = DateTime.now();
       Duration remains = nextPrayerTime.difference(now);
       return secondToHour(remains.inSeconds);
     });
   }
 
-secondToHour(int seconds){
-  int minutes = seconds ~/ 60;
-  int hours = minutes ~/ 60;
-  seconds = seconds - minutes * 60;
-  minutes = minutes - hours * 60;
+  String secondToHour(int seconds) {
+    int minutes = seconds ~/ 60;
+    int hours = minutes ~/ 60;
+    seconds = seconds - minutes * 60;
+    minutes = minutes - hours * 60;
 
-  return "$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
-}
-  
-  late Map<String, bool> isAlarmOnMap = {}; // Initialize isAlarmOnMap as an empty map
+    return "$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
+  }
+
+  late Map<String, bool> isAlarmOnMap = {};
 
   @override
   void initState() {
     super.initState();
-    loadAlarmStates(); // Load the alarm states when the widget initializes
+    _notificationService.init();
+    loadAlarmStates();
   }
 
   void loadAlarmStates() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      // Retrieve the alarm states from SharedPreferences, defaulting to false if not found
       isAlarmOnMap = {
         'Subuh': prefs.getBool('SubuhAlarmOn') ?? false,
         'Syuruk': prefs.getBool('SyurukAlarmOn') ?? false,
@@ -73,87 +71,44 @@ secondToHour(int seconds){
     });
   }
 
- void schedulePrayerNotification(String azanName, DateTime azanTime) {
-  AwesomeNotifications().createNotification(
-    content: NotificationContent(
-      id: azanName.hashCode,
-      channelKey: 'basic_channel',
-      title: 'Prayer Time',
-      body: 'It\'s time for $azanName prayer.',
-      notificationLayout: NotificationLayout.Default,
-    ),
-    schedule: NotificationCalendar.fromDate(date: azanTime),
-  );
-
-  DateTime upcomingAzanTime = azanTime.subtract(Duration(hours: 4, minutes: 03));
-    print('Scheduling upcoming notification for $azanName at $upcomingAzanTime'); // Debug statement
-    AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: (azanName + '_upcoming').hashCode,
-        channelKey: 'basic_channel',
-        title: 'Upcoming Prayer Time',
-        body: '$azanName prayer is in 4 hours and 03 minutes.',
-        notificationLayout: NotificationLayout.Default,
-      ),
-      schedule: NotificationCalendar.fromDate(date: upcomingAzanTime),
-    );
-}
-
-void cancelPrayerNotification(String azanName) {
-  AwesomeNotifications().cancel(azanName.hashCode);
-  AwesomeNotifications().cancel((azanName + '_upcoming').hashCode);
-}
   void toggleAlarm(String azanName) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  setState(() {
-    isAlarmOnMap[azanName] = !(isAlarmOnMap[azanName] ?? false); // Toggle alarm state
-    prefs.setBool('$azanName' + 'AlarmOn', isAlarmOnMap[azanName] ?? false); // Save the updated alarm state
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isAlarmOnMap[azanName] = !(isAlarmOnMap[azanName] ?? false);
+      prefs.setBool('$azanName' + 'AlarmOn', isAlarmOnMap[azanName] ?? false);
 
-    if (isAlarmOnMap[azanName] == true) {
-      // Schedule notification for the azan time
-      DateTime azanTime;
-      switch (azanName) {
-        case 'Subuh':
-          azanTime = widget.prayerTimes.fajr!.toLocal();
-          break;
-        case 'Syuruk':
-          azanTime = widget.prayerTimes.sunrise!.toLocal();
-          break;
-        case 'Zohor':
-          azanTime = widget.prayerTimes.dhuhr!.toLocal();
-          break;
-        case 'Asar':
-          azanTime = widget.prayerTimes.asr!.toLocal();
-          break;
-        case 'Maghrib':
-          azanTime = widget.prayerTimes.maghrib!.toLocal();
-          break;
-        case 'Isyak':
-          azanTime = widget.prayerTimes.isha!.toLocal();
-          break;
-        default:
-          return;
+      if (isAlarmOnMap[azanName] == true) {
+        DateTime azanTime;
+        switch (azanName) {
+          case 'Subuh':
+            azanTime = widget.prayerTimes.fajr!.toLocal();
+            break;
+          case 'Syuruk':
+            azanTime = widget.prayerTimes.sunrise!.toLocal();
+            break;
+          case 'Zohor':
+            azanTime = widget.prayerTimes.dhuhr!.toLocal();
+            break;
+          case 'Asar':
+            azanTime = widget.prayerTimes.asr!.toLocal();
+            break;
+          case 'Maghrib':
+            azanTime = widget.prayerTimes.maghrib!.toLocal();
+            break;
+          case 'Isyak':
+            azanTime = widget.prayerTimes.isha!.toLocal();
+            break;
+          default:
+            return;
+        }
+        print('Scheduling notification for $azanName at $azanTime');
+        _notificationService.scheduleAzanNotification(azanName, azanTime);
+      } else {
+        _notificationService.cancelAzanNotification(azanName);
       }
-      print('Scheduling notification for $azanName at $azanTime');
-      schedulePrayerNotification(azanName, azanTime);
-    } else {
-      // Cancel notification for the azan time
-      cancelPrayerNotification(azanName);
-    }
-  });
-}
+    });
+  }
 
- /*   void triggerTestNotification() {
-    AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: 9999, // Unique ID for the test notification
-        channelKey: 'basic_channel',
-        title: 'Test Notification',
-        body: 'This is a test notification to check if the system works correctly.',
-        notificationLayout: NotificationLayout.Default,
-      ),
-    );
-  }  */
   @override
   Widget build(BuildContext context) {
     Color bgColor = widget.isCurrentPrayer ? Colors.blue : primaryColor;
@@ -186,8 +141,7 @@ void cancelPrayerNotification(String azanName) {
             ),
             GestureDetector(
               onTap: () {
-                toggleAlarm(widget.azanName); 
-                // Toggle alarm state when tapped
+                toggleAlarm(widget.azanName);
               },
               child: Padding(
                 padding: const EdgeInsets.only(right: 60),
@@ -205,24 +159,22 @@ void cancelPrayerNotification(String azanName) {
               ),
             ),
             widget.isNextPrayer
-            ? StreamBuilder(
-                stream: remainsTime(),
-                builder: (context, snapshot) {
-                  // Display the remaining time if data is available
-                  return Container(
-                    width: 50,
-                    child: Text(
-                      '${snapshot.data ?? ''}',
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.white,
-                      ),
-                    ),
-                  );
-                },   
-              )
-            : SizedBox(width: 50),
-              
+                ? StreamBuilder(
+                    stream: remainsTime(),
+                    builder: (context, snapshot) {
+                      return Container(
+                        width: 50,
+                        child: Text(
+                          '${snapshot.data ?? ''}',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.white,
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                : SizedBox(width: 50),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(right: 30),
@@ -241,11 +193,8 @@ void cancelPrayerNotification(String azanName) {
         ),
       ),
     );
-    
   }
 }
-
-
 String timePresenter(DateTime dateTime){
   bool isPM = dateTime.hour >= 12; // Check if hour is greater than or equal to 12 to determine PM
   
