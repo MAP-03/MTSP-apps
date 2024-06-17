@@ -8,7 +8,6 @@ import 'package:mtsp/view/kalendar/acara_form.dart';
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-
 class Kalendar extends StatefulWidget {
   const Kalendar({super.key});
 
@@ -155,13 +154,13 @@ class _KalendarState extends State<Kalendar> {
             child: FloatingActionButton(
               heroTag: 'sortButton',
               onPressed: _toggleSortOrder,
-              child: Icon(_isAscending ? Icons.sort : Icons.sort_rounded),
               backgroundColor: Colors.white,
               mini: true,
               elevation: 4.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50.0),
               ),
+              child: Icon(_isAscending ? Icons.sort : Icons.sort_rounded),
             ),
           ),
           Positioned(
@@ -183,23 +182,24 @@ class _KalendarState extends State<Kalendar> {
                           } else {
                             events[normalizedDay] = [event];
                           }
-                          _selectedEvents.value = _getEventsForDay(
-                              normalizedDay);
+                          _selectedEvents.value =
+                              _getEventsForDay(normalizedDay);
                         });
                         _saveEvent(event);
                       },
-                      initialDate: _selectedDay!, // Pass the selected date to EventForm
+                      initialDate:
+                          _selectedDay!, // Pass the selected date to EventForm
                     );
                   },
                 );
               },
-              child: Icon(Icons.add),
               backgroundColor: Colors.white,
               mini: true,
               elevation: 4.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50.0),
               ),
+              child: const Icon(Icons.add),
             ),
           ),
         ],
@@ -210,13 +210,13 @@ class _KalendarState extends State<Kalendar> {
   Widget content() {
     return Column(
       children: [
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Center(
           child: Container(
             width: MediaQuery.of(context).size.width * 0.85,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [Color(0xFF62CFF4), Color(0xFF2C67F2)],
@@ -251,16 +251,16 @@ class _KalendarState extends State<Kalendar> {
                     color: Colors.black,
                     fontSize: 14,
                     fontWeight: FontWeight.w500),
-                markerDecoration: BoxDecoration(
-                    color: Colors.white, shape: BoxShape.circle),
-                markerMargin: EdgeInsets.symmetric(
-                    horizontal: 1.0, vertical: 6.0),
-                selectedDecoration: BoxDecoration(
+                markerDecoration:
+                    const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                markerMargin:
+                    const EdgeInsets.symmetric(horizontal: 1.0, vertical: 6.0),
+                selectedDecoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                todayDecoration: BoxDecoration(
-                  color: Colors.grey,
+                todayDecoration: const BoxDecoration(
+                  color: Color(0xFF023E8A),
                   shape: BoxShape.circle,
                 ),
                 outsideDaysVisible: false,
@@ -272,17 +272,17 @@ class _KalendarState extends State<Kalendar> {
                     fontWeight: FontWeight.bold),
                 formatButtonVisible: false,
                 titleCentered: true,
-                formatButtonTextStyle: TextStyle(color: Colors.white),
+                formatButtonTextStyle: const TextStyle(color: Colors.white),
                 formatButtonDecoration: BoxDecoration(
                   color: Colors.transparent,
                   border: Border.all(color: Colors.white),
                   borderRadius: BorderRadius.circular(12.0),
                 ),
-                leftChevronIcon: Icon(
+                leftChevronIcon: const Icon(
                   Icons.arrow_back_ios,
                   color: Colors.white,
                 ),
-                rightChevronIcon: Icon(
+                rightChevronIcon: const Icon(
                   Icons.arrow_forward_ios,
                   color: Colors.white,
                 ),
@@ -300,7 +300,7 @@ class _KalendarState extends State<Kalendar> {
             ),
           ),
         ),
-        SizedBox(height: 80.0),
+        const SizedBox(height: 80.0),
         Expanded(
           child: ValueListenableBuilder<List<Event>>(
             valueListenable: _selectedEvents,
@@ -335,27 +335,28 @@ class _KalendarState extends State<Kalendar> {
                       key: Key(event.id),
                       direction: DismissDirection.endToStart,
                       onDismissed: (direction) {
-                        _deleteEvent(event.id, _normalizeDate(event.startDate), event);
+                        _deleteEvent(
+                            event.id, _normalizeDate(event.startDate), event);
                       },
                       background: Container(
                         alignment: Alignment.centerRight,
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                             horizontal: 12.0, vertical: 4.0),
                         color: Colors.red,
-                        child: Icon(
+                        child: const Icon(
                           Icons.delete,
                           color: Colors.white,
                         ),
                       ),
                       child: Container(
-                        margin: EdgeInsets.symmetric(
+                        margin: const EdgeInsets.symmetric(
                             horizontal: 12.0, vertical: 4.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.0),
                           color: Colors.white,
                         ),
                         child: ListTile(
-                          contentPadding: EdgeInsets.all(8.0),
+                          contentPadding: const EdgeInsets.all(8.0),
                           leading: CircleAvatar(
                             backgroundColor: event.color,
                             radius: 10,
@@ -371,7 +372,7 @@ class _KalendarState extends State<Kalendar> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(height: 4),
+                              const SizedBox(height: 4),
                               Text(
                                 event.note,
                                 style: GoogleFonts.poppins(
