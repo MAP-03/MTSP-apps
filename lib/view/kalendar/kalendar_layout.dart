@@ -1,13 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/global.dart';
+import 'package:mtsp/services/acara_service.dart';
 import 'package:mtsp/view/kalendar/acara.dart';
 import 'package:mtsp/view/kalendar/acara_form.dart';
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:mtsp/services/acara_service.dart'; 
+
 
 class Kalendar extends StatefulWidget {
   const Kalendar({super.key});
@@ -59,7 +59,6 @@ class _KalendarState extends State<Kalendar> {
   Future<void> _saveEvent(Event event) async {
     try {
       await _acaraService.addEvent(event);
-
     } catch (e) {
       print('Error saving event: $e');
     }
@@ -69,7 +68,7 @@ class _KalendarState extends State<Kalendar> {
     try {
       final loadedEvents = await _acaraService.getEvents();
       setState(() {
-        events.clear();  // Clear the map before loading new events
+        events.clear(); // Clear the map before loading new events
         for (var event in loadedEvents) {
           final day = _normalizeDate(event.startDate);
           if (events.containsKey(day)) {
@@ -95,7 +94,6 @@ class _KalendarState extends State<Kalendar> {
 
   Future<void> _deleteEvent(String eventId, DateTime day, Event event) async {
     try {
-      await _acaraService.deleteEvent(eventId);
       setState(() {
         events[day]?.remove(event);
         if (events[day]?.isEmpty ?? true) {
@@ -103,6 +101,7 @@ class _KalendarState extends State<Kalendar> {
         }
         _selectedEvents.value = _getEventsForDay(day);
       });
+      await _acaraService.deleteEvent(eventId);
     } catch (e) {
       print('Error deleting event: $e');
     }
@@ -126,7 +125,9 @@ class _KalendarState extends State<Kalendar> {
         child: AppBar(
           title: Text('Kalendar',
               style: GoogleFonts.poppins(
-                  fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white)),
           leading: IconButton(
             icon: const Icon(Icons.menu, color: Colors.white, size: 30),
             onPressed: () {
@@ -148,7 +149,7 @@ class _KalendarState extends State<Kalendar> {
       body: Stack(
         children: [
           content(),
-          Positioned( 
+          Positioned(
             bottom: 320,
             right: 76,
             child: FloatingActionButton(
@@ -182,7 +183,8 @@ class _KalendarState extends State<Kalendar> {
                           } else {
                             events[normalizedDay] = [event];
                           }
-                          _selectedEvents.value = _getEventsForDay(normalizedDay);
+                          _selectedEvents.value = _getEventsForDay(
+                              normalizedDay);
                         });
                         _saveEvent(event);
                       },
@@ -249,10 +251,10 @@ class _KalendarState extends State<Kalendar> {
                     color: Colors.black,
                     fontSize: 14,
                     fontWeight: FontWeight.w500),
-                markerDecoration:
-                    BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                markerMargin:
-                    EdgeInsets.symmetric(horizontal: 1.0, vertical: 6.0),
+                markerDecoration: BoxDecoration(
+                    color: Colors.white, shape: BoxShape.circle),
+                markerMargin: EdgeInsets.symmetric(
+                    horizontal: 1.0, vertical: 6.0),
                 selectedDecoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
@@ -315,10 +317,9 @@ class _KalendarState extends State<Kalendar> {
                       Text(
                         'Tiada Acara Harini',
                         style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
                       ),
                     ],
                   ),
@@ -334,7 +335,7 @@ class _KalendarState extends State<Kalendar> {
                       key: Key(event.id),
                       direction: DismissDirection.endToStart,
                       onDismissed: (direction) {
-                        _deleteEvent(event.id, _selectedDay!, event);
+                        _deleteEvent(event.id, _normalizeDate(event.startDate), event);
                       },
                       background: Container(
                         alignment: Alignment.centerRight,
@@ -347,7 +348,8 @@ class _KalendarState extends State<Kalendar> {
                         ),
                       ),
                       child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 4.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.0),
                           color: Colors.white,
@@ -362,10 +364,9 @@ class _KalendarState extends State<Kalendar> {
                           title: Text(
                             "${event.startDate.hour.toString().padLeft(2, '0')}:${event.startDate.minute.toString().padLeft(2, '0')} ${event.startDate.hour >= 12 ? 'PM' : 'AM'} - ${event.endDate.hour.toString().padLeft(2, '0')}:${event.endDate.minute.toString().padLeft(2, '0')} ${event.endDate.hour >= 12 ? 'PM' : 'AM'}",
                             style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
                           ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -374,9 +375,7 @@ class _KalendarState extends State<Kalendar> {
                               Text(
                                 event.note,
                                 style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                ),
+                                    fontSize: 14, color: Colors.black),
                               ),
                             ],
                           ),

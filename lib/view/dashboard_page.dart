@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
     coordinates = Coordinates(1.5638129487418682, 103.61735116456667);
     date = DateTime.now();
     params = CalculationMethod.Malaysia();
-    params.madhab = Madhab.Shafi;
+    params.madhab = Madhab.shafi;
     _fetchEvents();
     
   }
@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
-    prayerTimes = PrayerTimes(coordinates, date, params, precision: true);
+    prayerTimes = PrayerTimes(coordinates: coordinates, date: date, calculationParameters: params, precision: true);
     return Scaffold(
       key: _scaffoldKey,
       appBar: PreferredSize(

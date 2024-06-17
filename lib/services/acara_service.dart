@@ -57,7 +57,7 @@ class AcaraService {
         final doc = await _firestore.collection('Events').doc(eventId).get();
         if (doc.exists && doc.data()?['userId'] == user.email) {
           await _firestore.collection('Events').doc(eventId).delete();
-          showToast(message: 'Event successfully deleted');
+          showToast(message: 'Acara berjaya dipadamkan');
         } else {
           showToast(message: 'No permission to delete this event');
         }

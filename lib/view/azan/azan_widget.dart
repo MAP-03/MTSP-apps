@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 
 import 'package:adhan_dart/adhan_dart.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/global.dart';
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:hijri/hijri_calendar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mtsp/view/azan/waktu_solat.dart';
 
 
@@ -34,12 +33,12 @@ class _AzanState extends State<Azan> {
     coordinates = Coordinates(1.5638129487418682, 103.61735116456667);
     date = DateTime.now();
     params = CalculationMethod.Malaysia();
-    params.madhab = Madhab.Shafi;
+    params.madhab = Madhab.shafi;
   }
   
   @override
   Widget build(BuildContext context) {
-    prayerTimes = PrayerTimes(coordinates, date, params, precision: true);
+    prayerTimes = PrayerTimes(coordinates: coordinates, date: date, calculationParameters: params, precision: true);
     return Scaffold(
       key: _scaffoldKey,
       appBar: PreferredSize(
@@ -107,7 +106,7 @@ class _AzanState extends State<Azan> {
                       child: InkWell(
                         onTap: () => setState(() {
                           date = date.subtract( const Duration(days: 1));
-                          prayerTimes = PrayerTimes(coordinates, date, params, precision: true);
+                          prayerTimes = PrayerTimes(coordinates: coordinates, date: date, calculationParameters: params, precision: true);
                           _hijriCalendar = HijriCalendar.fromDate(date);
                         }),
                         child: const Icon(
@@ -131,7 +130,7 @@ class _AzanState extends State<Azan> {
                       child: InkWell(
                         onTap: () => setState(() {
                           date = date.add(const Duration(days: 1));
-                          prayerTimes = PrayerTimes(coordinates, date, params, precision: true);
+                          prayerTimes = PrayerTimes(coordinates: coordinates, date: date, calculationParameters: params, precision: true);
                            _hijriCalendar = HijriCalendar.fromDate(date);
                         }),
                         child: const Icon(
@@ -201,6 +200,5 @@ class _AzanState extends State<Azan> {
     );
   }
 }
-
 
 
