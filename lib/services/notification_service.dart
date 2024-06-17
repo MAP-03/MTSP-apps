@@ -115,7 +115,7 @@ class NotificationService {
     }
 
     // Schedule a reminder 10 minutes before the azan time
-    tz.TZDateTime reminderTime = notificationTime.subtract(const Duration(hours: 5, minutes: 46));
+    tz.TZDateTime reminderTime = notificationTime.subtract(const Duration(minutes: 10));
     if (reminderTime.isAfter(now)) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
         (azanName + '_reminder').hashCode,
@@ -130,11 +130,11 @@ class NotificationService {
     }
 
     // Debug notification to verify that the alarm is working
-    tz.TZDateTime debugTime = now.add(const Duration(seconds: 10));
+    tz.TZDateTime debugTime = now.add(const Duration(minutes: 2));
     await flutterLocalNotificationsPlugin.zonedSchedule(
       (azanName + '_debug').hashCode,
       'Debug Notification',
-      '$azanName alarm is set and will notify in 10 seconds.',
+      '$azanName alarm is set and will notify in 2 minutes.',
       debugTime,
       platformChannelSpecifics,
       androidAllowWhileIdle: true,
