@@ -1,27 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mtsp/view/kalendar/event.dart';
+import 'package:mtsp/view/kalendar/acara.dart';
+import 'package:uuid/uuid.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 
 class EventForm extends StatefulWidget {
   final Function(Event) onSave;
+  final DateTime initialDate;
 
-  EventForm({required this.onSave});
+  const EventForm({super.key, required this.onSave, required this.initialDate});
 
   @override
   _EventFormState createState() => _EventFormState();
 }
 
 class _EventFormState extends State<EventForm> {
-  TextEditingController _noteController = TextEditingController();
-  DateTime _eventDate = DateTime.now();
+  final TextEditingController _noteController = TextEditingController();
+  late DateTime _eventDate;
   TimeOfDay _startTime = TimeOfDay.now();
   TimeOfDay _endTime = TimeOfDay(
-  hour: (TimeOfDay.now().hour + 1) % 24, // Ensure it wraps around 24 hours
-  minute: TimeOfDay.now().minute,
+    hour: (TimeOfDay.now().hour + 1) % 24, // Ensure it wraps around 24 hours
+    minute: TimeOfDay.now().minute,
   );
   bool _alarm = false;
   Color _selectedColor = Colors.blue;
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _eventDate = widget.initialDate;
+  }
 
   @override
   void dispose() {
@@ -85,7 +94,9 @@ class _EventFormState extends State<EventForm> {
                               children: [
                                 Text("Mula",
                                     style: GoogleFonts.poppins(
-                                        color: Colors.black, fontWeight: FontWeight.bold)),
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    )),
                                 Container(
                                   padding: EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
@@ -133,7 +144,7 @@ class _EventFormState extends State<EventForm> {
                               children: [
                                 Text("Tamat",
                                     style: GoogleFonts.poppins(
-                                        color: Colors.black, fontWeight: FontWeight.bold)),
+                                      color: Colors.black, fontWeight: FontWeight.bold)),
                                 Container(
                                   padding: EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
@@ -312,17 +323,34 @@ class _EventFormState extends State<EventForm> {
                             _endTime.minute,
                           );
 
-                          final event = Event(
-                            _noteController.text,
-                            eventStartDateTime,
-                            eventEndDateTime,
-                            _selectedColor,
-                          );
+                          final user = FirebaseAuth.instance.currentUser; // Get current user
+                          if (user != null) {
+                            final event = Event(
+                              id: Uuid().v4(),
+                              note: _noteController.text,
+                              startDate: eventStartDateTime,
+                              endDate: eventEndDateTime,
+                              color: _selectedColor,
+                              userId: user.email!, // Set userId to current user's email
+                            );
 
-                          widget.onSave(event);
+                            widget.onSave(event);
 
-                          Navigator.of(context).pop();
-                          _noteController.clear();
+                            Navigator.of(context).pop();
+                            _noteController.clear();
+                          } else {
+                            // Handle case where user is not logged in
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'User not logged in',
+                                  style: GoogleFonts.poppins(color: Colors.white),
+                                ),
+                                backgroundColor: Colors.red,
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(

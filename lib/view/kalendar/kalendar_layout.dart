@@ -1,12 +1,13 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/global.dart';
-import 'package:mtsp/view/kalendar/event.dart';
-import 'package:mtsp/view/kalendar/event_form.dart';
+import 'package:mtsp/services/acara_service.dart';
+import 'package:mtsp/view/kalendar/acara.dart';
+import 'package:mtsp/view/kalendar/acara_form.dart';
 import 'package:mtsp/widgets/drawer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
+
 
 class Kalendar extends StatefulWidget {
   const Kalendar({super.key});
@@ -21,21 +22,20 @@ class _KalendarState extends State<Kalendar> {
   DateTime? _selectedDay;
   Map<DateTime, List<Event>> events = {};
   late final ValueNotifier<List<Event>> _selectedEvents;
+  bool _isAscending = true;
+  final AcaraService _acaraService = AcaraService(); // Initialize AcaraService
 
   @override
   void initState() {
     super.initState();
-    _selectedDay = null; // Initially, no day is selected
+    _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier([]);
-    _loadEvents().then((_) {
-      setState(() {
-        _selectedEvents.value = _getEventsForDay(_focusedDay);
-      });
-    });
+    _loadEvents();
   }
 
   @override
   void dispose() {
+    _selectedEvents.dispose();
     super.dispose();
   }
 
@@ -48,58 +48,72 @@ class _KalendarState extends State<Kalendar> {
   }
 
   List<Event> _getEventsForDay(DateTime day) {
-    return events[day] ?? [];
+    final normalizedDay = _normalizeDate(day);
+    List<Event> dayEvents = events[normalizedDay] ?? [];
+    dayEvents.sort((a, b) => _isAscending
+        ? a.startDate.compareTo(b.startDate)
+        : b.startDate.compareTo(a.startDate));
+    return dayEvents;
   }
 
-  Future<void> _saveEvents() async {
-    final prefs = await SharedPreferences.getInstance();
-    final Map<String, List<Map<String, dynamic>>> jsonEvents = {};
-    events.forEach((key, value) {
-      jsonEvents[key.toIso8601String()] =
-          value.map((event) => event.toJson()).toList();
-    });
-    prefs.setString('events', jsonEncode(jsonEvents));
+  Future<void> _saveEvent(Event event) async {
+    try {
+      await _acaraService.addEvent(event);
+    } catch (e) {
+      print('Error saving event: $e');
+    }
   }
 
   Future<void> _loadEvents() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? jsonString = prefs.getString('events');
-    if (jsonString != null) {
-      final Map<String, dynamic> jsonEvents = jsonDecode(jsonString);
-      jsonEvents.forEach((key, value) {
-        final DateTime date = DateTime.parse(key);
-        final List<Event> eventList =
-            (value as List).map((e) => Event.fromJson(e)).toList();
-        events[date] = eventList;
+    try {
+      final loadedEvents = await _acaraService.getEvents();
+      setState(() {
+        events.clear(); // Clear the map before loading new events
+        for (var event in loadedEvents) {
+          final day = _normalizeDate(event.startDate);
+          if (events.containsKey(day)) {
+            events[day]!.add(event);
+          } else {
+            events[day] = [event];
+          }
+        }
+        if (_selectedDay != null) {
+          _selectedEvents.value = _getEventsForDay(_selectedDay!);
+        } else {
+          _selectedEvents.value = _getEventsForDay(_focusedDay);
+        }
       });
+    } catch (e) {
+      print('Error loading events: $e');
     }
-    setState(() {
-      _selectedEvents.value = _getEventsForDay(_focusedDay);
-    });
   }
 
-  void _deleteEvent(DateTime day, Event event) {
+  DateTime _normalizeDate(DateTime date) {
+    return DateTime(date.year, date.month, date.day);
+  }
+
+  Future<void> _deleteEvent(String eventId, DateTime day, Event event) async {
+    try {
+      setState(() {
+        events[day]?.remove(event);
+        if (events[day]?.isEmpty ?? true) {
+          events.remove(day);
+        }
+        _selectedEvents.value = _getEventsForDay(day);
+      });
+      await _acaraService.deleteEvent(eventId);
+    } catch (e) {
+      print('Error deleting event: $e');
+    }
+  }
+
+  void _toggleSortOrder() {
     setState(() {
-      events[day]?.remove(event);
-      if (events[day]?.isEmpty ?? true) {
-        events.remove(day);
+      _isAscending = !_isAscending;
+      if (_selectedDay != null) {
+        _selectedEvents.value = _getEventsForDay(_selectedDay!);
       }
     });
-    _selectedEvents.value = _getEventsForDay(day);
-    _saveEvents();
-  }
-
-  void _showSelectDateMessage(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Sila pilih tarikh dahulu sebelum menambah acara',
-          style: GoogleFonts.poppins(color: Colors.white, fontSize: 13), // Optional: change text color
-        ),
-        backgroundColor: Colors.blue, // Change to your desired background color
-        duration: Duration(seconds: 2),
-      ),
-    );
   }
 
   @override
@@ -137,32 +151,47 @@ class _KalendarState extends State<Kalendar> {
           content(),
           Positioned(
             bottom: 320,
+            right: 76,
+            child: FloatingActionButton(
+              heroTag: 'sortButton',
+              onPressed: _toggleSortOrder,
+              child: Icon(_isAscending ? Icons.sort : Icons.sort_rounded),
+              backgroundColor: Colors.white,
+              mini: true,
+              elevation: 4.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50.0),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 320,
             right: 16,
             child: FloatingActionButton(
+              heroTag: 'addButton',
               onPressed: () {
-                if (_selectedDay == null) {
-                  _showSelectDateMessage(context);
-                } else {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (context) {
-                      return EventForm(
-                        onSave: (event) {
-                          setState(() {
-                            if (events.containsKey(_selectedDay)) {
-                              events[_selectedDay!]!.add(event);
-                            } else {
-                              events[_selectedDay!] = [event];
-                            }
-                            _selectedEvents.value = _getEventsForDay(_selectedDay!);
-                          });
-                          _saveEvents();
-                        },
-                      );
-                    },
-                  );
-                }
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) {
+                    return EventForm(
+                      onSave: (event) {
+                        setState(() {
+                          final normalizedDay = _normalizeDate(_selectedDay!);
+                          if (events.containsKey(normalizedDay)) {
+                            events[normalizedDay]!.add(event);
+                          } else {
+                            events[normalizedDay] = [event];
+                          }
+                          _selectedEvents.value = _getEventsForDay(
+                              normalizedDay);
+                        });
+                        _saveEvent(event);
+                      },
+                      initialDate: _selectedDay!, // Pass the selected date to EventForm
+                    );
+                  },
+                );
               },
               child: Icon(Icons.add),
               backgroundColor: Colors.white,
@@ -222,10 +251,10 @@ class _KalendarState extends State<Kalendar> {
                     color: Colors.black,
                     fontSize: 14,
                     fontWeight: FontWeight.w500),
-                markerDecoration:
-                    BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                markerMargin:
-                    EdgeInsets.symmetric(horizontal: 1.0, vertical: 6.0),
+                markerDecoration: BoxDecoration(
+                    color: Colors.white, shape: BoxShape.circle),
+                markerMargin: EdgeInsets.symmetric(
+                    horizontal: 1.0, vertical: 6.0),
                 selectedDecoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
@@ -279,21 +308,18 @@ class _KalendarState extends State<Kalendar> {
               if (value.isEmpty) {
                 return Center(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Image.asset(
-                        'assets/images/uai.jpg', // Make sure to add your image in the assets folder and declare it in pubspec.yaml
-                        width: 100,
-                        height: 100,
+                      SvgPicture.asset(
+                        'assets/svg/kalendar.svg',
+                        width: 200,
                       ),
-                      SizedBox(height: 20),
                       Text(
                         'Tiada Acara Harini',
                         style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
                       ),
                     ],
                   ),
@@ -306,10 +332,10 @@ class _KalendarState extends State<Kalendar> {
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(12.0),
                     child: Dismissible(
-                      key: Key(event.startDate.toString() + event.note),
+                      key: Key(event.id),
                       direction: DismissDirection.endToStart,
                       onDismissed: (direction) {
-                        _deleteEvent(_selectedDay!, event);
+                        _deleteEvent(event.id, _normalizeDate(event.startDate), event);
                       },
                       background: Container(
                         alignment: Alignment.centerRight,
@@ -322,7 +348,8 @@ class _KalendarState extends State<Kalendar> {
                         ),
                       ),
                       child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 4.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.0),
                           color: Colors.white,
@@ -337,10 +364,9 @@ class _KalendarState extends State<Kalendar> {
                           title: Text(
                             "${event.startDate.hour.toString().padLeft(2, '0')}:${event.startDate.minute.toString().padLeft(2, '0')} ${event.startDate.hour >= 12 ? 'PM' : 'AM'} - ${event.endDate.hour.toString().padLeft(2, '0')}:${event.endDate.minute.toString().padLeft(2, '0')} ${event.endDate.hour >= 12 ? 'PM' : 'AM'}",
                             style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
                           ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -349,9 +375,7 @@ class _KalendarState extends State<Kalendar> {
                               Text(
                                 event.note,
                                 style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                ),
+                                    fontSize: 14, color: Colors.black),
                               ),
                             ],
                           ),
