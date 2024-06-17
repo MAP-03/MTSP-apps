@@ -10,15 +10,15 @@ import 'package:mtsp/view/azan/waktu_solat.dart';
 
 
 class Azan extends StatefulWidget {
-  
   const Azan({Key? key}) : super(key: key);
 
   @override
   State<Azan> createState() => _AzanState();
 }
 
-List months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-List hijri=["Muharram","Safar","Rabi'ul Awwal","Rabi'ul Akhir","Jumadal Ula","Jumadal Akhir","Rajab","Sha'ban","Ramadan","Shawwal","Dhul Qa'dah","Dhul Hijjah"];
+List months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+List hijri = ["Muharram", "Safar", "Rabi'ul Awwal", "Rabi'ul Akhir", "Jumadal Ula", "Jumadal Akhir", "Rajab", "Sha'ban", "Ramadan", "Shawwal", "Dhul Qa'dah", "Dhul Hijjah"];
+
 class _AzanState extends State<Azan> {
   HijriCalendar _hijriCalendar = HijriCalendar.now();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -26,7 +26,7 @@ class _AzanState extends State<Azan> {
   late DateTime date;
   late Coordinates coordinates;
   late CalculationParameters params;
-  
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +35,7 @@ class _AzanState extends State<Azan> {
     params = CalculationMethod.Malaysia();
     params.madhab = Madhab.shafi;
   }
-  
+
   @override
   Widget build(BuildContext context) {
     prayerTimes = PrayerTimes(coordinates: coordinates, date: date, calculationParameters: params, precision: true);
@@ -75,18 +75,18 @@ class _AzanState extends State<Azan> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center, // Align the column in the center vertically
           children: [
-            Container( // Wrap the text with a container
-            padding: const EdgeInsets.only(left: 10), 
-        alignment: Alignment.centerLeft, // Align the text to the left
-        child: const Text(
-          "Lokasi:\nPulai, Johor Bahru",
-          style: TextStyle(
-            fontSize: 15,
-            color: Colors.white,
-          ),
-        ),
-      ),
-      const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.only(left: 10),
+              alignment: Alignment.centerLeft, // Align the text to the left
+              child: const Text(
+                "Lokasi:\nPulai, Johor Bahru",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
             Container(
               width: 300,
               height: 70,
@@ -105,7 +105,7 @@ class _AzanState extends State<Azan> {
                     Expanded(
                       child: InkWell(
                         onTap: () => setState(() {
-                          date = date.subtract( const Duration(days: 1));
+                          date = date.subtract(const Duration(days: 1));
                           prayerTimes = PrayerTimes(coordinates: coordinates, date: date, calculationParameters: params, precision: true);
                           _hijriCalendar = HijriCalendar.fromDate(date);
                         }),
@@ -117,13 +117,13 @@ class _AzanState extends State<Azan> {
                     ),
                     Center(
                       child: Text(
-                        "${date.day} ${months[date.month-1]} ${date.year}\n${_hijriCalendar.hDay} ${hijri[_hijriCalendar.hMonth-1]}  ${_hijriCalendar.hYear} AH",
+                        "${date.day} ${months[date.month - 1]} ${date.year}\n${_hijriCalendar.hDay} ${hijri[_hijriCalendar.hMonth - 1]}  ${_hijriCalendar.hYear} AH",
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
-                         textAlign: TextAlign.center,
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     Expanded(
@@ -131,7 +131,7 @@ class _AzanState extends State<Azan> {
                         onTap: () => setState(() {
                           date = date.add(const Duration(days: 1));
                           prayerTimes = PrayerTimes(coordinates: coordinates, date: date, calculationParameters: params, precision: true);
-                           _hijriCalendar = HijriCalendar.fromDate(date);
+                          _hijriCalendar = HijriCalendar.fromDate(date);
                         }),
                         child: const Icon(
                           Icons.arrow_forward_ios,
@@ -145,52 +145,50 @@ class _AzanState extends State<Azan> {
             ),
             const SizedBox(height: 30),
             PrayTime(
-              azanTime:timePresenter(prayerTimes.fajr!.toLocal()),
+              azanTime: timePresenter(prayerTimes.fajr!.toLocal()),
               azanName: 'Subuh',
               isAlarmOn: true,
-              isCurrentPrayer:prayerTimes.fajr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.sunrise!.toLocal()),
+              isCurrentPrayer: prayerTimes.fajr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.sunrise!.toLocal()),
               isNextPrayer: false,
               prayerTimes: prayerTimes,
-             
-              
             ),
             PrayTime(
-              azanTime:timePresenter(prayerTimes.sunrise!.toLocal()),            
+              azanTime: timePresenter(prayerTimes.sunrise!.toLocal()),
               azanName: 'Syuruk',
               isAlarmOn: true,
-              isCurrentPrayer:prayerTimes.sunrise!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.dhuhr!.toLocal()),
-              isNextPrayer:prayerTimes.fajr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.sunrise!.toLocal()),
+              isCurrentPrayer: prayerTimes.sunrise!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.dhuhr!.toLocal()),
+              isNextPrayer: prayerTimes.fajr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.sunrise!.toLocal()),
               prayerTimes: prayerTimes,
             ),
             PrayTime(
-              azanTime:timePresenter(prayerTimes.dhuhr!.toLocal()),
+              azanTime: timePresenter(prayerTimes.dhuhr!.toLocal()),
               azanName: 'Zohor',
               isAlarmOn: true,
-              isCurrentPrayer:prayerTimes.dhuhr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.asr!.toLocal()),
-              isNextPrayer:prayerTimes.sunrise!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.dhuhr!.toLocal()),
+              isCurrentPrayer: prayerTimes.dhuhr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.asr!.toLocal()),
+              isNextPrayer: prayerTimes.sunrise!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.dhuhr!.toLocal()),
               prayerTimes: prayerTimes,
             ),
-             PrayTime(
-              azanTime:timePresenter(prayerTimes.asr!.toLocal()),
+            PrayTime(
+              azanTime: timePresenter(prayerTimes.asr!.toLocal()),
               azanName: 'Asar',
               isAlarmOn: true,
-              isCurrentPrayer:prayerTimes.asr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.maghrib!.toLocal()),
-              isNextPrayer:prayerTimes.dhuhr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.asr!.toLocal()),
+              isCurrentPrayer: prayerTimes.asr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.maghrib!.toLocal()),
+              isNextPrayer: prayerTimes.dhuhr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.asr!.toLocal()),
               prayerTimes: prayerTimes,
             ),
-             PrayTime(
-              azanTime:timePresenter(prayerTimes.maghrib!.toLocal()),
+            PrayTime(
+              azanTime: timePresenter(prayerTimes.maghrib!.toLocal()),
               azanName: 'Maghrib',
               isAlarmOn: true,
-              isCurrentPrayer:prayerTimes.maghrib!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.isha!.toLocal()),
+              isCurrentPrayer: prayerTimes.maghrib!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.isha!.toLocal()),
               isNextPrayer: prayerTimes.asr!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.maghrib!.toLocal()),
               prayerTimes: prayerTimes,
             ),
-             PrayTime(
-              azanTime:timePresenter(prayerTimes.isha!.toLocal()),
+            PrayTime(
+              azanTime: timePresenter(prayerTimes.isha!.toLocal()),
               azanName: 'Isyak',
               isAlarmOn: true,
-              isCurrentPrayer:prayerTimes.isha!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.fajr!.add(const Duration(days: 1)).toLocal()),
+              isCurrentPrayer: prayerTimes.isha!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.fajr!.add(const Duration(days: 1)).toLocal()),
               isNextPrayer: prayerTimes.maghrib!.toLocal().isBefore(DateTime.now()) && DateTime.now().isBefore(prayerTimes.isha!.toLocal()),
               prayerTimes: prayerTimes,
             ),
@@ -200,5 +198,6 @@ class _AzanState extends State<Azan> {
     );
   }
 }
+
 
 

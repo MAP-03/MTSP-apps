@@ -6,7 +6,8 @@ class Event {
   final DateTime startDate;
   final DateTime endDate;
   final Color color;
-  final String userId; // Add userId field
+  final String userId;
+  final DateTime creationDate; // Add creationDate field
 
   Event({
     required this.id,
@@ -14,7 +15,8 @@ class Event {
     required this.startDate,
     required this.endDate,
     required this.color,
-    required this.userId, // Initialize userId
+    required this.userId,
+    required this.creationDate, // Initialize creationDate
   });
 
   Map<String, dynamic> toJson() => {
@@ -23,7 +25,8 @@ class Event {
         'startDate': startDate.toIso8601String(),
         'endDate': endDate.toIso8601String(),
         'color': color.value,
-        'userId': userId, // Add userId to JSON
+        'userId': userId,
+        'creationDate': creationDate.toIso8601String(), // Add to JSON
       };
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -33,7 +36,8 @@ class Event {
       startDate: DateTime.parse(json['startDate']),
       endDate: DateTime.parse(json['endDate']),
       color: Color(json['color']),
-      userId: json['userId'] ?? '', // Initialize userId from JSON
+      userId: json['userId'] ?? '',
+      creationDate: DateTime.parse(json['creationDate']), // Initialize from JSON
     );
   }
 
