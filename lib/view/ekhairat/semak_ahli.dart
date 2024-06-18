@@ -145,13 +145,14 @@ class _SemakAhliState extends State<SemakAhli> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: ahli!.status == 'PENDING' ? Color(0xffE8D427) : ahli!.status == 'EXPIRED' ? Colors.red : Colors.green,
+                  color: ahli!.status == 'PENDING' ? pendingColor : ahli!.status == 'EXPIRED' ? expiredColor : activeColor,
                   borderRadius: BorderRadius.circular(25),
                 ),
                 child: Text(ahli!.status, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black, letterSpacing: 1.8))
               ),
             ],
           ),
+          SizedBox(height: 10),
         ],
       ),
     );
