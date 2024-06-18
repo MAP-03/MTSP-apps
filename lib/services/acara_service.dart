@@ -39,7 +39,7 @@ Future<List<Event>> getEvents() async {
           .where('userId', isEqualTo: user.email)
           .get();
       return snapshot.docs
-          .map((doc) => Event.fromJson(doc.data() as Map<String, dynamic>))
+          .map((doc) => Event.fromJson(doc.data()))
           .toList();
     } else {
       showToast(message: 'User not logged in');

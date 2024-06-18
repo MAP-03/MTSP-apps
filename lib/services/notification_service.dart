@@ -1,7 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mtsp/view/kalendar/acara.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:adhan_dart/adhan_dart.dart';
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -36,6 +35,9 @@ class NotificationService {
     }
   }
 
+  //
+  // EVENT NOTIFICATIONS
+  //
   Future<void> scheduleEventNotification(Event event) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
@@ -84,6 +86,9 @@ class NotificationService {
     }
   }
 
+  //
+  // AZAN NOTIFICATIONS
+  //
   Future<void> scheduleAzanNotification(String azanName, DateTime azanTime) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
@@ -111,6 +116,7 @@ class NotificationService {
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time, // Schedule daily
       );
     }
 
@@ -126,6 +132,7 @@ class NotificationService {
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time, // Schedule daily
       );
     }
 

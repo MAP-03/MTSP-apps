@@ -195,19 +195,19 @@ class _PrayTimeState extends State<PrayTime> {
     );
   }
 }
-String timePresenter(DateTime dateTime){
-  bool isPM = dateTime.hour >= 12; // Check if hour is greater than or equal to 12 to determine PM
-  
-  int hour = isPM ? dateTime.hour - 12 : dateTime.hour % 12; // Adjust hour for PM if necessary
-  if(hour == 0) hour = 12; // Handle midnight (0 hour)
-  
-  int minute = dateTime.minute;
-  String hourInString = hour.toString().padLeft(2, '0'); // Pad single digit hours with leading zero
-  String minuteInString = minute.toString().padLeft(2, '0'); // Pad single digit minutes with leading zero
-  
-  return "$hourInString:$minuteInString ${isPM ? 'PM' : 'AM'}"; // Use isPM flag to determine AM/PM
-}
 
+String timePresenter(DateTime dateTime) {
+  bool isPM = dateTime.hour >= 12;
+
+  int hour = isPM ? dateTime.hour - 12 : dateTime.hour % 12;
+  if (hour == 0) hour = 12;
+
+  int minute = dateTime.minute;
+  String hourInString = hour.toString().padLeft(2, '0');
+  String minuteInString = minute.toString().padLeft(2, '0');
+
+  return "$hourInString:$minuteInString ${isPM ? 'PM' : 'AM'}";
+}
 
 String getNextPrayerTime(PrayerTimes prayerTimes) {
   DateTime now = DateTime.now();
@@ -225,7 +225,6 @@ String getNextPrayerTime(PrayerTimes prayerTimes) {
   } else if (now.isBefore(prayerTimes.isha!)) {
     return timePresenter(prayerTimes.isha!.toLocal());
   } else {
-    // If it's after Isha, return Fajr of the next day
     return timePresenter(prayerTimes.fajr!.add(const Duration(days: 1)).toLocal());
   }
 }
