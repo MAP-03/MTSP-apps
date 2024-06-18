@@ -37,39 +37,45 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
         Center(
           child: SafeArea(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 100,
-              ),
-              Image.asset(
-                'assets/images/mtsp_logo.png',
-                height: 200,
-              ),
-              const SizedBox(
-                height: 200,
-              ),
-              RichText(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 100,
+                ),
+                Image.asset(
+                  'assets/images/mtsp_logo.png',
+                  height: 200,
+                ),
+                const SizedBox(
+                  height: 200,
+                ),
+                RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
-                      text: "Jika syurga yang dicari,\nJadikanlah ",
-                      style: GoogleFonts.manrope(
-                          fontSize: 24,
+                    text: "Jika syurga yang dicari,\nJadikanlah ",
+                    style: GoogleFonts.manrope(
+                      fontSize: 24,
+                      color: Colors.black,
+                      letterSpacing: 3.5 / 100,
+                      height: 152 / 100,
+                    ),
+                    children: const [
+                      TextSpan(
+                        text: "Masjid",
+                        style: TextStyle(
                           color: Colors.black,
-                          letterSpacing: 3.5 / 100,
-                          height: 152 / 100),
-                      children: const [
-                        TextSpan(
-                            text: "Masjid",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w800)),
-                        TextSpan(text: "\nteman sejati")
-                      ]))
-            ],
-          )),
-        )
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      TextSpan(text: "\nteman sejati"),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ]),
     );
   }
