@@ -1,10 +1,12 @@
+// kalendar_layout.dart (modified part)
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/global.dart';
-import 'package:mtsp/services/acara_service.dart';
 import 'package:mtsp/view/kalendar/acara.dart';
 import 'package:mtsp/view/kalendar/acara_form.dart';
+import 'package:mtsp/view/kalendar/kalendar_logic.dart'; // Import the logic
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -17,102 +19,18 @@ class Kalendar extends StatefulWidget {
 
 class _KalendarState extends State<Kalendar> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
-  Map<DateTime, List<Event>> events = {};
-  late final ValueNotifier<List<Event>> _selectedEvents;
-  bool _isAscending = true;
-  final AcaraService _acaraService = AcaraService(); // Initialize AcaraService
+  late final KalendarLogic kalendarLogic;
 
   @override
   void initState() {
     super.initState();
-    _selectedDay = _focusedDay;
-    _selectedEvents = ValueNotifier([]);
-    _loadEvents();
+    kalendarLogic = KalendarLogic();
   }
 
   @override
   void dispose() {
-    _selectedEvents.dispose();
+    kalendarLogic.selectedEvents.dispose();
     super.dispose();
-  }
-
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    setState(() {
-      _selectedDay = selectedDay;
-      _focusedDay = focusedDay;
-      _selectedEvents.value = _getEventsForDay(selectedDay);
-    });
-  }
-
-  List<Event> _getEventsForDay(DateTime day) {
-    final normalizedDay = _normalizeDate(day);
-    List<Event> dayEvents = events[normalizedDay] ?? [];
-    dayEvents.sort((a, b) => _isAscending
-        ? a.startDate.compareTo(b.startDate)
-        : b.startDate.compareTo(a.startDate));
-    return dayEvents;
-  }
-
-  Future<void> _saveEvent(Event event) async {
-    try {
-      await _acaraService.addEvent(event);
-    } catch (e) {
-      print('Error saving event: $e');
-    }
-  }
-
-  Future<void> _loadEvents() async {
-    try {
-      final loadedEvents = await _acaraService.getEvents();
-      setState(() {
-        events.clear(); // Clear the map before loading new events
-        for (var event in loadedEvents) {
-          final day = _normalizeDate(event.startDate);
-          if (events.containsKey(day)) {
-            events[day]!.add(event);
-          } else {
-            events[day] = [event];
-          }
-        }
-        if (_selectedDay != null) {
-          _selectedEvents.value = _getEventsForDay(_selectedDay!);
-        } else {
-          _selectedEvents.value = _getEventsForDay(_focusedDay);
-        }
-      });
-    } catch (e) {
-      print('Error loading events: $e');
-    }
-  }
-
-  DateTime _normalizeDate(DateTime date) {
-    return DateTime(date.year, date.month, date.day);
-  }
-
-  Future<void> _deleteEvent(String eventId, DateTime day, Event event) async {
-    try {
-      setState(() {
-        events[day]?.remove(event);
-        if (events[day]?.isEmpty ?? true) {
-          events.remove(day);
-        }
-        _selectedEvents.value = _getEventsForDay(day);
-      });
-      await _acaraService.deleteEvent(eventId);
-    } catch (e) {
-      print('Error deleting event: $e');
-    }
-  }
-
-  void _toggleSortOrder() {
-    setState(() {
-      _isAscending = !_isAscending;
-      if (_selectedDay != null) {
-        _selectedEvents.value = _getEventsForDay(_selectedDay!);
-      }
-    });
   }
 
   @override
@@ -153,14 +71,19 @@ class _KalendarState extends State<Kalendar> {
             right: 76,
             child: FloatingActionButton(
               heroTag: 'sortButton',
-              onPressed: _toggleSortOrder,
+              onPressed: () {
+                setState(() {
+                  kalendarLogic.toggleSortOrder();
+                });
+              },
               backgroundColor: Colors.white,
               mini: true,
               elevation: 4.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50.0),
               ),
-              child: Icon(_isAscending ? Icons.sort : Icons.sort_rounded),
+              child: Icon(
+                  kalendarLogic.isAscending ? Icons.sort : Icons.sort_rounded),
             ),
           ),
           Positioned(
@@ -176,19 +99,19 @@ class _KalendarState extends State<Kalendar> {
                     return EventForm(
                       onSave: (event) {
                         setState(() {
-                          final normalizedDay = _normalizeDate(_selectedDay!);
-                          if (events.containsKey(normalizedDay)) {
-                            events[normalizedDay]!.add(event);
+                          final normalizedDay = kalendarLogic.normalizeDate(
+                              kalendarLogic.selectedDay!);
+                          if (kalendarLogic.events.containsKey(normalizedDay)) {
+                            kalendarLogic.events[normalizedDay]!.add(event);
                           } else {
-                            events[normalizedDay] = [event];
+                            kalendarLogic.events[normalizedDay] = [event];
                           }
-                          _selectedEvents.value =
-                              _getEventsForDay(normalizedDay);
+                          kalendarLogic.selectedEvents.value =
+                              kalendarLogic.getEventsForDay(normalizedDay);
                         });
-                        _saveEvent(event);
+                        kalendarLogic.saveEvent(event);
                       },
-                      initialDate:
-                          _selectedDay!, // Pass the selected date to EventForm
+                      initialDate: kalendarLogic.selectedDay!, // Pass the selected date to EventForm
                     );
                   },
                 );
@@ -225,15 +148,17 @@ class _KalendarState extends State<Kalendar> {
             child: TableCalendar<Event>(
               rowHeight: 37,
               availableGestures: AvailableGestures.all,
-              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-              focusedDay: _focusedDay,
+              selectedDayPredicate: (day) =>
+                  isSameDay(kalendarLogic.selectedDay, day),
+              focusedDay: kalendarLogic.focusedDay,
               firstDay: DateTime.utc(2010, 10, 16),
               lastDay: DateTime.utc(2030, 3, 14),
-              onDaySelected: _onDaySelected,
-              eventLoader: _getEventsForDay,
-              onPageChanged: (focusedDay) {
-                _focusedDay = focusedDay;
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  kalendarLogic.onDaySelected(selectedDay, focusedDay);
+                });
               },
+              eventLoader: kalendarLogic.getEventsForDay,
               calendarStyle: CalendarStyle(
                 defaultTextStyle: GoogleFonts.poppins(
                     color: Colors.white,
@@ -251,8 +176,8 @@ class _KalendarState extends State<Kalendar> {
                     color: Colors.black,
                     fontSize: 14,
                     fontWeight: FontWeight.w500),
-                markerDecoration:
-                    const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                markerDecoration: const BoxDecoration(
+                    color: Colors.white, shape: BoxShape.circle),
                 markerMargin:
                     const EdgeInsets.symmetric(horizontal: 1.0, vertical: 6.0),
                 selectedDecoration: const BoxDecoration(
@@ -300,10 +225,10 @@ class _KalendarState extends State<Kalendar> {
             ),
           ),
         ),
-        const SizedBox(height: 80.0),
+        const SizedBox(height: 55),
         Expanded(
           child: ValueListenableBuilder<List<Event>>(
-            valueListenable: _selectedEvents,
+            valueListenable: kalendarLogic.selectedEvents,
             builder: (context, value, _) {
               if (value.isEmpty) {
                 return Center(
@@ -325,70 +250,90 @@ class _KalendarState extends State<Kalendar> {
                   ),
                 );
               }
-              return ListView.builder(
-                itemCount: value.length,
-                itemBuilder: (context, index) {
-                  final event = value[index];
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(12.0),
-                    child: Dismissible(
-                      key: Key(event.id),
-                      direction: DismissDirection.endToStart,
-                      onDismissed: (direction) {
-                        _deleteEvent(
-                            event.id, _normalizeDate(event.startDate), event);
-                      },
-                      background: Container(
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 4.0),
-                        color: Colors.red,
-                        child: const Icon(
-                          Icons.delete,
-                          color: Colors.white,
-                        ),
-                      ),
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 4.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12.0),
-                          color: Colors.white,
-                        ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(8.0),
-                          leading: CircleAvatar(
-                            backgroundColor: event.color,
-                            radius: 10,
-                            child: Container(),
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: value.length,
+                      itemBuilder: (context, index) {
+                        final event = value[index];
+                        return Dismissible(
+                          key: Key(event.id),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (direction) {
+                            setState(() {
+                              kalendarLogic.deleteEvent(
+                                  event.id,
+                                  kalendarLogic
+                                      .normalizeDate(event.startDate),
+                                  event);
+                            });
+                          },
+                          background: Container(
+                            margin: const EdgeInsets.all(12.0),
+                            padding: const EdgeInsets.all(24.0),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            alignment: Alignment.centerRight,
+                            child: const Icon(Icons.delete,
+                                color: Colors.white, size: 30),
                           ),
-                          title: Text(
-                            "${event.startDate.hour.toString().padLeft(2, '0')}:${event.startDate.minute.toString().padLeft(2, '0')} ${event.startDate.hour >= 12 ? 'PM' : 'AM'} - ${event.endDate.hour.toString().padLeft(2, '0')}:${event.endDate.minute.toString().padLeft(2, '0')} ${event.endDate.hour >= 12 ? 'PM' : 'AM'}",
-                            style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 4),
-                              Text(
-                                event.note,
-                                style: GoogleFonts.poppins(
-                                    fontSize: 14, color: Colors.black),
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 4.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.all(8.0),
+                              leading: CircleAvatar(
+                                backgroundColor: event.color,
+                                radius: 10,
+                                child: Container(),
                               ),
-                            ],
+                              title: Text(
+                                "${event.startDate.hour.toString().padLeft(2, '0')}:${event.startDate.minute.toString().padLeft(2, '0')} ${event.startDate.hour >= 12 ? 'PM' : 'AM'} - ${event.endDate.hour.toString().padLeft(2, '0')}:${event.endDate.minute.toString().padLeft(2, '0')} ${event.endDate.hour >= 12 ? 'PM' : 'AM'}",
+                                style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    event.note,
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 14, color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
+                  ),
+                  const Divider(
+                    color: Colors.white, // Adjust the color to match your design
+                    thickness: 2.0,    // Adjust the thickness as needed
+                    indent: 16.0,      // Adjust the indent as needed
+                    endIndent: 16.0,   // Adjust the end indent as needed
+                  ),
+                ],
               );
             },
           ),
-        )
+        ),
+        // add new event retreived from berita page
+        //Expanded(
+        // child: newEventLinkedBeritaWidget(),
+        //),
       ],
     );
   }
