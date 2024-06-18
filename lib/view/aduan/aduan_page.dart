@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/components/submit_button.dart';
 import 'package:mtsp/global.dart';
+import 'package:mtsp/services/aduan_service.dart';
 import 'package:mtsp/view/aduan/aduanList_tile.dart';
 import 'package:mtsp/view/aduan/aduan_form.dart';
 import 'package:mtsp/view/aduan/aduan_details.dart';
@@ -18,41 +19,32 @@ class AduanPage extends StatefulWidget {
 class _AduanPageState extends State<AduanPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final _textController = TextEditingController();
+  final _searchController = TextEditingController();
 
-  //test2
-  final List<Aduan> _aduanList = [
-    Aduan(type: 'Aduan 1', subject: 'Aduan Subject', comment: 'Aduan Comment'),
-    Aduan(type: 'Aduan 2', subject: 'Aduan Subject', comment: 'Aduan Comment'),
-    Aduan(
-        type: 'Cadangan 1',
-        subject: 'Aduan Subject',
-        comment: 'Cadangan Comment'),
-    Aduan(
-        type: 'Cadangan 2',
-        subject: 'Cadangan Subject',
-        comment: 'Cadangan Comment'),
-    Aduan(
-        type: 'Cadangan 3',
-        subject: 'Cadangan Subject',
-        comment: 'Cadangan Comment'),
-  ];
+  List<Aduan> aduanList = [];
+  
+  Future<void> getAduanList() async {
+    final aduanList = await AduanService().getAduanListByUser();
+    setState(() {
+      this.aduanList = aduanList;
+    });
+  }
 
   void navigateToAduanForm() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AduanForm(),
+        builder: (context) => const AduanForm(),
       ),
     );
   }
 
-  void navigateToAduanDetails(int index) {
+  void navigateToAduanDetails(Aduan aduan) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => AduanDetailsPage(
-          aduan: _aduanList[index],
+          aduan: aduan,
         ),
       ),
     );
@@ -93,14 +85,14 @@ class _AduanPageState extends State<AduanPage> {
             const SizedBox(height: 20),
             //search container
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 //search bar
                 SizedBox(
                   width: 260,
                   height: 30,
                   child: TextField(
-                    controller: _textController,
+                    controller: _searchController,
                     style:
                         GoogleFonts.poppins(fontSize: 14, color: Colors.black),
                     textAlignVertical: TextAlignVertical.bottom,
@@ -124,7 +116,7 @@ class _AduanPageState extends State<AduanPage> {
                         icon: const Icon(
                             size: 14, Icons.clear, color: Colors.grey),
                         onPressed: () {
-                          _textController.clear();
+                          _searchController.clear();
                         },
                       ),
                     ),
@@ -155,12 +147,37 @@ class _AduanPageState extends State<AduanPage> {
                   color: primaryColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: ListView.builder(
-                  itemCount: _aduanList.length,
-                  itemBuilder: (context, index) => AduanListTile(
-                    aduan: _aduanList[index],
-                    onTap: () => navigateToAduanDetails(index),
-                  ),
+                child: FutureBuilder(
+                  future: getAduanList(),
+                  builder: (context, snapshot) {
+                    // show loading circle
+                    // if (snapshot.connectionState == ConnectionState.waiting) {
+                    //   return const Center(
+                    //     child: CircularProgressIndicator(),
+                    //   );
+                    // }
+
+                    // no data?
+                    if (aduanList.isEmpty) {
+                      return Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Text(
+                          'Tiada aduan atau cadangan yang dihantar.',
+                          style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: const Color(0xffD9D9D9))
+                        ),
+                      );
+                    }
+
+                    return ListView.builder(
+                      itemCount: aduanList.length,
+                      itemBuilder: (context, index) {
+                        return AduanListTile(
+                          aduan: aduanList[index],
+                          onTap: () => navigateToAduanDetails(aduanList[index]),
+                        );
+                      }
+                    );
+                  },
                 ),
               ),
             ),
