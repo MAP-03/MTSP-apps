@@ -48,4 +48,8 @@ class BeritaService {
     }
     return events;
   }
+
+  Stream<QuerySnapshot> getEventsStream() {
+    return _firestore.collection('Berita').snapshots();
+  }
 }

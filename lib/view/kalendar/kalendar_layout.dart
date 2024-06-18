@@ -1,14 +1,14 @@
-// kalendar_layout.dart (modified part)
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/global.dart';
+import 'package:mtsp/view/kalendar/Berita_EventCard.dart';
 import 'package:mtsp/view/kalendar/acara.dart';
 import 'package:mtsp/view/kalendar/acara_form.dart';
 import 'package:mtsp/view/kalendar/kalendar_logic.dart'; // Import the logic
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:mtsp/services/berita_service.dart'; // Import BeritaService
 
 class Kalendar extends StatefulWidget {
   const Kalendar({super.key});
@@ -25,8 +25,36 @@ class _KalendarState extends State<Kalendar> {
   void initState() {
     super.initState();
     kalendarLogic = KalendarLogic();
-  }
 
+WidgetsBinding.instance.addPostFrameCallback((_) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      backgroundColor: Colors.transparent,
+      behavior: SnackBarBehavior.floating,
+      elevation: 0,
+      content: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          decoration: BoxDecoration(
+            color: Color(0xff12223C),
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          child: Text(
+            '< swipe >',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+      duration: const Duration(seconds: 3),
+    ),
+  );
+});
+
+  }
   @override
   void dispose() {
     kalendarLogic.selectedEvents.dispose();
@@ -42,9 +70,7 @@ class _KalendarState extends State<Kalendar> {
         child: AppBar(
           title: Text('Kalendar',
               style: GoogleFonts.poppins(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white)),
+                  fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
           leading: IconButton(
             icon: const Icon(Icons.menu, color: Colors.white, size: 30),
             onPressed: () {
@@ -148,8 +174,7 @@ class _KalendarState extends State<Kalendar> {
             child: TableCalendar<Event>(
               rowHeight: 37,
               availableGestures: AvailableGestures.all,
-              selectedDayPredicate: (day) =>
-                  isSameDay(kalendarLogic.selectedDay, day),
+              selectedDayPredicate: (day) => isSameDay(kalendarLogic.selectedDay, day),
               focusedDay: kalendarLogic.focusedDay,
               firstDay: DateTime.utc(2010, 10, 16),
               lastDay: DateTime.utc(2030, 3, 14),
@@ -161,23 +186,15 @@ class _KalendarState extends State<Kalendar> {
               eventLoader: kalendarLogic.getEventsForDay,
               calendarStyle: CalendarStyle(
                 defaultTextStyle: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500),
+                    color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
                 weekendTextStyle: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500),
+                    color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
                 todayTextStyle: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500),
+                    color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
                 selectedTextStyle: GoogleFonts.poppins(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500),
-                markerDecoration: const BoxDecoration(
-                    color: Colors.white, shape: BoxShape.circle),
+                    color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
+                markerDecoration:
+                    const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
                 markerMargin:
                     const EdgeInsets.symmetric(horizontal: 1.0, vertical: 6.0),
                 selectedDecoration: const BoxDecoration(
@@ -192,9 +209,7 @@ class _KalendarState extends State<Kalendar> {
               ),
               headerStyle: HeaderStyle(
                 titleTextStyle: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold),
+                    color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),
                 formatButtonVisible: false,
                 titleCentered: true,
                 formatButtonTextStyle: const TextStyle(color: Colors.white),
@@ -209,23 +224,18 @@ class _KalendarState extends State<Kalendar> {
                 ),
                 rightChevronIcon: const Icon(
                   Icons.arrow_forward_ios,
-                  color: Colors.white,
-                ),
+                  color: Colors.white),
               ),
               daysOfWeekStyle: DaysOfWeekStyle(
                 weekdayStyle: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600),
+                    color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
                 weekendStyle: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600),
+                    color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
               ),
             ),
           ),
         ),
-        const SizedBox(height: 55),
+        const SizedBox(height: 50),
         Expanded(
           child: ValueListenableBuilder<List<Event>>(
             valueListenable: kalendarLogic.selectedEvents,
@@ -237,14 +247,18 @@ class _KalendarState extends State<Kalendar> {
                     children: [
                       SvgPicture.asset(
                         'assets/svg/kalendar.svg',
-                        width: 200,
+                        width: 189.1,
                       ),
                       Text(
                         'Tiada Acara Harini',
                         style: GoogleFonts.poppins(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                            fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                      const Divider(
+                        color: Colors.white, // Adjust the color to match your design
+                        thickness: 2.0, // Adjust the thickness as needed
+                        indent: 16.0, // Adjust the indent as needed
+                        endIndent: 16.0, // Adjust the end indent as needed
                       ),
                     ],
                   ),
@@ -264,26 +278,22 @@ class _KalendarState extends State<Kalendar> {
                           onDismissed: (direction) {
                             setState(() {
                               kalendarLogic.deleteEvent(
-                                  event.id,
-                                  kalendarLogic
-                                      .normalizeDate(event.startDate),
-                                  event);
+                                  event.id, kalendarLogic.normalizeDate(event.startDate), event);
                             });
                           },
                           background: Container(
-                            margin: const EdgeInsets.all(12.0),
-                            padding: const EdgeInsets.all(24.0),
+                            margin: const EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(16.0),
                             decoration: BoxDecoration(
                               color: Colors.red,
                               borderRadius: BorderRadius.circular(16.0),
                             ),
                             alignment: Alignment.centerRight,
-                            child: const Icon(Icons.delete,
-                                color: Colors.white, size: 30),
+                            child: const Icon(Icons.delete, color: Colors.white, size: 30),
                           ),
                           child: Container(
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 4.0),
+                            // event card
+                            margin: const EdgeInsets.symmetric(vertical: 4.0),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(16.0),
@@ -298,9 +308,7 @@ class _KalendarState extends State<Kalendar> {
                               title: Text(
                                 "${event.startDate.hour.toString().padLeft(2, '0')}:${event.startDate.minute.toString().padLeft(2, '0')} ${event.startDate.hour >= 12 ? 'PM' : 'AM'} - ${event.endDate.hour.toString().padLeft(2, '0')}:${event.endDate.minute.toString().padLeft(2, '0')} ${event.endDate.hour >= 12 ? 'PM' : 'AM'}",
                                 style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
+                                    fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
                               ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,19 +329,19 @@ class _KalendarState extends State<Kalendar> {
                   ),
                   const Divider(
                     color: Colors.white, // Adjust the color to match your design
-                    thickness: 2.0,    // Adjust the thickness as needed
-                    indent: 16.0,      // Adjust the indent as needed
-                    endIndent: 16.0,   // Adjust the end indent as needed
+                    thickness: 2.0, // Adjust the thickness as needed
+                    indent: 16.0, // Adjust the indent as needed
+                    endIndent: 16.0, // Adjust the end indent as needed
                   ),
                 ],
               );
             },
           ),
         ),
-        // add new event retreived from berita page
-        //Expanded(
-        // child: newEventLinkedBeritaWidget(),
-        //),
+        Container(
+          height: 100, // Fixed height for the event card container
+          child: NewEventLinkedBeritaWidget(),
+        ),
       ],
     );
   }
