@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mtsp/global.dart';
 import 'package:intl/intl.dart';
 import 'package:mtsp/services/berita_service.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-class NewEventLinkedBeritaWidget extends StatelessWidget {
+class acara_berita extends StatelessWidget {
   final BeritaService beritaService = BeritaService();
 
   @override
@@ -15,7 +14,7 @@ class NewEventLinkedBeritaWidget extends StatelessWidget {
       stream: beritaService.getEventsStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
           return Text("Something went wrong", style: GoogleFonts.poppins(color: Colors.white));

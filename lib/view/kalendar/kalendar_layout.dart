@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/global.dart';
-import 'package:mtsp/view/kalendar/Berita_EventCard.dart';
+import 'package:mtsp/view/kalendar/acara_berita.dart';
 import 'package:mtsp/view/kalendar/acara.dart';
 import 'package:mtsp/view/kalendar/acara_form.dart';
 import 'package:mtsp/view/kalendar/kalendar_logic.dart'; // Import the logic
@@ -340,7 +340,7 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
         ),
         Container(
           height: 100, // Fixed height for the event card container
-          child: NewEventLinkedBeritaWidget(),
+          child: acara_berita(),
         ),
       ],
     );
