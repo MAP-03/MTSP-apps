@@ -65,10 +65,6 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.pink,
         ),
-        textTheme: TextTheme(
-          titleMedium: TextStyle(color: Colors.white),
-        ),
-        
       ),
       routes: {
         '/home': (context) => HomePage(),
