@@ -9,8 +9,6 @@ class EventCard extends StatelessWidget {
   final String date;
   final String description;
   final String imageUrl;
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
 
   const EventCard({
     Key? key,
@@ -18,8 +16,6 @@ class EventCard extends StatelessWidget {
     required this.date,
     required this.description,
     required this.imageUrl,
-    required this.onEdit,
-    required this.onDelete,
   }) : super(key: key);
 
   @override

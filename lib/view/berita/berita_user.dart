@@ -99,8 +99,6 @@ class _BeritaUserState extends State<BeritaUser> {
                     date: formattedDate,
                     description: data['description'] ?? 'No Description',
                     imageUrl: data['imageLink'] ?? 'https://via.placeholder.com/150',
-                    onEdit: () {}, // No edit functionality for BeritaUser
-                    onDelete: () {}, // No delete functionality for BeritaUser
                   ),
                 );
               },
