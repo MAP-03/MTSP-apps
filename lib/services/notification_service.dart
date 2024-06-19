@@ -18,10 +18,10 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
     // Request permission for notifications on Android and iOS
-    await _requestNotificationPermission();
+    await requestNotificationPermission();
   }
 
-  Future<void> _requestNotificationPermission() async {
+  Future<void> requestNotificationPermission() async {
     final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
         flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>();
@@ -86,7 +86,9 @@ class NotificationService {
     }
   }
 
+  //
   // AZAN NOTIFICATIONS
+  //
   Future<void> scheduleAzanNotification(String azanName, DateTime azanTime, bool isAlarmOn) async {
     if (!isAlarmOn) return; // Only schedule if the alarm toggle is on
 

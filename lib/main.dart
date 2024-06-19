@@ -29,7 +29,6 @@ import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -43,7 +42,7 @@ void main() async {
 
   final NotificationService notificationService = NotificationService();
   await notificationService.init();
-
+  await notificationService.requestNotificationPermission();// Request notification permissions
 
   runApp(
     MultiProvider(
@@ -68,7 +67,6 @@ class MyApp extends StatelessWidget {
         textTheme: TextTheme(
           titleMedium: TextStyle(color: Colors.white),
         ),
-        
       ),
       routes: {
         '/home': (context) => HomePage(),
@@ -87,5 +85,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-

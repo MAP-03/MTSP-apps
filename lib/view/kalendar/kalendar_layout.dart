@@ -8,7 +8,6 @@ import 'package:mtsp/view/kalendar/acara_form.dart';
 import 'package:mtsp/view/kalendar/kalendar_logic.dart'; // Import the logic
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:mtsp/services/berita_service.dart'; // Import BeritaService
 
 class Kalendar extends StatefulWidget {
   const Kalendar({super.key});
