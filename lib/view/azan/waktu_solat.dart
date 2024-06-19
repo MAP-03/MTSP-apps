@@ -71,44 +71,51 @@ class _PrayTimeState extends State<PrayTime> {
     });
   }
 
-  void toggleAlarm(String azanName) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isAlarmOnMap[azanName] = !(isAlarmOnMap[azanName] ?? false);
-      prefs.setBool('$azanName' + 'AlarmOn', isAlarmOnMap[azanName] ?? false);
+ void toggleAlarm(String azanName) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool currentAlarmState = isAlarmOnMap[azanName] ?? false;  // Get the current state
+  bool newAlarmState = !currentAlarmState;  // Toggle the current state
 
-      if (isAlarmOnMap[azanName] == true) {
-        DateTime azanTime;
-        switch (azanName) {
-          case 'Subuh':
-            azanTime = widget.prayerTimes.fajr!.toLocal();
-            break;
-          case 'Syuruk':
-            azanTime = widget.prayerTimes.sunrise!.toLocal();
-            break;
-          case 'Zohor':
-            azanTime = widget.prayerTimes.dhuhr!.toLocal();
-            break;
-          case 'Asar':
-            azanTime = widget.prayerTimes.asr!.toLocal();
-            break;
-          case 'Maghrib':
-            azanTime = widget.prayerTimes.maghrib!.toLocal();
-            break;
-          case 'Isyak':
-            azanTime = widget.prayerTimes.isha!.toLocal();
-            break;
-          default:
-            return;
-        }
-        print('Scheduling notification for $azanName at $azanTime');
-        _notificationService.scheduleAzanNotification(azanName, azanTime);
-      } else {
-        _notificationService.cancelAzanNotification(azanName);
-      }
-    });
+  setState(() {
+    isAlarmOnMap[azanName] = newAlarmState;  // Update the map with the new state
+    prefs.setBool('$azanName' + 'AlarmOn', newAlarmState);  // Save the new state to SharedPreferences
+  });
+
+  DateTime azanTime;
+  // Determine the correct azan time based on the azanName
+  switch (azanName) {
+    case 'Subuh':
+      azanTime = widget.prayerTimes.fajr!.toLocal();
+      break;
+    case 'Syuruk':
+      azanTime = widget.prayerTimes.sunrise!.toLocal();
+      break;
+    case 'Zohor':
+      azanTime = widget.prayerTimes.dhuhr!.toLocal();
+      break;
+    case 'Asar':
+      azanTime = widget.prayerTimes.asr!.toLocal();
+      break;
+    case 'Maghrib':
+      azanTime = widget.prayerTimes.maghrib!.toLocal();
+      break;
+    case 'Isyak':
+      azanTime = widget.prayerTimes.isha!.toLocal();
+      break;
+    default:
+      return;
   }
 
+  // Depending on the new alarm state, schedule or cancel the notification
+  if (newAlarmState) {
+    print('Scheduling notification for $azanName at $azanTime');
+    _notificationService.scheduleAzanNotification(azanName, azanTime, newAlarmState);
+    _notificationService.scheduleAzanDebugNotification(azanName, azanTime);  // Schedule the debug notification
+  } else {
+    print('Canceling notification for $azanName');
+    _notificationService.cancelAzanNotification(azanName);
+  }
+}
   @override
   Widget build(BuildContext context) {
     Color bgColor = widget.isCurrentPrayer ? Colors.blue : primaryColor;
