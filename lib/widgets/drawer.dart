@@ -129,7 +129,7 @@ class CustomDrawer extends StatelessWidget {
                   title: Text(
                     'Forum',
                     style: GoogleFonts.poppins(
-                      color: Colors.white,
+                      color: currentRoute == '/forum' ? Colors.blue : Colors.white,
                       fontSize: 16,
                     ),
                   ),

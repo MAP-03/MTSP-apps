@@ -32,7 +32,7 @@ class _AzanState extends State<Azan> {
     super.initState();
     coordinates = Coordinates(1.5638129487418682, 103.61735116456667);
     date = DateTime.now();
-    params = CalculationMethod.Malaysia();
+    params = CalculationMethod.singapore();
     params.madhab = Madhab.shafi;
   }
 

@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:mtsp/firebase_options.dart';
 import 'package:mtsp/services/ekhairat_service.dart';
 import 'package:mtsp/services/forum_service.dart';
@@ -24,6 +25,7 @@ import 'package:mtsp/view/forum/create_forum.dart';
 import 'package:mtsp/view/forum/forum_page.dart';
 import 'package:mtsp/view/infaq/infaq.dart';
 import 'package:mtsp/view/kalendar/kalendar_layout.dart';
+import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -42,7 +44,15 @@ void main() async {
   final NotificationService notificationService = NotificationService();
   await notificationService.init();
 
-  runApp(MyApp());
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ForumsService()),
+      ],
+      child: MyApp()
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -54,6 +64,16 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.blue,
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.pink,
+        ),
+        textTheme: TextTheme(
+          titleMedium: TextStyle(color: Colors.white),
+        ),
+        colorScheme: ColorScheme.fromSeed(
+          brightness: Brightness.dark,
+          seedColor: Colors.black,
+          surface: Colors.white,
+          // Defines colors like cursor color of the text fields.
+          primary: Colors.blue,
         ),
       ),
       routes: {

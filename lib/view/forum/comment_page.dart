@@ -190,14 +190,15 @@ class _CommentPageState extends State<CommentPage> {
                                       context: context,
                                       builder: (BuildContext context) {
                                         return AlertDialog(
-                                          title: Text('Padam perbincangan'),
-                                          content: Text('Ada pasti mahu padam perbincangan ini?'),
+                                          backgroundColor: primaryColor,
+                                          title: Text('Padam perbincangan', style: TextStyle(color: Colors.white)),
+                                          content: Text('Ada pasti mahu padam perbincangan ini?', style: TextStyle(color: Colors.white)),
                                           actions: [
                                             TextButton(
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                               },
-                                              child: Text('Batal'),
+                                              child: Text('Batal', style: TextStyle(color: Colors.blue)),
                                             ),
                                             TextButton(
                                               onPressed: () async {
@@ -218,7 +219,7 @@ class _CommentPageState extends State<CommentPage> {
                                                   _isLoading = false;
                                                 });
                                               },
-                                              child: Text('Padam'),
+                                              child: Text('Padam', style: TextStyle(color: Colors.blue)),
                                             ),
                                           ],
                                         );
@@ -374,14 +375,15 @@ class _CommentPageState extends State<CommentPage> {
                                                 context: context,
                                                 builder: (BuildContext context) {
                                                   return AlertDialog(
-                                                    title: Text('Padam komen'),
-                                                    content: Text('Adakah anda pasti mahu padam komen ini?'),
+                                                    backgroundColor: primaryColor,
+                                                    title: Text('Padam komen', style: TextStyle(color: Colors.white)),
+                                                    content: Text('Adakah anda pasti mahu padam komen ini?', style: TextStyle(color: Colors.white)),
                                                     actions: [
                                                       TextButton(
                                                         onPressed: () {
                                                           Navigator.of(context).pop();
                                                         },
-                                                        child: Text('Batal'),
+                                                        child: Text('Batal', style: TextStyle(color: Colors.blue)),
                                                       ),
                                                       TextButton(
                                                         onPressed: () async {
@@ -396,7 +398,7 @@ class _CommentPageState extends State<CommentPage> {
                                                             _isLoading = false;
                                                           });
                                                         },
-                                                        child: Text('Padam'),
+                                                        child: Text('Padam', style: TextStyle(color: Colors.blue)),
                                                       ),
                                                     ],
                                                   );
