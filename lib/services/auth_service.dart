@@ -80,6 +80,17 @@ class AuthService {
     }
   }
 
+  Future<String> getProfilePicture(String email) async {
+    final doc = await usersCollection.doc(email).get();
+
+    if (doc.exists) {
+      final userData = doc.data() as Map<String, dynamic>;
+      return userData['profileImage'];
+    } else {
+      throw Exception('User not found');
+    }
+  }
+
   Future<Map<String, dynamic>> getCurrentUserData() async {
     final currentUser = FirebaseAuth.instance.currentUser;
     final doc = await usersCollection.doc(currentUser!.email).get();
