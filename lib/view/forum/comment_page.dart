@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'dart:io';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:file_picker/file_picker.dart';
@@ -35,13 +33,11 @@ class _CommentPageState extends State<CommentPage> {
     super.initState();
     _forumService = Provider.of<ForumsService>(context, listen: false);
     _forumService.getComments(widget.forumData['id']).then((_) {
-      setState(() {
-        authService.getCurrentUserData().then((value) {
-          setState(() {
-            userData.addAll(value);
-          });
+      authService.getCurrentUserData().then((value) {
+        setState(() {
+          userData.addAll(value);
+          _isLoading = false;
         });
-        _isLoading = false;
       });
     });
   }
@@ -68,9 +64,7 @@ class _CommentPageState extends State<CommentPage> {
       ),
       backgroundColor: secondaryColor,
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -89,26 +83,36 @@ class _CommentPageState extends State<CommentPage> {
                                 const SizedBox(height: 5),
                                 Row(
                                   children: [
-                                     userData['profileImage'] == null
-                                      ? CircleAvatar(
-                                          backgroundImage: const AssetImage('assets/images/profileMan.png'),
-                                          radius: 20,
-                                        )
-                                      : GestureDetector(
-                                          onTap: () {
-                                            showImageViewer(
-                                              doubleTapZoomable: true,
-                                                context,
-                                                NetworkImage(
-                                                  userData['profileImage'],
-                                                ),
-                                            );
-                                          },
-                                        child: CircleAvatar(
-                                            backgroundImage: NetworkImage(userData['profileImage']),
+                                    FutureBuilder<String>(
+                                      future: authService.getProfilePicture(widget.forumData['email']),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                          return CircleAvatar(
+                                            backgroundImage: const AssetImage('assets/images/profileMan.png'),
                                             radius: 20,
-                                          ),
-                                      ),
+                                          );
+                                        } else if (snapshot.hasError || !snapshot.hasData) {
+                                          return CircleAvatar(
+                                            backgroundImage: const AssetImage('assets/images/profileMan.png'),
+                                            radius: 20,
+                                          );
+                                        } else {
+                                          return GestureDetector(
+                                            onTap: () {
+                                              showImageViewer(
+                                                doubleTapZoomable: true,
+                                                context,
+                                                NetworkImage(snapshot.data!),
+                                              );
+                                            },
+                                            child: CircleAvatar(
+                                              backgroundImage: NetworkImage(snapshot.data!),
+                                              radius: 20,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
                                     const SizedBox(width: 10),
                                     Text(
                                       widget.forumData['username'],
@@ -116,8 +120,8 @@ class _CommentPageState extends State<CommentPage> {
                                         fontSize: 18,
                                         fontWeight: FontWeight.w700,
                                         color: widget.forumData['email'] == FirebaseAuth.instance.currentUser!.email
-                                        ? Colors.blue
-                                        : Colors.white,
+                                            ? Colors.blue
+                                            : Colors.white,
                                       ),
                                     )
                                   ],
@@ -139,7 +143,7 @@ class _CommentPageState extends State<CommentPage> {
                                   ),
                                 ),
                                 const SizedBox(height: 10),
-                                if (widget.forumData.containsKey('imageUrl') == true && widget.forumData['imageUrl'] != null) ...[
+                                if (widget.forumData.containsKey('imageUrl') && widget.forumData['imageUrl'] != null)
                                   GestureDetector(
                                     onTap: () {
                                       showImageViewer(
@@ -155,8 +159,7 @@ class _CommentPageState extends State<CommentPage> {
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-                                  const SizedBox(height: 10),
-                                ],
+                                const SizedBox(height: 10),
                                 Text(
                                   widget.forumData['description'],
                                   style: GoogleFonts.poppins(
@@ -242,9 +245,7 @@ class _CommentPageState extends State<CommentPage> {
                     Consumer<ForumsService>(
                       builder: (context, forumService, _) {
                         if (_isLoading) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
+                          return const Center(child: CircularProgressIndicator());
                         } else if (forumService.commentData.isEmpty) {
                           return const Center(
                             child: Text(
@@ -275,26 +276,36 @@ class _CommentPageState extends State<CommentPage> {
                                           const SizedBox(height: 5),
                                           Row(
                                             children: [
-                                               userData['profileImage'] == null
-                                                ? CircleAvatar(
-                                                    backgroundImage: const AssetImage('assets/images/profileMan.png'),
-                                                    radius: 20,
-                                                  )
-                                                : GestureDetector(
-                                                    onTap: () {
-                                                      showImageViewer(
-                                                        doubleTapZoomable: true,
-                                                          context,
-                                                          NetworkImage(
-                                                            userData['profileImage'],
-                                                          ),
-                                                      );
-                                                    },
-                                                  child: CircleAvatar(
-                                                      backgroundImage: NetworkImage(userData['profileImage']),
+                                              FutureBuilder<String>(
+                                                future: authService.getProfilePicture(forumService.commentData[index]['email']),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                                    return CircleAvatar(
+                                                      backgroundImage: const AssetImage('assets/images/profileMan.png'),
                                                       radius: 20,
-                                                    ),
-                                                ),
+                                                    );
+                                                  } else if (snapshot.hasError || !snapshot.hasData) {
+                                                    return CircleAvatar(
+                                                      backgroundImage: const AssetImage('assets/images/profileMan.png'),
+                                                      radius: 20,
+                                                    );
+                                                  } else {
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        showImageViewer(
+                                                          doubleTapZoomable: true,
+                                                          context,
+                                                          NetworkImage(snapshot.data!),
+                                                        );
+                                                      },
+                                                      child: CircleAvatar(
+                                                        backgroundImage: NetworkImage(snapshot.data!),
+                                                        radius: 20,
+                                                      ),
+                                                    );
+                                                  }
+                                                },
+                                              ),
                                               const SizedBox(width: 10),
                                               Text(
                                                 forumService.commentData[index]['username'],
@@ -302,8 +313,8 @@ class _CommentPageState extends State<CommentPage> {
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.w700,
                                                   color: forumService.commentData[index]['email'] == FirebaseAuth.instance.currentUser!.email
-                                                  ? Colors.blue
-                                                  : Colors.white,
+                                                      ? Colors.blue
+                                                      : Colors.white,
                                                 ),
                                               )
                                             ],
@@ -325,7 +336,7 @@ class _CommentPageState extends State<CommentPage> {
                                             ),
                                           ),
                                           const SizedBox(height: 10),
-                                          if (forumService.commentData[index].containsKey('imageUrl') == true && forumService.commentData[index]['imageUrl'] != null) ...[
+                                          if (forumService.commentData[index].containsKey('imageUrl') && forumService.commentData[index]['imageUrl'] != null)
                                             GestureDetector(
                                               onTap: () {
                                                 showImageViewer(
@@ -341,8 +352,7 @@ class _CommentPageState extends State<CommentPage> {
                                                 fit: BoxFit.cover,
                                               ),
                                             ),
-                                            const SizedBox(height: 10),
-                                          ],
+                                          const SizedBox(height: 10),
                                           forumService.commentData[index]['timestamp'].runtimeType == DateTime
                                               ? Text(
                                                   Jiffy.parseFromDateTime(forumService.commentData[index]['timestamp']).fromNow().toString(),

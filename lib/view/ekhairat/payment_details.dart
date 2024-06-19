@@ -42,7 +42,7 @@ class PaymentDetailsState extends State<PaymentDetails> {
           },
         ),
       ),
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: Builder(
         builder: (BuildContext context) {
           return Container(
@@ -135,6 +135,10 @@ class PaymentDetailsState extends State<PaymentDetails> {
                                 focusedBorder: border,
                                 enabledBorder: border,
                               ),
+                              cardNumberTextStyle: TextStyle(color: Colors.white),
+                              expiryDateTextStyle: TextStyle(color: Colors.white),
+                              cvvCodeTextStyle: TextStyle(color: Colors.white),
+                              cardHolderTextStyle: TextStyle(color: Colors.white),
                             ),
                             onCreditCardModelChange: onCreditCardModelChange,
                           ),
@@ -202,9 +206,6 @@ class PaymentDetailsState extends State<PaymentDetails> {
     }
   }
 
-  void _bayar(){
-    
-  }
 
   Glassmorphism? _getGlassmorphismConfig() {
     if (!useGlassMorphism) {
