@@ -13,6 +13,7 @@ import 'package:mtsp/services/notification_service.dart';
 import 'package:mtsp/services/role_based_route.dart';
 import 'package:mtsp/splash_screen.dart';
 import 'package:mtsp/view/aduan/aduan_page.dart';
+import 'package:mtsp/view/aduan/aduan_page_admin.dart';
 import 'package:mtsp/view/azan/azan_layout.dart';
 import 'package:mtsp/view/berita/berita.dart';
 import 'package:mtsp/view/berita/berita_user.dart';

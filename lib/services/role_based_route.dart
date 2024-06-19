@@ -36,7 +36,7 @@ class _RoleBasedRouteState extends State<RoleBasedRoute> {
   @override
   Widget build(BuildContext context) {
     if (role == '') {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     } else if (role == 'admin') {
       return widget.adminPage;
     } else {
