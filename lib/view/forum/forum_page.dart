@@ -270,14 +270,15 @@ class _ForumState extends State<Forum> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: Text('Padam perbincangan'),
-                                    content: Text('Adakah anda pasti untuk memadam perbincangan ini?'),
+                                    title: Text('Padam perbincangan', style: TextStyle(color: Colors.white)),
+                                    content: Text('Adakah anda pasti untuk memadam perbincangan ini?', style: TextStyle(color: Colors.white)),
+                                    backgroundColor: primaryColor,
                                     actions: [
                                       TextButton(
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
-                                        child: Text('Batal'),
+                                        child: Text('Batal', style: GoogleFonts.poppins(color: Colors.blue)),
                                       ),
                                       TextButton(
                                         onPressed: () async {
@@ -294,7 +295,7 @@ class _ForumState extends State<Forum> {
                                             _isLoading = false;
                                           });
                                         },
-                                        child: Text('Padam'),
+                                        child: Text('Padam', style: GoogleFonts.poppins(color: Colors.blue)),
                                       ),
                                     ],
                                   );

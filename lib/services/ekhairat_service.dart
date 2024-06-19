@@ -1,7 +1,11 @@
 
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:mtsp/models/ahli.dart';
 import 'package:mtsp/models/tanggungan.dart';
+import 'package:http/http.dart' as http;
 
 class EkhairatService {
 
@@ -58,6 +62,10 @@ class EkhairatService {
 
   Future<void> updateAhliStatus(String? email, String? status) async{
     await _firestore.collection('ahli').doc(email).update({'status': status});
+  }
+
+  Future<void> bayarEkhairat() async{
+    
   }
 
 }

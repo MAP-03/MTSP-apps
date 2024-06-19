@@ -45,9 +45,8 @@ class _HomePageState extends State<HomePage> {
     coordinates = Coordinates(1.5638129487418682, 103.61735116456667);
     date = DateTime.now();
     params = CalculationMethod.Malaysia();
-    params.madhab = Madhab.shafi;
+    params.madhab = Madhab.Shafi;
     _fetchEvents();
-    
   }
 
   Future<void> _fetchEvents() async {
@@ -285,7 +284,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, '/azan');
+                          Navigator.pushNamed(context, '/forum');
                         },
                         child: Container(
                           width: 110,
@@ -297,8 +296,8 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              SvgPicture.asset('assets/svg/azan.svg', width: 100),
-                              Text('Waktu Azan', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white)),
+                              SvgPicture.asset('assets/svg/forum.svg', width: 100),
+                              Text('Forum', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white)),
                             ],
                           ),
                         ),
@@ -358,92 +357,96 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                width: 300,
-                height: 80, // Increased height to accommodate the additional text
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  gradient: LinearGradient(
-                    end: Alignment(0.97, -0.26),
-                    begin: Alignment(-0.97, 0.26),
-                    colors: [Color(0xFF62CFF4), Color(0xFF2C67F2)],
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/azan');
+                },
+                child: Container(
+                  width: 300,
+                  height: 80, // Increased height to accommodate the additional text
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    gradient: LinearGradient(
+                      end: Alignment(0.97, -0.26),
+                      begin: Alignment(-0.97, 0.26),
+                      colors: [Color(0xFF62CFF4), Color(0xFF2C67F2)],
+                    ),
                   ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Row( // Use Row instead of Center
-                    mainAxisAlignment: MainAxisAlignment.start, // Center the content horizontally
-                    children: [
-                      Row(
-                        children: [
-                          SizedBox(width: 10), // Added SizedBox for spacing
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                prayerTimes.nextPrayer(),
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row( // Use Row instead of Center
+                      mainAxisAlignment: MainAxisAlignment.start, // Center the content horizontally
+                      children: [
+                        Row(
+                          children: [
+                            SizedBox(width: 10), // Added SizedBox for spacing
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  prayerTimes.nextPrayer(),
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 5), // Added SizedBox for spacing
-                              Text(
-                                getNextPrayerTime(prayerTimes), // Replace with your desired text
-                                style: GoogleFonts.notoSans(
-                                  color: Color(0xFFD9D9D9),
-                                  fontSize: 24, // Adjust the font size as needed
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 1.20,
+                                SizedBox(height: 5), // Added SizedBox for spacing
+                                Text(
+                                  getNextPrayerTime(prayerTimes), // Replace with your desired text
+                                  style: GoogleFonts.notoSans(
+                                    color: Color(0xFFD9D9D9),
+                                    fontSize: 24, // Adjust the font size as needed
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 1.20,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      // Added SizedBox for spacing between texts
-                      Row(
-                        children: [
-                          Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 5), // Add left padding to move the text a bit to the right
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      "${_hijriCalendar.hDay} ${hijri[_hijriCalendar.hMonth-1]}  ${_hijriCalendar.hYear} AH", // First text
-                                      style: GoogleFonts.notoSans(
-                                        color: Color(0xFFD9D9D9),
-                                        fontSize: 12, // Adjust the font size as needed
-                                        fontWeight: FontWeight.w500,
+                              ],
+                            ),
+                          ],
+                        ),
+                        // Added SizedBox for spacing between texts
+                        Row(
+                          children: [
+                            Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 5), // Add left padding to move the text a bit to the right
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        "${_hijriCalendar.hDay} ${hijri[_hijriCalendar.hMonth-1]}  ${_hijriCalendar.hYear} AH", // First text
+                                        style: GoogleFonts.notoSans(
+                                          color: Color(0xFFD9D9D9),
+                                          fontSize: 12, // Adjust the font size as needed
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      "${months[date.month-1]} ${date.day}, ${date.year}", // Second text
-                                      style: GoogleFonts.notoSans(
-                                        color: Color(0xFFD9D9D9),
-                                        fontSize: 10, // Adjust the font size as needed
-                                        fontWeight: FontWeight.w300,
+                                      Text(
+                                        "${months[date.month-1]} ${date.day}, ${date.year}", // Second text
+                                        style: GoogleFonts.notoSans(
+                                          color: Color(0xFFD9D9D9),
+                                          fontSize: 10, // Adjust the font size as needed
+                                          fontWeight: FontWeight.w300,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 10),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                                SizedBox(height: 10),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-
 
             ],
           ),
