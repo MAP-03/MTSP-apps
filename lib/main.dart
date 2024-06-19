@@ -68,13 +68,7 @@ class MyApp extends StatelessWidget {
         textTheme: TextTheme(
           titleMedium: TextStyle(color: Colors.white),
         ),
-        colorScheme: ColorScheme.fromSeed(
-          brightness: Brightness.dark,
-          seedColor: Colors.black,
-          surface: Colors.white,
-          // Defines colors like cursor color of the text fields.
-          primary: Colors.blue,
-        ),
+        
       ),
       routes: {
         '/home': (context) => HomePage(),
