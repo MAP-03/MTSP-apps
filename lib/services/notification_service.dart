@@ -86,12 +86,11 @@ class NotificationService {
     }
   }
 
-  //
   // AZAN NOTIFICATIONS
-  //
-  Future<void> scheduleAzanNotification(String azanName, DateTime azanTime) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
+  Future<void> scheduleAzanNotification(String azanName, DateTime azanTime, bool isAlarmOn) async {
+    if (!isAlarmOn) return; // Only schedule if the alarm toggle is on
+
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'azan_channel_id',
       'Azan Notifications',
       importance: Importance.max,
@@ -99,8 +98,7 @@ class NotificationService {
       showWhen: true,
     );
 
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
 
     tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime notificationTime = tz.TZDateTime.from(azanTime, tz.local);
@@ -114,9 +112,8 @@ class NotificationService {
         notificationTime,
         platformChannelSpecifics,
         androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time, // Schedule daily
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time, // Schedule daily at this time
       );
     }
 
@@ -130,24 +127,42 @@ class NotificationService {
         reminderTime,
         platformChannelSpecifics,
         androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time, // Schedule daily
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time, // Schedule daily 10 minutes before azan time
       );
     }
 
-    // Debug notification to verify that the alarm is working
-    tz.TZDateTime debugTime = now.add(const Duration(minutes: 2));
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      (azanName + '_debug').hashCode,
-      'Debug Notification',
-      '$azanName alarm is set and will notify in 2 minutes.',
-      debugTime,
-      platformChannelSpecifics,
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
+    // Schedule the debug notification
+    await scheduleAzanDebugNotification(azanName, azanTime);
+  }
+
+  Future<void> scheduleAzanDebugNotification(String azanName, DateTime azanTime) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'azan_debug_channel_id',
+      'Debug Azan Notifications',
+      importance: Importance.low, // Lower importance for debug notifications
+      priority: Priority.low,
+      showWhen: true,
     );
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    // Set the debug notification to trigger 2 minutes after scheduling
+    tz.TZDateTime debugTime = now.add(const Duration(minutes: 2));
+
+    // Schedule the debug notification
+    if (debugTime.isAfter(now)) {
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        (azanName + '_debug').hashCode,
+        'Debug Prayer Notification',
+        'Debug: $azanName notification is set and will notify in 2 minutes.',
+        debugTime,
+        platformChannelSpecifics,
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    }
   }
 
   void cancelAzanNotification(String azanName) {

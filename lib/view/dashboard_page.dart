@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
     coordinates = Coordinates(1.5638129487418682, 103.61735116456667);
     date = DateTime.now();
     params = CalculationMethod.Malaysia();
-    params.madhab = Madhab.Shafi;
+    params.madhab = Madhab.shafi;
     _fetchEvents();
     
   }
