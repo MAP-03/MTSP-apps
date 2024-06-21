@@ -25,35 +25,36 @@ class _KalendarState extends State<Kalendar> {
     super.initState();
     kalendarLogic = KalendarLogic();
 
-WidgetsBinding.instance.addPostFrameCallback((_) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      backgroundColor: Colors.transparent,
-      behavior: SnackBarBehavior.floating,
-      elevation: 0,
-      content: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          decoration: BoxDecoration(
-            color: Color(0xff12223C),
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          child: Text(
-            '< swipe >',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.transparent,
+          behavior: SnackBarBehavior.floating,
+          elevation: 0,
+          content: Center(
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              decoration: BoxDecoration(
+                color: Color(0xff12223C),
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              child: Text(
+                '< swipe >',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
+          duration: const Duration(seconds: 3),
         ),
-      ),
-      duration: const Duration(seconds: 3),
-    ),
-  );
-});
-
+      );
+    });
   }
+
   @override
   void dispose() {
     kalendarLogic.selectedEvents.dispose();
@@ -69,7 +70,9 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
         child: AppBar(
           title: Text('Kalendar',
               style: GoogleFonts.poppins(
-                  fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white)),
           leading: IconButton(
             icon: const Icon(Icons.menu, color: Colors.white, size: 30),
             onPressed: () {
@@ -124,8 +127,8 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
                     return EventForm(
                       onSave: (event) {
                         setState(() {
-                          final normalizedDay = kalendarLogic.normalizeDate(
-                              kalendarLogic.selectedDay!);
+                          final normalizedDay = kalendarLogic
+                              .normalizeDate(kalendarLogic.selectedDay!);
                           if (kalendarLogic.events.containsKey(normalizedDay)) {
                             kalendarLogic.events[normalizedDay]!.add(event);
                           } else {
@@ -136,7 +139,8 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
                         });
                         kalendarLogic.saveEvent(event);
                       },
-                      initialDate: kalendarLogic.selectedDay!, // Pass the selected date to EventForm
+                      initialDate: kalendarLogic
+                          .selectedDay!, // Pass the selected date to EventForm
                     );
                   },
                 );
@@ -173,7 +177,8 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
             child: TableCalendar<Event>(
               rowHeight: 37,
               availableGestures: AvailableGestures.all,
-              selectedDayPredicate: (day) => isSameDay(kalendarLogic.selectedDay, day),
+              selectedDayPredicate: (day) =>
+                  isSameDay(kalendarLogic.selectedDay, day),
               focusedDay: kalendarLogic.focusedDay,
               firstDay: DateTime.utc(2010, 10, 16),
               lastDay: DateTime.utc(2030, 3, 14),
@@ -185,15 +190,23 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
               eventLoader: kalendarLogic.getEventsForDay,
               calendarStyle: CalendarStyle(
                 defaultTextStyle: GoogleFonts.poppins(
-                    color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500),
                 weekendTextStyle: GoogleFonts.poppins(
-                    color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500),
                 todayTextStyle: GoogleFonts.poppins(
-                    color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500),
                 selectedTextStyle: GoogleFonts.poppins(
-                    color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
-                markerDecoration:
-                    const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500),
+                markerDecoration: const BoxDecoration(
+                    color: Colors.white, shape: BoxShape.circle),
                 markerMargin:
                     const EdgeInsets.symmetric(horizontal: 1.0, vertical: 6.0),
                 selectedDecoration: const BoxDecoration(
@@ -208,7 +221,9 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
               ),
               headerStyle: HeaderStyle(
                 titleTextStyle: GoogleFonts.poppins(
-                    color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold),
                 formatButtonVisible: false,
                 titleCentered: true,
                 formatButtonTextStyle: const TextStyle(color: Colors.white),
@@ -221,15 +236,18 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
                   Icons.arrow_back_ios,
                   color: Colors.white,
                 ),
-                rightChevronIcon: const Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.white),
+                rightChevronIcon:
+                    const Icon(Icons.arrow_forward_ios, color: Colors.white),
               ),
               daysOfWeekStyle: DaysOfWeekStyle(
                 weekdayStyle: GoogleFonts.poppins(
-                    color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600),
                 weekendStyle: GoogleFonts.poppins(
-                    color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -251,13 +269,9 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
                       Text(
                         'Tiada Acara Harini',
                         style: GoogleFonts.poppins(
-                            fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                      const Divider(
-                        color: Colors.white, // Adjust the color to match your design
-                        thickness: 2.0, // Adjust the thickness as needed
-                        indent: 16.0, // Adjust the indent as needed
-                        endIndent: 16.0, // Adjust the end indent as needed
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
                       ),
                     ],
                   ),
@@ -277,7 +291,9 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
                           onDismissed: (direction) {
                             setState(() {
                               kalendarLogic.deleteEvent(
-                                  event.id, kalendarLogic.normalizeDate(event.startDate), event);
+                                  event.id,
+                                  kalendarLogic.normalizeDate(event.startDate),
+                                  event);
                             });
                           },
                           background: Container(
@@ -288,7 +304,8 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
                               borderRadius: BorderRadius.circular(16.0),
                             ),
                             alignment: Alignment.centerRight,
-                            child: const Icon(Icons.delete, color: Colors.white, size: 30),
+                            child: const Icon(Icons.delete,
+                                color: Colors.white, size: 30),
                           ),
                           child: Container(
                             // event card
@@ -307,7 +324,9 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
                               title: Text(
                                 "${event.startDate.hour.toString().padLeft(2, '0')}:${event.startDate.minute.toString().padLeft(2, '0')} ${event.startDate.hour >= 12 ? 'PM' : 'AM'} - ${event.endDate.hour.toString().padLeft(2, '0')}:${event.endDate.minute.toString().padLeft(2, '0')} ${event.endDate.hour >= 12 ? 'PM' : 'AM'}",
                                 style: GoogleFonts.poppins(
-                                    fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
                               ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,7 +346,8 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
                     ),
                   ),
                   const Divider(
-                    color: Colors.white, // Adjust the color to match your design
+                    color:
+                        Colors.white, // Adjust the color to match your design
                     thickness: 2.0, // Adjust the thickness as needed
                     indent: 16.0, // Adjust the indent as needed
                     endIndent: 16.0, // Adjust the end indent as needed
@@ -336,6 +356,12 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
               );
             },
           ),
+        ),
+        const Divider(
+          color: Colors.white, // Adjust the color to match your design
+          thickness: 2.0, // Adjust the thickness as needed
+          indent: 16.0, // Adjust the indent as needed
+          endIndent: 16.0, // Adjust the end indent as needed
         ),
         Container(
           height: 100, // Fixed height for the event card container

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/services/notification_service.dart';
@@ -67,42 +69,22 @@ class _EventFormState extends State<EventForm> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      "Masa",
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 16),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _buildTimePicker(
-                          context,
-                          "Mula",
-                          _startTime,
-                          (newTime) => setState(() {
-                            _startTime = newTime;
-                            _eventDate = DateTime(
-                              _eventDate.year,
-                              _eventDate.month,
-                              _eventDate.day,
-                              _startTime.hour,
-                              _startTime.minute,
-                            );
-                          }),
-                        ),
+                        _buildTimePicker(context, 'Masa Mula', _startTime,
+                            (time) {
+                          setState(() {
+                            _startTime = time;
+                          });
+                        }),
                         SizedBox(width: 16),
-                        _buildTimePicker(
-                          context,
-                          "Tamat",
-                          _endTime,
-                          (newTime) => setState(() {
-                            _endTime = newTime;
-                            // Update event end date when end time changes
-                          }),
-                        ),
+                        _buildTimePicker(context, 'Masa Tamat', _endTime,
+                            (time) {
+                          setState(() {
+                            _endTime = time;
+                          });
+                        }),
                       ],
                     ),
                     SizedBox(height: 16),
@@ -133,33 +115,49 @@ class _EventFormState extends State<EventForm> {
       child: GestureDetector(
         onTap: () => _pickTime(context, time, onTimeChanged),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              label,
-              style: GoogleFonts.poppins(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(8.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 1.0),
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    time.format(context),
-                    style: GoogleFonts.poppins(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+            Row(
+              children: [
+                SizedBox(
+                  width: 8,
+                ),
+                Text(
+                  label,
+                  style: GoogleFonts.poppins(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+ 
                   ),
-                  SizedBox(width: 8),
-                  Icon(Icons.access_time),
-                ],
+                  textAlign: TextAlign.start,
+                ),
+                
+              ],
+            ),
+            SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.only(left: 9, right: 9),
+              child: Container(
+                padding: EdgeInsets.all(8),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black, width: 1.0),
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      time.format(context),
+                      style: GoogleFonts.poppins(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(Icons.access_time),
+                  ],
+                ),
               ),
             ),
           ],
@@ -187,7 +185,8 @@ class _EventFormState extends State<EventForm> {
             borderRadius: BorderRadius.circular(12.0),
             borderSide: BorderSide(width: 1.0),
           ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -265,7 +264,7 @@ class _EventFormState extends State<EventForm> {
     );
   }
 
-   Widget _buildSaveButton(BuildContext context) {
+  Widget _buildSaveButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
