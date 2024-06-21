@@ -11,6 +11,7 @@ import 'package:mtsp/models/ahli.dart';
 import 'package:mtsp/models/tanggungan.dart';
 import 'package:mtsp/services/ekhairat_service.dart';
 import 'package:mtsp/view/dashboard_page.dart';
+import 'package:mtsp/view/ekhairat/payment_details.dart';
 import 'package:mtsp/widgets/toast.dart';
 
 class BayaranPage extends StatefulWidget {
@@ -22,8 +23,17 @@ class BayaranPage extends StatefulWidget {
 
 class _BayaranPageState extends State<BayaranPage> {
 
-  final ahli = MemoryCache.instance.read<Ahli>('ahli');
+  Ahli? ahli;
   bool isChecked = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    ahli = MemoryCache.instance.read<Ahli>('ahli');
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -254,11 +264,11 @@ class _BayaranPageState extends State<BayaranPage> {
        bottomSheet: GestureDetector(
         onTap: () {
           if (isChecked) {
-            //sepatutnya bayar dulu
-            ahli!.tarikhDaftar = Timestamp.now();
+            Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentDetails()));
+            /* ahli!.tarikhDaftar = Timestamp.now();
             EkhairatService().addAhli(ahli!);
             showToast(message: 'Pendaftaran berjaya');
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage())); */
 
           } else {
             showToast(message: 'Sila setuju dengan syarat dan terma yang dikenakan');

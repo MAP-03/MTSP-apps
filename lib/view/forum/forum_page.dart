@@ -1,6 +1,4 @@
-
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
-
+// ignore_for_file: prefer_const_constructors
 
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,8 +12,6 @@ import 'package:mtsp/services/forum_service.dart';
 import 'package:mtsp/view/forum/comment_page.dart';
 import 'package:mtsp/widgets/drawer.dart';
 import 'package:provider/provider.dart';
-
-
 
 class Forum extends StatefulWidget {
   const Forum({super.key});
@@ -36,17 +32,14 @@ class _ForumState extends State<Forum> {
     super.initState();
     _forumService = Provider.of<ForumsService>(context, listen: false);
     _forumService.getForums().then((_) {
-      setState(() {
-        authService.getCurrentUserData().then((value) {
+      authService.getCurrentUserData().then((value) {
         setState(() {
           userData.addAll(value);
+          _isLoading = false;
         });
-      });
-        _isLoading = false;
       });
     }); 
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -64,12 +57,12 @@ class _ForumState extends State<Forum> {
           ),
           backgroundColor: primaryColor,
           bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4.0),
-          child: Container(
-            color: Colors.black,
-            height: 2,
+            preferredSize: const Size.fromHeight(4.0),
+            child: Container(
+              color: Colors.black,
+              height: 2,
+            ),
           ),
-        ),
         ),
       ),
       drawer: CustomDrawer(),
@@ -77,11 +70,8 @@ class _ForumState extends State<Forum> {
       body: Consumer<ForumsService>(
         builder: (context, forumService, _) {
           if (_isLoading) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          else if (forumService.forumData.isEmpty) {
+            return Center(child: CircularProgressIndicator());
+          } else if (forumService.forumData.isEmpty) {
             return Center(
               child: Text(
                 'Tiada perbincangan',
@@ -92,8 +82,7 @@ class _ForumState extends State<Forum> {
                 ),
               ),
             );
-          }
-          else {
+          } else {
             return ListView.builder(
               itemCount: forumService.forumData.length,
               itemBuilder: (context, index) {
@@ -104,223 +93,214 @@ class _ForumState extends State<Forum> {
                   child: Stack(
                     children: [ 
                       ListTile(
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 5),
-                          Row(
-                            children: [
-                              userData['profileImage'] == null
-                              ? CircleAvatar(
-                                  backgroundImage: const AssetImage('assets/images/profileMan.png'),
-                                  radius: 20,
-                                )
-                              : GestureDetector(
-                                  onTap: () {
-                                    showImageViewer(
-                                      doubleTapZoomable: true,
-                                        context,
-                                        NetworkImage(
-                                          userData['profileImage'],
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 5),
+                            Row(
+                              children: [
+                                FutureBuilder<String>(
+                                  future: authService.getProfilePicture(forumService.forumData[index]['email']),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return CircleAvatar(
+                                        backgroundImage: const AssetImage('assets/images/profileMan.png'),
+                                        radius: 20,
+                                      );
+                                    } else if (snapshot.hasError || !snapshot.hasData) {
+                                      return CircleAvatar(
+                                        backgroundImage: const AssetImage('assets/images/profileMan.png'),
+                                        radius: 20,
+                                      );
+                                    } else {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          showImageViewer(
+                                            context,
+                                            NetworkImage(snapshot.data!),
+                                            doubleTapZoomable: true,
+                                          );
+                                        },
+                                        child: CircleAvatar(
+                                          backgroundImage: NetworkImage(snapshot.data!),
+                                          radius: 20,
                                         ),
-                                    );
+                                      );
+                                    }
                                   },
-                                child: CircleAvatar(
-                                    backgroundImage: NetworkImage(userData['profileImage']),
-                                    radius: 20,
-                                  ),
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                forumService.forumData[index]['username'],
-                                style: GoogleFonts.poppins(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: forumService.forumData[index]['email'] == FirebaseAuth.instance.currentUser!.email
-                                  ? Colors.blue
-                                  : Colors.white,
                                 ),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          const SizedBox(height: 10, child: Divider(color: Colors.white, height: 10, thickness: 1, indent: 0, endIndent: 0)),
-                        ],
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 5),
-                      
-                          Text(
-                            forumService.forumData[index]['title'],
-                            style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-
-                          const SizedBox(height: 10),
-
-                          if(forumService.forumData[index].containsKey('imageUrl') == true && forumService.forumData[index]['imageUrl'] != null)...[
-                            GestureDetector(
-                              onTap: () {
-                                showImageViewer(
-                                  doubleTapZoomable: true,
-                                  context,
-                                  NetworkImage(
-                                    forumService.forumData[index]['imageUrl'],
+                                const SizedBox(width: 10),
+                                Text(
+                                  forumService.forumData[index]['username'],
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: forumService.forumData[index]['email'] == FirebaseAuth.instance.currentUser!.email
+                                      ? Colors.blue
+                                      : Colors.white,
                                   ),
-                                );
-                              },
-                              child: Image.network(
-                                forumService.forumData[index]['imageUrl'],
-                                width: double.infinity,
-                                height: 350.0,
-                                fit: BoxFit.cover,
+                                )
+                              ],
+                            ),
+                            const SizedBox(height: 5),
+                            const SizedBox(height: 10, child: Divider(color: Colors.white, height: 10, thickness: 1, indent: 0, endIndent: 0)),
+                          ],
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 5),
+                            Text(
+                              forumService.forumData[index]['title'],
+                              style: GoogleFonts.poppins(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 10),
+                            if (forumService.forumData[index].containsKey('imageUrl') && forumService.forumData[index]['imageUrl'] != null)
+                              GestureDetector(
+                                onTap: () {
+                                  showImageViewer(
+                                    context,
+                                    NetworkImage(forumService.forumData[index]['imageUrl']),
+                                    doubleTapZoomable: true,
+                                  );
+                                },
+                                child: Image.network(
+                                  forumService.forumData[index]['imageUrl'],
+                                  width: double.infinity,
+                                  height: 350.0,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            const SizedBox(height: 10),
+                            Text(
+                              forumService.forumData[index]['description'],
+                              style: GoogleFonts.poppins(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.white,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              Jiffy.parseFromDateTime(forumService.forumData[index]['timestamp'].toDate()).fromNow().toString(),
+                              style: GoogleFonts.poppins(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w200,
+                                color: Color(0xFFA19CC5),
                               ),
                             ),
                             const SizedBox(height: 10),
-                          ],
-
-                          Text(
-                            forumService.forumData[index]['description'],
-                            style: GoogleFonts.poppins(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.white,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 10),
-
-
-                          Text(
-                            Jiffy.parseFromDateTime(forumService.forumData[index]['timestamp'].toDate()).fromNow().toString(),
-                            style: GoogleFonts.poppins(   
-                              fontSize: 15,
-                              fontWeight: FontWeight.w200,
-                              color: Color(0xFFA19CC5),
-                            ),
-                          ),
-                                          
-                          const SizedBox(height: 10),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(Icons.comment, color: Colors.white, size: 25),
-
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    (forumService.forumData[index]['comments'] != null && forumService.forumData[index]['comments'].isNotEmpty)
-                                      ? forumService.forumData[index]['comments'].length.toString()
-                                      : '0', 
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => CommentPage(
-                                        forumData: forumService.forumData[index],
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.comment, color: Colors.white, size: 25),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      (forumService.forumData[index]['comments'] != null && forumService.forumData[index]['comments'].isNotEmpty)
+                                        ? forumService.forumData[index]['comments'].length.toString()
+                                        : '0', 
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
                                       ),
                                     ),
-                                  );
-                                },
-                                child: Text(
-                                  'Lihat komen',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w300,
-                                    color: Colors.blue,
+                                  ],
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => CommentPage(
+                                          forumData: forumService.forumData[index],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    'Lihat komen',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w300,
+                                      color: Colors.blue,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-
-                          
-                        ],
-                      ),
-                    ),
-
-                    if (forumService.forumData[index]['email'] == FirebaseAuth.instance.currentUser!.email || userData['role'] == 'admin')
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: PopupMenuButton<String>(
-                          icon: Icon(Icons.more_vert, color: Colors.white),
-                          onSelected: (value) {
-                            if (value == 'delete') {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text('Padam perbincangan'),
-                                    content: Text('Adakah anda pasti untuk memadam perbincangan ini?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Text('Batal'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                          setState(() {
-                                            _isLoading = true;
-                                          });
-                
-                                          await forumService.deleteForum(
-                                            forumService.forumData[index]['id'],
-                                          );
-                
-                                          setState(() {
-                                            _isLoading = false;
-                                          });
-                                        },
-                                        child: Text('Padam'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            }
-                          },
-                          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                            PopupMenuItem<String>(
-                              height: 40,
-                              value: 'delete',
-                              child: Text('Delete', style: GoogleFonts.poppins(color: Colors.blue),),
+                              ],
                             ),
                           ],
                         ),
                       ),
-                  ],
+                      if (forumService.forumData[index]['email'] == FirebaseAuth.instance.currentUser!.email || userData['role'] == 'admin')
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: PopupMenuButton<String>(
+                            icon: Icon(Icons.more_vert, color: Colors.white),
+                            onSelected: (value) {
+                              if (value == 'delete') {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Padam perbincangan', style: TextStyle(color: Colors.white)),
+                                      content: Text('Adakah anda pasti untuk memadam perbincangan ini?', style: TextStyle(color: Colors.white)),
+                                      backgroundColor: primaryColor,
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('Batal', style: GoogleFonts.poppins(color: Colors.blue)),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            Navigator.of(context).pop();
+                                            setState(() {
+                                              _isLoading = true;
+                                            });
+
+                                            await forumService.deleteForum(forumService.forumData[index]['id']);
+
+                                            setState(() {
+                                              _isLoading = false;
+                                            });
+                                          },
+                                          child: Text('Padam', style: GoogleFonts.poppins(color: Colors.blue)),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
+                            },
+                            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                              PopupMenuItem<String>(
+                                height: 40,
+                                value: 'delete',
+                                child: Text('Delete', style: GoogleFonts.poppins(color: Colors.blue)),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
                   ),
-                  
                 );
               },
             );
           }
         },
       ),
-
       floatingActionButton: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

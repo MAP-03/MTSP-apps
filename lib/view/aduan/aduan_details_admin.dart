@@ -1,41 +1,72 @@
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mtsp/components/submit_button.dart';
+import 'package:mtsp/models/aduan.dart';
 import 'package:mtsp/global.dart';
+import 'package:mtsp/components/submit_button.dart';
 import 'package:mtsp/services/aduan_service.dart';
 
-class AduanForm extends StatefulWidget {
-  const AduanForm({super.key});
-  
+class AduanDetailsAdminPage extends StatefulWidget {
+  final String docID;
+  final Aduan aduan;
+
+  const AduanDetailsAdminPage({
+    super.key,
+    required this.docID,
+    required this.aduan,
+  });
+
   @override
-  State<AduanForm> createState() => _AduanFormState();
+  State<AduanDetailsAdminPage> createState() => _AduanDetailsAdminPageState();
 }
 
-class _AduanFormState extends State<AduanForm> {
-  final TextEditingController aduanSubjectController = TextEditingController();
-  final TextEditingController aduanDescriptionController = TextEditingController();
+class _AduanDetailsAdminPageState extends State<AduanDetailsAdminPage> {
+  final AduanService aduanService = AduanService();
+  final TextEditingController aduanReplyController = TextEditingController();
 
-  String aduanType = 'Aduan';
-  var aduanTypeList = ['Aduan', 'Cadangan'];
+  void updateAduan(String docID) {
+    Aduan newAduan = Aduan (
+      type: widget.aduan.type,
+      subject: widget.aduan.subject,
+      comment: widget.aduan.comment,
+      status: widget.aduan.status,
+      userEmail: widget.aduan.userEmail,
+      reply: aduanReplyController.text,
+      timestamp: widget.aduan.timestamp,
+    );
 
-  void submitAduan(bool isDraft) {
-    if (aduanSubjectController.text.isNotEmpty && aduanDescriptionController.text.isNotEmpty) {
-      String aduanStatus = 'PENDING';
+    aduanService.updateAduan(docID, newAduan);
+    Navigator.pop(context);
+  }
 
-      if (isDraft) {
-        aduanStatus = 'DRAFT';
-      }
-
-      AduanService().addAduan(
-        aduanType,
-        aduanSubjectController.text,
-        aduanDescriptionController.text,
-        aduanStatus,
-      );
-      aduanSubjectController.clear();
-      aduanDescriptionController.clear();
-      Navigator.pop(context);
-    }
+  void deleteAduan(String docID) {
+    // confirm delete
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: primaryColor,
+          title: const Text('Delete Aduan', style: TextStyle(color: Colors.white)),
+          content: const Text('Are you sure you want to delete this aduan?', style: TextStyle(color: Colors.white)),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                aduanService.deleteAduan(docID);
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+              child: const Text('Yes', style: TextStyle(color: Colors.blue)),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('No', style: TextStyle(color: Colors.blue)),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -68,13 +99,12 @@ class _AduanFormState extends State<AduanForm> {
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(15),
-          height: MediaQuery.of(context).size.height,
+          // height: MediaQuery.of(context).size.height,
           child: Column(
             children: [
               //form body
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                height: 565,
                 decoration: BoxDecoration(
                   color: primaryColor,
                   borderRadius: BorderRadius.circular(15),
@@ -82,10 +112,7 @@ class _AduanFormState extends State<AduanForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    //Aduan OR Cadangan
-                    Text('Aduan / Cadangan', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
-                    const SizedBox(height: 5),
-                    //Aduan OR Cadangan Dropdown
+                    // Aduan Status Dropdown
                     Container(
                       width: double.infinity,
                       height: 45,
@@ -95,7 +122,7 @@ class _AduanFormState extends State<AduanForm> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: DropdownButton<String>(
-                        value: aduanType,
+                        value: widget.aduan.status,
                         icon: const Icon(Icons.arrow_drop_down),
                         iconSize: 24,
                         elevation: 16,
@@ -107,7 +134,7 @@ class _AduanFormState extends State<AduanForm> {
                         ),
                         borderRadius: BorderRadius.circular(15),
                         padding: const EdgeInsets.symmetric(horizontal: 12),
-                        items: aduanTypeList.map((String type) {
+                        items: widget.aduan.statusList.map((String type) {
                           return DropdownMenuItem<String>(
                             value: type,
                             child: Text(type),
@@ -115,26 +142,58 @@ class _AduanFormState extends State<AduanForm> {
                         }).toList(),
                         onChanged: (String? newValue) {
                           setState(() {
-                            aduanType = newValue!;
+                            widget.aduan.status = newValue!;
                           });
                         },
                       ),
                     ),
-              
+
                     const SizedBox(height: 25),
-              
-                    //Aduan Subjek
-                    Text('Subjek', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
+
+                    Text('User Email: ${widget.aduan.userEmail}', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
+
+                    const SizedBox(height: 25),
+                    
+                    Text('Aduan Type: ${widget.aduan.type}', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
+
+                    const SizedBox(height: 25),
+
+                    Text('Subject: ${widget.aduan.subject}', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
+
+                    const SizedBox(height: 25),
+                    
+                    Text('Comment', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
                     const SizedBox(height: 5),
-                    //Aduan Subjek TextField
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      width: double.infinity,
+                      height: 280,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD9D9D9),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Text(
+                        widget.aduan.comment,
+                        textAlign: TextAlign.justify,
+                        style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.black)
+                      ),
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    Text('Admin Reply', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
+                    const SizedBox(height: 5),
                     SizedBox(
-                      height: 45,
+                      height: 280,
                       child: TextField(
-                        controller: aduanSubjectController,
+                        controller: aduanReplyController,
+                        keyboardType: TextInputType.multiline,
                         style: GoogleFonts.poppins(fontSize: 14, color: Colors.black),
-                        textAlignVertical: TextAlignVertical.bottom,
+                        maxLines: null,
+                        expands: true,
+                        textAlignVertical: TextAlignVertical.top,
                         decoration: InputDecoration(
-                          hintText: 'Tulis subjek aduan anda',
+                          hintText: widget.aduan.reply?.isEmpty ?? true ? 'Masih tiada balasan daripada Admin' : widget.aduan.reply!,
                           hintStyle: GoogleFonts.poppins(fontSize: 14, color: Colors.grey),
                           filled: true,
                           fillColor: Colors.white,
@@ -146,73 +205,34 @@ class _AduanFormState extends State<AduanForm> {
                             borderSide: const BorderSide(color: Colors.white),
                             borderRadius: BorderRadius.circular(15),
                           ),
-                          suffixIcon: IconButton(
-                            icon: const Icon(size: 20, Icons.clear, color: Colors.grey),
-                            onPressed: () {
-                              aduanSubjectController.clear();
-                            },
-                          ),
                         ),
-                      ),
-                    ),
-              
-                    const SizedBox(height: 25),
-              
-                    //Aduan Description
-                    Text('Komen', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
-                    const SizedBox(height: 5),
-                    //Aduan Description TextField
-                    SizedBox(
-                      height: 280,
-                      child: TextField(
-                      controller: aduanDescriptionController,
-                      keyboardType: TextInputType.multiline,
-                      style: GoogleFonts.poppins(fontSize: 14, color: Colors.black),
-                      maxLines: null,
-                      expands: true,
-                      textAlignVertical: TextAlignVertical.top,
-                      decoration: InputDecoration(
-                        hintText: 'Nyatakan komen anda disini...',
-                        hintStyle: GoogleFonts.poppins(fontSize: 14, color: Colors.grey),
-                        filled: true,
-                        fillColor: Colors.white,
-                        focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.blue, width: 2),
-                        borderRadius: BorderRadius.circular(15),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
                       ),
                     ),
                   ],
                 ),
               ),
-          
+
               const SizedBox(height: 25),
           
               //Submit Button
               SubmitButton(
-                text: 'Submit', 
+                text: 'Update', 
                 buttonColor: primaryButtonColor,
                 onTap: () {
-                  submitAduan(false);
+                  updateAduan(widget.docID);
                 },
               ),
-          
+
               const SizedBox(height: 15),
-          
-              //Save Draft Button
+
               SubmitButton(
-                text: 'Simpan Draft', 
-                buttonColor: secondaryButtonColor,
+                text: 'Delete', 
+                buttonColor: Colors.red,
                 onTap: () {
-                  submitAduan(true);
+                  deleteAduan(widget.docID);
                 },
               ),
-              
+
             ],
           ),
         ),
