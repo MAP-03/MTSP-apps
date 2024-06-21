@@ -19,6 +19,7 @@ class _AddEventPageState extends State<AddEventPage> {
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  //final TextEditingController _longDescriptionController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
@@ -103,6 +104,24 @@ class _AddEventPageState extends State<AddEventPage> {
                   return null;
                 },
               ),
+              /*SizedBox(height: 16.0),
+              TextFormField(
+                controller: _longDescriptionController,
+                decoration: InputDecoration(
+                  labelText: 'Long Description',
+                  labelStyle: TextStyle(color: Colors.white),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                ),
+                style: TextStyle(color: Colors.white),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter event description';
+                  }
+                  return null;
+                },
+              ),*/
               SizedBox(height: 16.0),
               TextFormField(
                 controller: _dateController,

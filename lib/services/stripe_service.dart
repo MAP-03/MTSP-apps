@@ -57,9 +57,11 @@ class StripeService {
     try {
       Map<String, dynamic> paymentIntent;
 
-      infaq.setStatus('Diproses');
+      infaq.setStatus('Gagal');
 
       paymentIntent = await createPaymentIntent(infaq);
+
+      infaq.setStatus('Gagal');
 
       infaq.setInfaqId(paymentIntent['id']);
 
