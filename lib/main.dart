@@ -38,7 +38,7 @@ void main() async {
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Asia/Kuala_Lumpur')); // Set Malaysia timezone
 
-  Stripe.publishableKey = "your_publishable_key";
+  Stripe.publishableKey = "pk_test_51OJWJGK4kvnq6xon7sAiBo0H0QmchNFML4vQjoSp1kZvlNDKWhPSEn2RUvniiOcOdfxtg0rSbZGD7MrwgEbRbVii00gSgX0cZG";
 
   final NotificationService notificationService = NotificationService();
   await notificationService.init();

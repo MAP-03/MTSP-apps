@@ -93,7 +93,7 @@ class _InfaqState extends State<Infaq> {
           infaqId: '',
           amaun: amount.toString(),
           tarikh: DateTime.now(),
-          status: 'Berjaya',
+          status: 'Gagal',
           paymentMethod: paymentType.toLowerCase());
 
       if (infaqModel != null) {
