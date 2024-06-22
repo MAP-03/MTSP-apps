@@ -1,17 +1,17 @@
-// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace
+// ignore_for_file: prefer_const_constructors
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:memory_cache/memory_cache.dart';
 import 'package:mtsp/global.dart';
 import 'package:mtsp/models/ahli.dart';
 import 'package:mtsp/models/tanggungan.dart';
+import 'package:mtsp/services/bayaran_service.dart';
 import 'package:mtsp/services/ekhairat_service.dart';
 import 'package:mtsp/view/dashboard_page.dart';
-import 'package:mtsp/view/ekhairat/payment_details.dart';
 import 'package:mtsp/widgets/toast.dart';
 
 class BayaranPage extends StatefulWidget {
@@ -22,18 +22,15 @@ class BayaranPage extends StatefulWidget {
 }
 
 class _BayaranPageState extends State<BayaranPage> {
-
   Ahli? ahli;
   bool isChecked = false;
+  BayaranService bayaranService = BayaranService();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     ahli = MemoryCache.instance.read<Ahli>('ahli');
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +69,7 @@ class _BayaranPageState extends State<BayaranPage> {
                       color: Color(0xFF0096FF),
                     ),
                     child: Center(
-                      child: Icon(Icons.check, color: Colors.white, size: 15)
+                      child: Icon(Icons.check, color: Colors.white, size: 15),
                     ),
                   ),
                   Container(
@@ -91,7 +88,7 @@ class _BayaranPageState extends State<BayaranPage> {
                       color: Color(0xFF0096FF),
                     ),
                     child: Center(
-                      child: Icon(Icons.check, color: Colors.white, size: 15)
+                      child: Icon(Icons.check, color: Colors.white, size: 15),
                     ),
                   ),
                   Container(
@@ -102,7 +99,7 @@ class _BayaranPageState extends State<BayaranPage> {
                       color: Color(0xFF0096FF),
                     ),
                   ),
-                Container(
+                  Container(
                     width: 25,
                     height: 25,
                     decoration: ShapeDecoration(
@@ -110,7 +107,7 @@ class _BayaranPageState extends State<BayaranPage> {
                       color: Color(0xFF0096FF),
                     ),
                     child: Center(
-                      child: Icon(Icons.check, color: Colors.white, size: 15)
+                      child: Icon(Icons.check, color: Colors.white, size: 15),
                     ),
                   ),
                   Container(
@@ -138,7 +135,7 @@ class _BayaranPageState extends State<BayaranPage> {
                 children: [
                   Text('     Ahli', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white)),
                   Text('  Tanggungan', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.grey)),
-                  Text('Pelan', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w400,color: Colors.grey)),
+                  Text('Pelan', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.grey)),
                   Text('    Bayaran', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.grey)),
                 ],
               ),
@@ -167,23 +164,22 @@ class _BayaranPageState extends State<BayaranPage> {
                   border: Border.all(color: Colors.white),
                 ),
                 child: ContainedTabBarView(
-                    tabs: [
-                      Text('Ahli', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
-                      Text('Tanggungan', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
-                    ],
-                    tabBarProperties: TabBarProperties(
-                      
-                      indicator: ContainerTabIndicator(
-                        radius: BorderRadius.circular(10.0),
-                        width: 195,
-                        color: Colors.blueGrey,
-                      ),
+                  tabs: [
+                    Text('Ahli', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
+                    Text('Tanggungan', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
+                  ],
+                  tabBarProperties: TabBarProperties(
+                    indicator: ContainerTabIndicator(
+                      radius: BorderRadius.circular(10.0),
+                      width: 195,
+                      color: Colors.blueGrey,
                     ),
-                    views: [
-                      _buildAhliTab(),
-                      _buildTanggunganTab(),
-                    ],
                   ),
+                  views: [
+                    _buildAhliTab(),
+                    _buildTanggunganTab(),
+                  ],
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20),
@@ -195,7 +191,11 @@ class _BayaranPageState extends State<BayaranPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text( "Pelan (${ahli!.pelan})", style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white), textAlign: TextAlign.start),
+                          Text(
+                            "Pelan (${ahli!.pelan})",
+                            style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),
+                            textAlign: TextAlign.start,
+                          ),
                           if (ahli!.pelan == 'Tahunan')
                             Text('RM 50', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w300, color: Colors.white), textAlign: TextAlign.start),
                           if (ahli!.pelan == 'Bulanan')
@@ -246,8 +246,8 @@ class _BayaranPageState extends State<BayaranPage> {
                     ),
                     Expanded(
                       child: Text(
-                        'Saya bersetuju dengan syarat dan terma yang dikenakan', 
-                        style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white), 
+                        'Saya bersetuju dengan syarat dan terma yang dikenakan',
+                        style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white),
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
@@ -261,15 +261,49 @@ class _BayaranPageState extends State<BayaranPage> {
           ),
         ),
       ),
-       bottomSheet: GestureDetector(
+      bottomSheet: GestureDetector(
         onTap: () {
           if (isChecked) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentDetails()));
-            /* ahli!.tarikhDaftar = Timestamp.now();
-            EkhairatService().addAhli(ahli!);
-            showToast(message: 'Pendaftaran berjaya');
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage())); */
-
+            BayaranService.makePayment(ahli!.pelan == 'Tahunan' ? '60' : '5', ahli!.pelan).then(
+              (result) {
+                if (result == 'Berjaya') {
+                  ahli!.tarikhDaftar = Timestamp.now();
+                  EkhairatService().addAhli(ahli!);
+                  CoolAlert.show(
+                    context: context,
+                    type: CoolAlertType.success,
+                    title: 'Pembayaran Berjaya!',
+                    text: 'Pendaftaran anda telah berjaya.',
+                    confirmBtnText: 'Kembali ke Laman Utama',
+                    loopAnimation: true,
+                    backgroundColor: primaryColor,
+                    barrierDismissible: false,
+                    confirmBtnColor: Colors.blue,
+                    onConfirmBtnTap: () {
+                      
+                    },
+                  );
+                  Future.delayed(Duration(seconds: 5), () {
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+                  });
+                } else {
+                  CoolAlert.show(
+                    context: context,
+                    type: CoolAlertType.error,
+                    title: 'Pembayaran Gagal!',
+                    text: 'Terdapat masalah dengan pembayaran anda. Sila cuba lagi.',
+                    confirmBtnText: 'Cuba Lagi',
+                    backgroundColor: primaryColor,
+                    loopAnimation: true,
+                    confirmBtnColor: Colors.blue,
+                    barrierDismissible: false,
+                    onConfirmBtnTap: () {
+                      Navigator.pop(context);
+                    },
+                  );
+                }
+              },
+            );
           } else {
             showToast(message: 'Sila setuju dengan syarat dan terma yang dikenakan');
           }
@@ -315,46 +349,45 @@ class _BayaranPageState extends State<BayaranPage> {
     );
   }
 
- Widget _buildTanggunganTab() {
-  return Scrollbar(
-    child: SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20),
-        child: Column(
-          children: ahli!.tanggungan.asMap().entries.map((entry) {
-            int index = entry.key + 1;
-            Tanggungan tanggungan = entry.value;
-            return Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 150,
-                    height: 38,
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.cyan[700],
-                      borderRadius: BorderRadius.circular(10),
+  Widget _buildTanggunganTab() {
+    return Scrollbar(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: Column(
+            children: ahli!.tanggungan.asMap().entries.map((entry) {
+              int index = entry.key + 1;
+              Tanggungan tanggungan = entry.value;
+              return Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 150,
+                      height: 38,
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.cyan[700],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Text('Tanggungan $index', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white)),
+                      ),
                     ),
-                    child: Center(
-                      child: Text('Tanggungan $index', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white)),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  buildDataRow('Nama', tanggungan.name),
-                  buildDataRow('No. Kad Pengenalan', tanggungan.ic),
-                  buildDataRow('Hubungan', tanggungan.hubungan),
-                ],
-              ),
-            );
-          }).toList(),
+                    SizedBox(height: 10),
+                    buildDataRow('Nama', tanggungan.name),
+                    buildDataRow('No. Kad Pengenalan', tanggungan.ic),
+                    buildDataRow('Hubungan', tanggungan.hubungan),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget buildDataRow(String label, String data) {
     return Row(
@@ -372,8 +405,8 @@ class _BayaranPageState extends State<BayaranPage> {
                 ),
                 Text(
                   data,
-                  overflow: TextOverflow.ellipsis, 
-                  maxLines: 3, 
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
                   style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white),
                 ),
                 SizedBox(height: 10),
@@ -384,4 +417,5 @@ class _BayaranPageState extends State<BayaranPage> {
       ],
     );
   }
+
 }

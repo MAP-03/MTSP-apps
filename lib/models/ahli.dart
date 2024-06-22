@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mtsp/models/butiranBayaran.dart';
 import 'package:mtsp/models/tanggungan.dart';
 
 class Ahli{
@@ -12,6 +13,7 @@ class Ahli{
   String pelan = '';
   String status = 'PENDING';
   Timestamp tarikhDaftar = Timestamp.now();
+  List<ButiranBayaran> bayaran = [];
 
   Ahli({
     required this.name,
@@ -31,6 +33,7 @@ class Ahli{
       'phone': phone,
       'emergencyPhone': emergencyPhone,
       'tanggungan': tanggungan.map((e) => e.toMap()).toList(),
+      'bayaran': bayaran.map((e) => e.toMap()).toList(),
       'pelan': pelan,
       'tarikhDaftar': tarikhDaftar,
       'status': status,

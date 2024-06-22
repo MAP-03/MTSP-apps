@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mtsp/view/dashboard_page.dart';
 import 'package:mtsp/auth/authentication_page.dart';
+import 'package:mtsp/view/profile/butiran_bil.dart';
 import 'package:mtsp/view/profile/user_update_profile_page.dart';
 import 'package:mtsp/widgets/profile_menu.dart';
 import 'package:mtsp/widgets/toast.dart';
@@ -136,7 +137,14 @@ class _ProfileState extends State<Profile> {
                   ProfileMenuWidget(
                     title: 'Butiran Bil',
                     icon: Icons.credit_card,
-                    onPress: () {},
+                    onPress: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ButiranBil(),
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 10),
                   const Divider(),

@@ -191,28 +191,6 @@ class _MaklumatAhliState extends State<MaklumatAhli> {
                       ],
                     ),
                   ),
-                  SizedBox(width: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      ekhairatService.updateAhliStatus(widget.ahli!.email, 'REJECTED');
-                      setState(() {
-                        widget.ahli!.status = 'REJECTED';
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: Size(140, 30),
-                      backgroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Icon(Icons.close, color: Colors.red),
-                        Text('Tolak', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.red)),
-                      ],
-                    ),
-                  ),
                 ],
               )
             : SizedBox(),

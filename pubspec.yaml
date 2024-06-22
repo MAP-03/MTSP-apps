@@ -41,7 +41,7 @@ dependencies:
   firebase_auth: ^4.19.4
   google_fonts: ^6.2.1
   flutter_svg: ^2.0.10+1
-  adhan_dart: ^1.0.8
+  adhan_dart: ^1.1.2
   hijri: ^3.0.0
   shared_preferences: ^2.2.3
   google_sign_in: ^6.2.1
@@ -73,7 +73,8 @@ dependencies:
   carousel_slider: ^4.2.1
   timezone: ^0.9.3
   flutter_slidable: ^3.1.0
-  flutter_credit_card: ^4.0.1
+  cool_alert: ^2.0.1
+  sks_ticket_view: ^1.0.0
 
 
 

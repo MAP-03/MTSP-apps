@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:mtsp/models/ahli.dart';
+import 'package:mtsp/models/butiranBayaran.dart';
 import 'package:mtsp/models/tanggungan.dart';
 import 'package:http/http.dart' as http;
 
@@ -66,6 +67,15 @@ class EkhairatService {
 
   Future<void> bayarEkhairat() async{
     
+  }
+
+  Future<void> addButiranBayaran(ButiranBayaran butiranBayaran, String email) async{
+    await _firestore.collection('ahli').doc(email).collection('bayaran').doc().set(butiranBayaran.toMap());
+  }
+
+  Future<List<ButiranBayaran>> getButiranBayaran(String email) async{
+    final snapshot = await _firestore.collection('ahli').doc(email).collection('bayaran').get();
+    return snapshot.docs.map((e) => ButiranBayaran.fromMap(e.data())).toList();
   }
 
 }

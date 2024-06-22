@@ -9,6 +9,7 @@ import 'package:mtsp/global.dart';
 import 'package:mtsp/models/ahli.dart';
 import 'package:mtsp/models/tanggungan.dart';
 import 'package:mtsp/services/ekhairat_service.dart';
+import 'package:mtsp/view/ekhairat/update_ahli_user.dart';
 
 class SemakAhli extends StatefulWidget {
   const SemakAhli({super.key});
@@ -53,6 +54,19 @@ class _SemakAhliState extends State<SemakAhli> {
             Navigator.pop(context);
           },
         ),
+         actions: [
+          IconButton(
+            icon: const Icon(Icons.edit, color: Colors.white),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return UpdaetAhliUser(ahli: ahli!);
+                },
+              );
+            },
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4.0),
           child: Container(
@@ -64,96 +78,98 @@ class _SemakAhliState extends State<SemakAhli> {
       backgroundColor: secondaryColor,
       body: isLoading 
       ? Center(child: CircularProgressIndicator()) 
-      : Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
-            child: Card(
-              color: primaryColor,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Icon(Icons.card_membership, color: Colors.blue, size: 30),
-                            SizedBox(width: 10),
-                            Text('Pelan', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
-                          ],
-                        ),
-                        Text(ahli!.pelan, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Icon(Icons.date_range, color: Colors.blue, size: 30),
-                            SizedBox(width: 10),
-                            Text('Tamat Tempoh', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
-                          ],
-                        ),
-                        Text(expiredDate!, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
-                      ],
-                    ),
-                  ],
+      : SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
+              child: Card(
+                color: primaryColor,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(Icons.card_membership, color: Colors.blue, size: 30),
+                              SizedBox(width: 10),
+                              Text('Pelan', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                            ],
+                          ),
+                          Text(ahli!.pelan, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(Icons.date_range, color: Colors.blue, size: 30),
+                              SizedBox(width: 10),
+                              Text('Tamat Tempoh', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                            ],
+                          ),
+                          Text(expiredDate!, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          Container(
-            width: double.infinity,
-            height: 400,
-            padding: EdgeInsets.only(left: 15, right: 15),
-            margin: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: primaryColor,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.white),
+            Container(
+              width: double.infinity,
+              height: 400,
+              padding: EdgeInsets.only(left: 15, right: 15),
+              margin: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: primaryColor,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.white),
+              ),
+              child: ContainedTabBarView(
+                tabs: [
+                  Text('Ahli', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
+                  Text('Tanggungan', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
+                ],
+                tabBarProperties: TabBarProperties(
+                  indicator: ContainerTabIndicator(
+                    radius: BorderRadius.circular(10.0),
+                    width: 195,
+                    color: Colors.blueGrey,
+                  ),
+                ),
+                views: [
+                  _buildAhliTab(),
+                  _buildTanggunganTab(),
+                ],
+              ),
             ),
-            child: ContainedTabBarView(
-              tabs: [
-                Text('Ahli', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
-                Text('Tanggungan', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white)),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Status  :  ', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: ahli!.status == 'PENDING' ? pendingColor : ahli!.status == 'EXPIRED' ? expiredColor : activeColor,
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: Text(ahli!.status, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black, letterSpacing: 1.8))
+                ),
               ],
-              tabBarProperties: TabBarProperties(
-                indicator: ContainerTabIndicator(
-                  radius: BorderRadius.circular(10.0),
-                  width: 195,
-                  color: Colors.blueGrey,
-                ),
-              ),
-              views: [
-                _buildAhliTab(),
-                _buildTanggunganTab(),
-              ],
             ),
-          ),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Status  :  ', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white)),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: ahli!.status == 'PENDING' ? pendingColor : ahli!.status == 'EXPIRED' ? expiredColor : activeColor,
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: Text(ahli!.status, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.black, letterSpacing: 1.8))
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
-        ],
+            SizedBox(height: 10),
+          ],
+        ),
       ),
     );
   }
