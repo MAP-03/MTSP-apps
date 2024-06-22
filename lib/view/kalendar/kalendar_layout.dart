@@ -33,10 +33,9 @@ class _KalendarState extends State<Kalendar> {
           elevation: 0,
           content: Center(
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               decoration: BoxDecoration(
-                color: Color(0xff12223C),
+                color: const Color(0xff12223C),
                 borderRadius: BorderRadius.circular(15.0),
               ),
               child: Text(
@@ -188,24 +187,65 @@ class _KalendarState extends State<Kalendar> {
               ),
             ),
           ),
-          // Fixed acara_berita() at the bottom
+          // FloatingActionButtons
           Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                  const Divider(
-                  color: Colors.white, // Adjust the color to match your design
-                  thickness: 2.0, // Adjust the thickness as needed
-                  indent: 16.0, // Adjust the indent as needed
-                  endIndent: 16.0, // Adjust the end indent as needed
-                ),
-                SizedBox(
-                  height: 100, // Fixed height for the acara_berita() container
-                  child: acara_berita(),
-                ),
-              ],
+            top: 318,
+            right: 76,
+            child: FloatingActionButton(
+              heroTag: 'sortButton',
+              onPressed: () {
+                setState(() {
+                  kalendarLogic.toggleSortOrder();
+                });
+              },
+              backgroundColor: Colors.white,
+              mini: true,
+              elevation: 1.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50.0),
+              ),
+              child: Icon(
+                  kalendarLogic.isAscending ? Icons.sort : Icons.sort_rounded),
+            ),
+          ),
+          Positioned(
+            top: 318,
+            right: 16,
+            child: FloatingActionButton(
+              heroTag: 'addButton',
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) {
+                    return EventForm(
+                      onSave: (event) {
+                        setState(() {
+                          final normalizedDay = kalendarLogic
+                              .normalizeDate(kalendarLogic.selectedDay!);
+                          if (kalendarLogic.events.containsKey(normalizedDay)) {
+                            kalendarLogic.events[normalizedDay]!.add(event);
+                          } else {
+                            kalendarLogic.events[normalizedDay] = [event];
+                          }
+                          kalendarLogic.selectedEvents.value =
+                              kalendarLogic.getEventsForDay(normalizedDay);
+                        });
+                        kalendarLogic.saveEvent(event);
+                      },
+                      initialDate: kalendarLogic
+                          .selectedDay!, // Pass the selected date to EventForm
+                    );
+                  },
+                );
+              },
+              backgroundColor: Colors.white,
+              mini: true,
+              elevation: 1.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50.0),
+              ),
+              child: const Icon(Icons.add),
             ),
           ),
           // Scrollable list of events
@@ -313,65 +353,24 @@ class _KalendarState extends State<Kalendar> {
               ),
             ),
           ),
-          // FloatingActionButtons
+          // Fixed acara_berita() at the bottom
           Positioned(
-            bottom: 337,
-            right: 76,
-            child: FloatingActionButton(
-              heroTag: 'sortButton',
-              onPressed: () {
-                setState(() {
-                  kalendarLogic.toggleSortOrder();
-                });
-              },
-              backgroundColor: Colors.white,
-              mini: true,
-              elevation: 1.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50.0),
-              ),
-              child: Icon(
-                  kalendarLogic.isAscending ? Icons.sort : Icons.sort_rounded),
-            ),
-          ),
-          Positioned(
-            bottom: 337,
-            right: 16,
-            child: FloatingActionButton(
-              heroTag: 'addButton',
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (context) {
-                    return EventForm(
-                      onSave: (event) {
-                        setState(() {
-                          final normalizedDay = kalendarLogic
-                              .normalizeDate(kalendarLogic.selectedDay!);
-                          if (kalendarLogic.events.containsKey(normalizedDay)) {
-                            kalendarLogic.events[normalizedDay]!.add(event);
-                          } else {
-                            kalendarLogic.events[normalizedDay] = [event];
-                          }
-                          kalendarLogic.selectedEvents.value =
-                              kalendarLogic.getEventsForDay(normalizedDay);
-                        });
-                        kalendarLogic.saveEvent(event);
-                      },
-                      initialDate: kalendarLogic
-                          .selectedDay!, // Pass the selected date to EventForm
-                    );
-                  },
-                );
-              },
-              backgroundColor: Colors.white,
-              mini: true,
-              elevation: 1.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50.0),
-              ),
-              child: const Icon(Icons.add),
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Column(
+              children: [
+                  const Divider(
+                  color: Colors.white, // Adjust the color to match your design
+                  thickness: 2.0, // Adjust the thickness as needed
+                  indent: 16.0, // Adjust the indent as needed
+                  endIndent: 16.0, // Adjust the end indent as needed
+                ),
+                SizedBox(
+                  height: 100, // Fixed height for the acara_berita() container
+                  child: acara_berita(),
+                ),
+              ],
             ),
           ),
         ],
