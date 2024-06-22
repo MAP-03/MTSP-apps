@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/services/notification_service.dart';
@@ -24,11 +22,12 @@ class _EventFormState extends State<EventForm> {
   TimeOfDay _endTime = TimeOfDay(
     hour: (TimeOfDay.now().hour + 1) % 24,
     minute: TimeOfDay.now().minute,
-  );
+  ); // Set default end time close to midnight
   bool _alarm = false;
   Color _selectedColor = Colors.blue;
   final _formKey = GlobalKey<FormState>();
   final NotificationService _notificationService = NotificationService();
+  String _timeError = ''; // This will hold the time validation error message
 
   @override
   void initState() {
@@ -43,13 +42,36 @@ class _EventFormState extends State<EventForm> {
   }
 
   Future<void> _pickTime(BuildContext context, TimeOfDay initialTime,
-      ValueChanged<TimeOfDay> onTimeChanged) async {
+      ValueChanged<TimeOfDay> onTimeChanged, bool isEndTime) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: initialTime,
     );
     if (picked != null) {
       onTimeChanged(picked);
+      _validateTimes(picked, isEndTime);
+    }
+  }
+
+  void _validateTimes(TimeOfDay pickedTime, bool isEndTime) {
+    if (isEndTime) {
+      _endTime = pickedTime;
+    } else {
+      _startTime = pickedTime;
+    }
+    final DateTime startDateTime = DateTime(_eventDate.year, _eventDate.month,
+        _eventDate.day, _startTime.hour, _startTime.minute);
+    final DateTime endDateTime = DateTime(_eventDate.year, _eventDate.month,
+        _eventDate.day, _endTime.hour, _endTime.minute);
+
+    if (endDateTime.isBefore(startDateTime)) {
+      setState(() {
+        _timeError = 'Masa tamat harus selepas masa mula';
+      });
+    } else {
+      setState(() {
+        _timeError = '';
+      });
     }
   }
 
@@ -69,6 +91,7 @@ class _EventFormState extends State<EventForm> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    SizedBox(height: 30),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -77,28 +100,40 @@ class _EventFormState extends State<EventForm> {
                           setState(() {
                             _startTime = time;
                           });
-                        }),
+                        }, false),
                         SizedBox(width: 16),
                         _buildTimePicker(context, 'Masa Tamat', _endTime,
                             (time) {
                           setState(() {
                             _endTime = time;
                           });
-                        }),
+                        }, true),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    if (_timeError.isNotEmpty) // Show error message if any
+                      Padding(
+                        padding: EdgeInsets.only(top: 8),
+                        child: Text(_timeError,
+                            style: TextStyle(color: Colors.red, fontSize: 14)),
+                      ),
+                    SizedBox(height: 26),
                     _buildTextField(),
                     SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _buildColorPicker(setState),
-                        _buildAlarmSwitch(setState),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 24.0), // Adjust padding to move alarm switch lower
+                          child: _buildAlarmSwitch(setState),
+                        ),
                       ],
                     ),
-                    SizedBox(height: 16),
-                    _buildSaveButton(context),
+                    SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: _buildSaveButton(context)
+                      ),
                   ],
                 ),
               ),
@@ -110,54 +145,42 @@ class _EventFormState extends State<EventForm> {
   }
 
   Widget _buildTimePicker(BuildContext context, String label, TimeOfDay time,
-      ValueChanged<TimeOfDay> onTimeChanged) {
+      ValueChanged<TimeOfDay> onTimeChanged, bool isEndTime) {
     return Expanded(
       child: GestureDetector(
-        onTap: () => _pickTime(context, time, onTimeChanged),
+        onTap: () => _pickTime(context, time, onTimeChanged, isEndTime),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  label,
-                  style: GoogleFonts.poppins(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
- 
-                  ),
-                  textAlign: TextAlign.start,
-                ),
-                
-              ],
+            Text(
+              label,
+              style: GoogleFonts.poppins(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.start,
             ),
             SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.only(left: 9, right: 9),
-              child: Container(
-                padding: EdgeInsets.all(8),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black, width: 1.0),
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      time.format(context),
-                      style: GoogleFonts.poppins(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+            Container(
+              padding: EdgeInsets.all(8),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black, width: 1.0),
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    time.format(context),
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
-                    SizedBox(width: 8),
-                    Icon(Icons.access_time),
-                  ],
-                ),
+                  ),
+                  SizedBox(width: 8),
+                  Icon(Icons.access_time),
+                ],
               ),
             ),
           ],
@@ -167,34 +190,26 @@ class _EventFormState extends State<EventForm> {
   }
 
   Widget _buildTextField() {
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: TextFormField(
-        controller: _noteController,
-        decoration: InputDecoration(
-          labelText: "Nota",
-          hintText: "Masukkan nota",
-          labelStyle: GoogleFonts.poppins(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
-            borderSide: BorderSide(width: 1.0),
-          ),
-          contentPadding:
-              EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+    return TextFormField(
+      controller: _noteController,
+      decoration: InputDecoration(
+        labelText: "Nota",
+        hintText: "Masukkan nota",
+        labelStyle: GoogleFonts.poppins(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
         ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Sila masukkan nota';
-          }
-          return null;
-        },
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Sila masukkan nota';
+        }
+        return null;
+      },
     );
   }
 
@@ -209,6 +224,7 @@ class _EventFormState extends State<EventForm> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        SizedBox(height: 8),
         Row(
           children: [
             _buildColorOption(setState, Colors.blue),
@@ -238,8 +254,8 @@ class _EventFormState extends State<EventForm> {
   }
 
   Widget _buildAlarmSwitch(StateSetter setState) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           "Alarm",
@@ -248,17 +264,14 @@ class _EventFormState extends State<EventForm> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Row(
-          children: [
-            Switch(
-              value: _alarm,
-              onChanged: (value) => setState(() => _alarm = value),
-              activeColor: Colors.blue,
-              activeTrackColor: Color(0xff12223C),
-              inactiveThumbColor: Color(0xff12223C),
-              inactiveTrackColor: Colors.grey[400],
-            ),
-          ],
+        SizedBox(width: 8),
+        Switch(
+          value: _alarm,
+          onChanged: (value) => setState(() => _alarm = value),
+          activeColor: Colors.blue,
+          activeTrackColor: Color(0xff12223C),
+          inactiveThumbColor: Color(0xff12223C),
+          inactiveTrackColor: Colors.grey[400],
         ),
       ],
     );
@@ -267,7 +280,7 @@ class _EventFormState extends State<EventForm> {
   Widget _buildSaveButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        if (_formKey.currentState!.validate()) {
+        if (_formKey.currentState!.validate() && _timeError.isEmpty) {
           final DateTime eventStartDateTime = DateTime(
             _eventDate.year,
             _eventDate.month,
@@ -284,21 +297,6 @@ class _EventFormState extends State<EventForm> {
             _endTime.minute,
           );
 
-          if (eventEndDateTime.isBefore(eventStartDateTime)) {
-            // Show a snackbar if end time is before start time
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Masa tamat harus selepas masa mula',
-                  style: GoogleFonts.poppins(color: Colors.white),
-                ),
-                backgroundColor: Colors.red,
-                duration: Duration(seconds: 2),
-              ),
-            );
-            return;
-          }
-
           final user = FirebaseAuth.instance.currentUser;
           if (user != null) {
             final event = Event(
@@ -308,7 +306,7 @@ class _EventFormState extends State<EventForm> {
               endDate: eventEndDateTime,
               color: _selectedColor,
               userId: user.email!,
-              creationDate: DateTime.now(), // Add current date
+              creationDate: DateTime.now(),
             );
 
             widget.onSave(event);
