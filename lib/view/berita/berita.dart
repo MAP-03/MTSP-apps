@@ -62,10 +62,7 @@ class _BeritaState extends State<Berita> {
                       data['imageLink'] ?? 'https://via.placeholder.com/150',
                   onEdit: () {},
                   onDelete: () {
-                    FirebaseFirestore.instance
-                        .collection('Berita')
-                        .doc(doc.id)
-                        .delete();
+                    _showDeleteConfirmationDialog(doc.id);
                   },
                 );
               },
@@ -83,6 +80,34 @@ class _BeritaState extends State<Berita> {
         child: Icon(Icons.add, color: primaryColor),
         backgroundColor: Colors.white,
       ),
+    );
+  }
+
+  void _showDeleteConfirmationDialog(String docId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: primaryColor,
+          title: Text('Confirm Delete', style: TextStyle(color: Colors.white)),
+          content: Text('Are you sure you want to delete this event?', style: TextStyle(color: Colors.white)),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel', style: TextStyle(color: Colors.white)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Delete', style: TextStyle(color: Colors.white)),
+              onPressed: () {
+                FirebaseFirestore.instance.collection('Berita').doc(docId).delete();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
