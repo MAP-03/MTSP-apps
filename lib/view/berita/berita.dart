@@ -60,7 +60,9 @@ class _BeritaState extends State<Berita> {
                   description: data['description'] ?? 'No Description',
                   imageUrl:
                       data['imageLink'] ?? 'https://via.placeholder.com/150',
-                  onEdit: () {},
+                  onEdit: () {
+                    
+                  },
                   onDelete: () {
                     _showDeleteConfirmationDialog(doc.id);
                   },
