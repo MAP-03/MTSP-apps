@@ -63,7 +63,8 @@ class EventCard extends StatelessWidget {
             children: [
               ElevatedButton.icon(
                 icon: Icon(Icons.edit, color: Colors.white),
-                label: Text('EDIT',
+                label: Text(
+                  'EDIT',
                     style: GoogleFonts.poppins(color: Colors.white)),
                 onPressed: onEdit,
                 style: ElevatedButton.styleFrom(
@@ -77,7 +78,8 @@ class EventCard extends StatelessWidget {
               SizedBox(width: 8), // Spacing between buttons
               ElevatedButton.icon(
                 icon: Icon(Icons.delete, color: Colors.white),
-                label: Text('DELETE',
+                label: Text(
+                  'DELETE',
                     style: GoogleFonts.poppins(color: Colors.white)),
                 onPressed: onDelete,
                 style: ElevatedButton.styleFrom(
