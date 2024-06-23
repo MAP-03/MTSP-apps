@@ -75,7 +75,8 @@ class MyApp extends StatelessWidget {
         '/infaq': (context) => Infaq(),
         '/azan': (context) => Azan(),
         '/kalendar': (context) => Kalendar(),
-        '/aduan': (context) => AduanPage(),
+        '/aduan': (context) =>
+            RoleBasedRoute(userPage: AduanPage(), adminPage: AduanPageAdmin()),
         '/forum': (context) => Forum(),
         '/create_forum': (context) => const CreateForum(),
       },
