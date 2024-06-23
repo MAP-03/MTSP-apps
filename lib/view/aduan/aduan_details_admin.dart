@@ -7,13 +7,13 @@ import 'package:mtsp/components/submit_button.dart';
 import 'package:mtsp/services/aduan_service.dart';
 
 class AduanDetailsAdminPage extends StatefulWidget {
-  final String docID;
   final Aduan aduan;
+  final String docID;
 
   const AduanDetailsAdminPage({
     super.key,
-    required this.docID,
     required this.aduan,
+    required this.docID,
   });
 
   @override
@@ -116,7 +116,6 @@ class _AduanDetailsAdminPageState extends State<AduanDetailsAdminPage> {
                     Container(
                       width: double.infinity,
                       height: 45,
-                      // padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(15),
@@ -148,21 +147,69 @@ class _AduanDetailsAdminPageState extends State<AduanDetailsAdminPage> {
                       ),
                     ),
 
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 20),
 
-                    Text('User Email: ${widget.aduan.userEmail}', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
+                    Text(
+                      'User Email:',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      widget.aduan.userEmail,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white
+                      ),
+                    ),
 
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 20),
                     
-                    Text('Aduan Type: ${widget.aduan.type}', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
+                    Text(
+                      'Aduan Type:',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      widget.aduan.type,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white
+                      ),
+                    ),
 
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 20),
 
-                    Text('Subject: ${widget.aduan.subject}', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
+                    Text(
+                      'Subject:',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      widget.aduan.subject,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white
+                      ),
+                    ),
 
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 20),
                     
-                    Text('Comment', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
+                    Text('Comment', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white)),
                     const SizedBox(height: 5),
                     Container(
                       padding: const EdgeInsets.all(12),
@@ -170,7 +217,7 @@ class _AduanDetailsAdminPageState extends State<AduanDetailsAdminPage> {
                       height: 280,
                       decoration: BoxDecoration(
                         color: const Color(0xFFD9D9D9),
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
                         widget.aduan.comment,
@@ -179,9 +226,9 @@ class _AduanDetailsAdminPageState extends State<AduanDetailsAdminPage> {
                       ),
                     ),
 
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 20),
 
-                    Text('Admin Reply', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
+                    Text('Admin Reply', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white)),
                     const SizedBox(height: 5),
                     SizedBox(
                       height: 280,
@@ -199,11 +246,11 @@ class _AduanDetailsAdminPageState extends State<AduanDetailsAdminPage> {
                           fillColor: Colors.white,
                           focusedBorder: OutlineInputBorder(
                             borderSide: const BorderSide(color: Colors.blue, width: 2),
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(color: Colors.white),
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),

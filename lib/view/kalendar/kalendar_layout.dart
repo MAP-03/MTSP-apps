@@ -25,35 +25,35 @@ class _KalendarState extends State<Kalendar> {
     super.initState();
     kalendarLogic = KalendarLogic();
 
-WidgetsBinding.instance.addPostFrameCallback((_) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      backgroundColor: Colors.transparent,
-      behavior: SnackBarBehavior.floating,
-      elevation: 0,
-      content: Center(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          decoration: BoxDecoration(
-            color: Color(0xff12223C),
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          child: Text(
-            '< swipe >',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.transparent,
+          behavior: SnackBarBehavior.floating,
+          elevation: 0,
+          content: Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              decoration: BoxDecoration(
+                color: const Color(0xff12223C),
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              child: Text(
+                '< swipe >',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
+          duration: const Duration(seconds: 3),
         ),
-      ),
-      duration: const Duration(seconds: 3),
-    ),
-  );
-});
-
+      );
+    });
   }
+
   @override
   void dispose() {
     kalendarLogic.selectedEvents.dispose();
@@ -69,7 +69,9 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
         child: AppBar(
           title: Text('Kalendar',
               style: GoogleFonts.poppins(
-                  fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white)),
           leading: IconButton(
             icon: const Icon(Icons.menu, color: Colors.white, size: 30),
             onPressed: () {
@@ -90,9 +92,104 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
       backgroundColor: secondaryColor,
       body: Stack(
         children: [
-          content(),
+          // Fixed TableCalendar at the top
           Positioned(
-            bottom: 320,
+            top: 10,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.85,
+                height: 302, // Fixed height for the calendar
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  gradient: const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(0xFF62CFF4), Color(0xFF2C67F2)],
+                  ),
+                ),
+                child: TableCalendar<Event>(
+                  rowHeight: 37,
+                  availableGestures: AvailableGestures.all,
+                  selectedDayPredicate: (day) =>
+                      isSameDay(kalendarLogic.selectedDay, day),
+                  focusedDay: kalendarLogic.focusedDay,
+                  firstDay: DateTime.utc(2010, 10, 16),
+                  lastDay: DateTime.utc(2030, 3, 14),
+                  onDaySelected: (selectedDay, focusedDay) {
+                    setState(() {
+                      kalendarLogic.onDaySelected(selectedDay, focusedDay);
+                    });
+                  },
+                  eventLoader: kalendarLogic.getEventsForDay,
+                  calendarStyle: CalendarStyle(
+                    defaultTextStyle: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                    weekendTextStyle: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                    todayTextStyle: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                    selectedTextStyle: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500),
+                    markerDecoration: const BoxDecoration(
+                        color: Colors.white, shape: BoxShape.circle),
+                    markerMargin:
+                        const EdgeInsets.symmetric(horizontal: 1.0, vertical: 6.0),
+                    selectedDecoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    todayDecoration: const BoxDecoration(
+                      color: Color(0xFF023E8A),
+                      shape: BoxShape.circle,
+                    ),
+                    outsideDaysVisible: false,
+                  ),
+                  headerStyle: HeaderStyle(
+                    titleTextStyle: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold),
+                    formatButtonVisible: false,
+                    titleCentered: true,
+                    formatButtonTextStyle: const TextStyle(color: Colors.white),
+                    formatButtonDecoration: BoxDecoration(
+                      color: Colors.transparent,
+                      border: Border.all(color: Colors.white),
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    leftChevronIcon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.white,
+                    ),
+                    rightChevronIcon: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+                  ),
+                  daysOfWeekStyle: DaysOfWeekStyle(
+                    weekdayStyle: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600),
+                    weekendStyle: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // FloatingActionButtons
+          Positioned(
+            top: 318,
             right: 76,
             child: FloatingActionButton(
               heroTag: 'sortButton',
@@ -103,7 +200,7 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
               },
               backgroundColor: Colors.white,
               mini: true,
-              elevation: 4.0,
+              elevation: 1.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50.0),
               ),
@@ -112,7 +209,7 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
             ),
           ),
           Positioned(
-            bottom: 320,
+            top: 318,
             right: 16,
             child: FloatingActionButton(
               heroTag: 'addButton',
@@ -124,8 +221,8 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
                     return EventForm(
                       onSave: (event) {
                         setState(() {
-                          final normalizedDay = kalendarLogic.normalizeDate(
-                              kalendarLogic.selectedDay!);
+                          final normalizedDay = kalendarLogic
+                              .normalizeDate(kalendarLogic.selectedDay!);
                           if (kalendarLogic.events.containsKey(normalizedDay)) {
                             kalendarLogic.events[normalizedDay]!.add(event);
                           } else {
@@ -136,212 +233,148 @@ WidgetsBinding.instance.addPostFrameCallback((_) {
                         });
                         kalendarLogic.saveEvent(event);
                       },
-                      initialDate: kalendarLogic.selectedDay!, // Pass the selected date to EventForm
+                      initialDate: kalendarLogic
+                          .selectedDay!, // Pass the selected date to EventForm
                     );
                   },
                 );
               },
               backgroundColor: Colors.white,
               mini: true,
-              elevation: 4.0,
+              elevation: 1.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50.0),
               ),
               child: const Icon(Icons.add),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget content() {
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        Center(
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.85,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFF62CFF4), Color(0xFF2C67F2)],
-              ),
-            ),
-            child: TableCalendar<Event>(
-              rowHeight: 37,
-              availableGestures: AvailableGestures.all,
-              selectedDayPredicate: (day) => isSameDay(kalendarLogic.selectedDay, day),
-              focusedDay: kalendarLogic.focusedDay,
-              firstDay: DateTime.utc(2010, 10, 16),
-              lastDay: DateTime.utc(2030, 3, 14),
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  kalendarLogic.onDaySelected(selectedDay, focusedDay);
-                });
-              },
-              eventLoader: kalendarLogic.getEventsForDay,
-              calendarStyle: CalendarStyle(
-                defaultTextStyle: GoogleFonts.poppins(
-                    color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
-                weekendTextStyle: GoogleFonts.poppins(
-                    color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
-                todayTextStyle: GoogleFonts.poppins(
-                    color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
-                selectedTextStyle: GoogleFonts.poppins(
-                    color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
-                markerDecoration:
-                    const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                markerMargin:
-                    const EdgeInsets.symmetric(horizontal: 1.0, vertical: 6.0),
-                selectedDecoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                todayDecoration: const BoxDecoration(
-                  color: Color(0xFF023E8A),
-                  shape: BoxShape.circle,
-                ),
-                outsideDaysVisible: false,
-              ),
-              headerStyle: HeaderStyle(
-                titleTextStyle: GoogleFonts.poppins(
-                    color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold),
-                formatButtonVisible: false,
-                titleCentered: true,
-                formatButtonTextStyle: const TextStyle(color: Colors.white),
-                formatButtonDecoration: BoxDecoration(
-                  color: Colors.transparent,
-                  border: Border.all(color: Colors.white),
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                leftChevronIcon: const Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                ),
-                rightChevronIcon: const Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.white),
-              ),
-              daysOfWeekStyle: DaysOfWeekStyle(
-                weekdayStyle: GoogleFonts.poppins(
-                    color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
-                weekendStyle: GoogleFonts.poppins(
-                    color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 50),
-        Expanded(
-          child: ValueListenableBuilder<List<Event>>(
-            valueListenable: kalendarLogic.selectedEvents,
-            builder: (context, value, _) {
-              if (value.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/svg/kalendar.svg',
-                        width: 189.1,
-                      ),
-                      Text(
-                        'Tiada Acara Harini',
-                        style: GoogleFonts.poppins(
-                            fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                      const Divider(
-                        color: Colors.white, // Adjust the color to match your design
-                        thickness: 2.0, // Adjust the thickness as needed
-                        indent: 16.0, // Adjust the indent as needed
-                        endIndent: 16.0, // Adjust the end indent as needed
-                      ),
-                    ],
-                  ),
-                );
-              }
-              return Column(
+          // Scrollable list of events
+          Positioned.fill(
+            top: 370, // Space to accommodate the fixed TableCalendar height + margin
+            bottom: 120, // Space to accommodate the fixed acara_berita() height + margin
+            child: SingleChildScrollView(
+              child: Column(
                 children: [
-                  Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: value.length,
-                      itemBuilder: (context, index) {
-                        final event = value[index];
-                        return Dismissible(
-                          key: Key(event.id),
-                          direction: DismissDirection.endToStart,
-                          onDismissed: (direction) {
-                            setState(() {
-                              kalendarLogic.deleteEvent(
-                                  event.id, kalendarLogic.normalizeDate(event.startDate), event);
-                            });
-                          },
-                          background: Container(
-                            margin: const EdgeInsets.all(16.0),
-                            padding: const EdgeInsets.all(16.0),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(16.0),
-                            ),
-                            alignment: Alignment.centerRight,
-                            child: const Icon(Icons.delete, color: Colors.white, size: 30),
-                          ),
-                          child: Container(
-                            // event card
-                            margin: const EdgeInsets.symmetric(vertical: 4.0),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16.0),
-                            ),
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.all(8.0),
-                              leading: CircleAvatar(
-                                backgroundColor: event.color,
-                                radius: 10,
-                                child: Container(),
+                  const SizedBox(height: 20), // Adjusted height for padding
+                  ValueListenableBuilder<List<Event>>(
+                    valueListenable: kalendarLogic.selectedEvents,
+                    builder: (context, value, _) {
+                      if (value.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/svg/kalendar.svg',
+                                width: 150,
                               ),
-                              title: Text(
-                                "${event.startDate.hour.toString().padLeft(2, '0')}:${event.startDate.minute.toString().padLeft(2, '0')} ${event.startDate.hour >= 12 ? 'PM' : 'AM'} - ${event.endDate.hour.toString().padLeft(2, '0')}:${event.endDate.minute.toString().padLeft(2, '0')} ${event.endDate.hour >= 12 ? 'PM' : 'AM'}",
+                              Text(
+                                'Tiada Acara Harini',
                                 style: GoogleFonts.poppins(
-                                    fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
                               ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    event.note,
-                                    style: GoogleFonts.poppins(
-                                        fontSize: 14, color: Colors.black),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            ],
                           ),
                         );
-                      },
-                    ),
-                  ),
-                  const Divider(
-                    color: Colors.white, // Adjust the color to match your design
-                    thickness: 2.0, // Adjust the thickness as needed
-                    indent: 16.0, // Adjust the indent as needed
-                    endIndent: 16.0, // Adjust the end indent as needed
+                      }
+                      return ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: value.length,
+                        itemBuilder: (context, index) {
+                          final event = value[index];
+                          return Dismissible(
+                            key: Key(event.id),
+                            direction: DismissDirection.endToStart,
+                            onDismissed: (direction) {
+                              setState(() {
+                                kalendarLogic.deleteEvent(
+                                    event.id,
+                                    kalendarLogic.normalizeDate(event.startDate),
+                                    event);
+                              });
+                            },
+                            background: Container(
+                              margin: const EdgeInsets.all(16.0),
+                              padding: const EdgeInsets.all(16.0),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(16.0),
+                              ),
+                              alignment: Alignment.centerRight,
+                              child: const Icon(Icons.delete, color: Colors.white, size: 30),
+                            ),
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 4.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16.0),
+                              ),
+                              child: ListTile(
+                                contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                leading: CircleAvatar(
+                                  backgroundColor: event.color,
+                                  radius: 10,
+                                  child: const CircleAvatar(
+                                    radius: 5,
+                                    backgroundColor: Colors.white,
+                                  ),
+                                ),
+                                title: Text(
+                                  "${event.startDate.hour.toString().padLeft(2, '0')}:${event.startDate.minute.toString().padLeft(2, '0')} ${event.startDate.hour >= 12 ? 'PM' : 'AM'} - ${event.endDate.hour.toString().padLeft(2, '0')}:${event.endDate.minute.toString().padLeft(2, '0')} ${event.endDate.hour >= 12 ? 'PM' : 'AM'}",
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      event.note,
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 14, color: Colors.black),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
                 ],
-              );
-            },
+              ),
+            ),
           ),
-        ),
-        Container(
-          height: 100, // Fixed height for the event card container
-          child: acara_berita(),
-        ),
-      ],
+          // Fixed acara_berita() at the bottom
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Column(
+              children: [
+                  const Divider(
+                  color: Colors.white, // Adjust the color to match your design
+                  thickness: 2.0, // Adjust the thickness as needed
+                  indent: 16.0, // Adjust the indent as needed
+                  endIndent: 16.0, // Adjust the end indent as needed
+                ),
+                SizedBox(
+                  height: 100, // Fixed height for the acara_berita() container
+                  child: acara_berita(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

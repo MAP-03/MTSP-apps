@@ -20,13 +20,13 @@ class _AduanPageAdminState extends State<AduanPageAdmin> {
 
   final _searchController = TextEditingController();
 
-  void navigateToAduanDetails(String docID, Aduan aduan) {
+  void navigateToAduanDetails(Aduan aduan, String docID) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => AduanDetailsAdminPage(
-          docID: docID,
           aduan: aduan,
+          docID: docID,
         ),
       ),
     );
@@ -79,7 +79,7 @@ class _AduanPageAdminState extends State<AduanPageAdmin> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: AduanService().getAduanStream(),
+                  stream: AduanService().getAduanListExcludeDraftStream(),
                   builder: (context, snapshot) {
                     // show loading circle
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -104,7 +104,8 @@ class _AduanPageAdminState extends State<AduanPageAdmin> {
                           // display as a list tile
                           return AduanListTile(
                             aduan: aduan,
-                            onTap: () => navigateToAduanDetails(docID, aduan),
+                            aduanDocID: docID,
+                            onTap: () => navigateToAduanDetails(aduan, docID),
                           );
                         }
                       );
