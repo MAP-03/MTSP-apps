@@ -44,8 +44,8 @@ class _HomePageState extends State<HomePage> {
     // Initialize the PrayerTimes instance with the required parameters
     coordinates = Coordinates(1.5638129487418682, 103.61735116456667);
     date = DateTime.now();
-    params = CalculationMethod.Malaysia();
-    params.madhab = Madhab.Shafi;
+    params = CalculationMethod.singapore();
+    params.madhab = Madhab.shafi;
     _fetchEvents();
     
   }
