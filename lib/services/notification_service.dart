@@ -1,10 +1,17 @@
+import 'package:adhan_dart/adhan_dart.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:mtsp/view/kalendar/acara.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:mtsp/view/kalendar/acara.dart'; // Assuming Event class is defined in this package
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
+  final Coordinates coordinates =
+      Coordinates(1.5638129487418682, 103.61735116456667); // Coordinates for prayer time calculations
+  final CalculationParameters params = CalculationMethod.Malaysia()
+    ..madhab = Madhab.shafi;
 
   Future<void> init() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
@@ -15,19 +22,25 @@ class NotificationService {
       android: initializationSettingsAndroid,
     );
 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    await flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+    );
 
-    // Request permission for notifications on Android and iOS
-    await _requestNotificationPermission();
+    // Request permission for notifications on Android
+    await requestNotificationPermission();
+
+    // Schedule daily prayer time update
+    await scheduleDailyPrayerTimeUpdate();
   }
 
-  Future<void> _requestNotificationPermission() async {
+  Future<void> requestNotificationPermission() async {
     final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
         flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>();
 
     if (androidImplementation != null) {
-      final bool? granted = await androidImplementation.requestNotificationsPermission();
+      final bool? granted =
+          await androidImplementation.requestNotificationsPermission();
       if (granted != true) {
         // Handle the case when permission is denied
         print("Notification permission denied");
@@ -35,9 +48,6 @@ class NotificationService {
     }
   }
 
-  //
-  // EVENT NOTIFICATIONS
-  //
   Future<void> scheduleEventNotification(Event event) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
@@ -54,12 +64,11 @@ class NotificationService {
     tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime eventTime = tz.TZDateTime.from(event.startDate, tz.local);
 
-    // Schedule notification for today's date and time if it's not past
     if (eventTime.isAfter(now) && isSameDay(now, eventTime)) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
         event.id.hashCode,
-        'Event Reminder - Today',
-        'Your event "${event.note}" is starting today!',
+        'Peringatan Acara - Hari Ini',
+        'Acara anda "${event.note}" akan bermula hari ini!',
         eventTime,
         platformChannelSpecifics,
         androidAllowWhileIdle: true,
@@ -68,15 +77,14 @@ class NotificationService {
       );
     }
 
-    // Schedule notification 24 hours before the event if it's tomorrow
-    tz.TZDateTime notificationTime = eventTime.subtract(const Duration(days: 1));
+    tz.TZDateTime notificationTime =
+        eventTime.subtract(const Duration(days: 1));
 
-    // Ensure the notification is scheduled for today
     if (notificationTime.isAfter(now) && isSameDay(now, notificationTime)) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
-        event.id.hashCode + 1, // Use a different ID for this notification
-        'Event Reminder - Tomorrow',
-        'Your event "${event.note}" is starting in 24 hours!',
+        event.id.hashCode + 1,
+        'Peringatan Acara - Esok',
+        'Acara anda "${event.note}" akan bermula dalam 24 jam!',
         notificationTime,
         platformChannelSpecifics,
         androidAllowWhileIdle: true,
@@ -86,12 +94,10 @@ class NotificationService {
     }
   }
 
-  //
-  // AZAN NOTIFICATIONS
-  //
-  Future<void> scheduleAzanNotification(String azanName, DateTime azanTime) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
+  Future<void> scheduleAzanNotification(String azanName, DateTime azanTime, bool isAlarmOn) async {
+    if (!isAlarmOn) return;
+
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'azan_channel_id',
       'Azan Notifications',
       importance: Importance.max,
@@ -99,61 +105,95 @@ class NotificationService {
       showWhen: true,
     );
 
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
 
     tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime notificationTime = tz.TZDateTime.from(azanTime, tz.local);
 
-    // Schedule notification for the azan time
     if (notificationTime.isAfter(now)) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
         azanName.hashCode,
-        'Prayer Reminder',
-        'It\'s time for $azanName prayer.',
+        'Peringatan Solat',
+        'Sudah tiba masanya untuk solat $azanName.',
         notificationTime,
         platformChannelSpecifics,
         androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time, // Schedule daily
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time,
       );
     }
 
-    // Schedule a reminder 10 minutes before the azan time
     tz.TZDateTime reminderTime = notificationTime.subtract(const Duration(minutes: 10));
     if (reminderTime.isAfter(now)) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
         (azanName + '_reminder').hashCode,
-        'Upcoming Prayer Reminder',
-        '$azanName prayer is in 10 minutes.',
+        'Peringatan Solat Akan Datang',
+        'Solat $azanName akan bermula dalam 10 minit.',
         reminderTime,
         platformChannelSpecifics,
         androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time, // Schedule daily
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time,
       );
     }
+  }
 
-    // Debug notification to verify that the alarm is working
-    tz.TZDateTime debugTime = now.add(const Duration(minutes: 2));
+  Future<void> scheduleDailyPrayerTimeUpdate() async {
+    final DateTime now = DateTime.now();
+    final PrayerTimes prayerTimes = PrayerTimes(
+      coordinates: coordinates,
+      date: now,
+      calculationParameters: params,
+      precision: true,
+    );
+
+    // Load alarm states from SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final Map<String, bool> alarmStates = {
+      'Subuh': prefs.getBool('SubuhAlarmOn') ?? false,
+      'Syuruk': prefs.getBool('SyurukAlarmOn') ?? false,
+      'Zohor': prefs.getBool('ZohorAlarmOn') ?? false,
+      'Asar': prefs.getBool('AsarAlarmOn') ?? false,
+      'Maghrib': prefs.getBool('MaghribAlarmOn') ?? false,
+      'Isyak': prefs.getBool('IsyakAlarmOn') ?? false,
+    };
+
+    // Schedule notifications based on prayer times
+    await scheduleAzanNotification('Subuh', prayerTimes.fajr!.toLocal(), alarmStates['Subuh']!);
+    await scheduleAzanNotification('Syuruk', prayerTimes.sunrise!.toLocal(), alarmStates['Syuruk']!);
+    await scheduleAzanNotification('Zohor', prayerTimes.dhuhr!.toLocal(), alarmStates['Zohor']!);
+    await scheduleAzanNotification('Asar', prayerTimes.asr!.toLocal(), alarmStates['Asar']!);
+    await scheduleAzanNotification('Maghrib', prayerTimes.maghrib!.toLocal(), alarmStates['Maghrib']!);
+    await scheduleAzanNotification('Isyak', prayerTimes.isha!.toLocal(), alarmStates['Isyak']!);
+
+    // Schedule this function to run daily at midnight
+    tz.TZDateTime nowTz = tz.TZDateTime.now(tz.local);
+    tz.TZDateTime nextMidnight = tz.TZDateTime(tz.local, nowTz.year, nowTz.month, nowTz.day + 1);
+
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      (azanName + '_debug').hashCode,
-      'Debug Notification',
-      '$azanName alarm is set and will notify in 2 minutes.',
-      debugTime,
-      platformChannelSpecifics,
+      'daily_update'.hashCode,
+      'Daily Prayer Time Update',
+      'Updating prayer times for the day.',
+      nextMidnight,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'daily_update_channel_id',
+          'Daily Update',
+          channelDescription: 'Updates the daily prayer times',
+          importance: Importance.low,
+          priority: Priority.low,
+          showWhen: false,
+        ),
+      ),
       androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
     );
   }
 
   void cancelAzanNotification(String azanName) {
     flutterLocalNotificationsPlugin.cancel(azanName.hashCode);
     flutterLocalNotificationsPlugin.cancel((azanName + '_reminder').hashCode);
-    flutterLocalNotificationsPlugin.cancel((azanName + '_debug').hashCode);
   }
 
   void cancelEventNotification(int eventId) {

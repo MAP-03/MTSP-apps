@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:mtsp/firebase_options.dart';
 import 'package:mtsp/services/ekhairat_service.dart';
 import 'package:mtsp/services/forum_service.dart';
@@ -24,9 +25,9 @@ import 'package:mtsp/view/forum/create_forum.dart';
 import 'package:mtsp/view/forum/forum_page.dart';
 import 'package:mtsp/view/infaq/infaq.dart';
 import 'package:mtsp/view/kalendar/kalendar_layout.dart';
+import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,12 +38,20 @@ void main() async {
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Asia/Kuala_Lumpur')); // Set Malaysia timezone
 
-  Stripe.publishableKey = "your_publishable_key";
+  Stripe.publishableKey = "pk_test_51OJWJGK4kvnq6xon7sAiBo0H0QmchNFML4vQjoSp1kZvlNDKWhPSEn2RUvniiOcOdfxtg0rSbZGD7MrwgEbRbVii00gSgX0cZG";
 
   final NotificationService notificationService = NotificationService();
   await notificationService.init();
+  await notificationService.requestNotificationPermission();// Request notification permissions
 
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ForumsService()),
+      ],
+      child: MyApp()
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -55,6 +64,7 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.pink,
         ),
+
       ),
       routes: {
         '/home': (context) => HomePage(),

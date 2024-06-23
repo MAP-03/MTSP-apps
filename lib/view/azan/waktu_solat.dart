@@ -29,10 +29,12 @@ class PrayTime extends StatefulWidget {
 class _PrayTimeState extends State<PrayTime> {
   final NotificationService _notificationService = NotificationService();
 
-  Stream remainsTime() async* {
+  Stream<String> remainsTime() async* {
     yield* Stream.periodic(const Duration(seconds: 1), (i) {
-      String nextprayer = widget.prayerTimes.nextPrayer();
-      DateTime nextPrayerTime = widget.prayerTimes.timeForPrayer(nextprayer)!.toLocal();
+      String nextPrayer = widget.prayerTimes.nextPrayer();
+      DateTime? nextPrayerTime = widget.prayerTimes.timeForPrayer(nextPrayer)?.toLocal();
+      if (nextPrayerTime == null) return "00:00:00";
+
       DateTime now = DateTime.now();
       Duration remains = nextPrayerTime.difference(now);
       return secondToHour(remains.inSeconds);
@@ -55,6 +57,17 @@ class _PrayTimeState extends State<PrayTime> {
     super.initState();
     _notificationService.init();
     loadAlarmStates();
+    storePrayerTimes();
+  }
+
+  Future<void> storePrayerTimes() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('SubuhTime', widget.prayerTimes.fajr?.toIso8601String() ?? '');
+    await prefs.setString('SyurukTime', widget.prayerTimes.sunrise?.toIso8601String() ?? '');
+    await prefs.setString('ZohorTime', widget.prayerTimes.dhuhr?.toIso8601String() ?? '');
+    await prefs.setString('AsarTime', widget.prayerTimes.asr?.toIso8601String() ?? '');
+    await prefs.setString('MaghribTime', widget.prayerTimes.maghrib?.toIso8601String() ?? '');
+    await prefs.setString('IsyakTime', widget.prayerTimes.isha?.toIso8601String() ?? '');
   }
 
   void loadAlarmStates() async {
@@ -73,40 +86,53 @@ class _PrayTimeState extends State<PrayTime> {
 
   void toggleAlarm(String azanName) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isAlarmOnMap[azanName] = !(isAlarmOnMap[azanName] ?? false);
-      prefs.setBool('$azanName' + 'AlarmOn', isAlarmOnMap[azanName] ?? false);
+    bool currentAlarmState = isAlarmOnMap[azanName] ?? false;
+    bool newAlarmState = !currentAlarmState;
 
-      if (isAlarmOnMap[azanName] == true) {
-        DateTime azanTime;
-        switch (azanName) {
-          case 'Subuh':
-            azanTime = widget.prayerTimes.fajr!.toLocal();
-            break;
-          case 'Syuruk':
-            azanTime = widget.prayerTimes.sunrise!.toLocal();
-            break;
-          case 'Zohor':
-            azanTime = widget.prayerTimes.dhuhr!.toLocal();
-            break;
-          case 'Asar':
-            azanTime = widget.prayerTimes.asr!.toLocal();
-            break;
-          case 'Maghrib':
-            azanTime = widget.prayerTimes.maghrib!.toLocal();
-            break;
-          case 'Isyak':
-            azanTime = widget.prayerTimes.isha!.toLocal();
-            break;
-          default:
-            return;
-        }
+    setState(() {
+      isAlarmOnMap[azanName] = newAlarmState;
+      prefs.setBool('$azanName' + 'AlarmOn', newAlarmState);
+    });
+
+    DateTime? azanTime;
+    switch (azanName) {
+      case 'Subuh':
+        azanTime = widget.prayerTimes.fajr?.toLocal();
+        break;
+      case 'Syuruk':
+        azanTime = widget.prayerTimes.sunrise?.toLocal();
+        break;
+      case 'Zohor':
+        azanTime = widget.prayerTimes.dhuhr?.toLocal();
+        break;
+      case 'Asar':
+        azanTime = widget.prayerTimes.asr?.toLocal();
+        break;
+      case 'Maghrib':
+        azanTime = widget.prayerTimes.maghrib?.toLocal();
+        break;
+      case 'Isyak':
+        azanTime = widget.prayerTimes.isha?.toLocal();
+        break;
+      default:
+        return;
+    }
+
+    if (azanTime != null) {
+      if (newAlarmState) {
         print('Scheduling notification for $azanName at $azanTime');
-        _notificationService.scheduleAzanNotification(azanName, azanTime);
+        _notificationService.scheduleAzanNotification(azanName, azanTime, newAlarmState);
       } else {
+        print('Canceling notification for $azanName');
         _notificationService.cancelAzanNotification(azanName);
       }
-    });
+    }
+
+    // Schedule daily update of prayer times
+    await _notificationService.scheduleDailyPrayerTimeUpdate();
+
+    // Log the current alarm state for debugging
+    print('Current alarm states: $isAlarmOnMap');
   }
 
   @override
@@ -146,12 +172,12 @@ class _PrayTimeState extends State<PrayTime> {
               child: Padding(
                 padding: const EdgeInsets.only(right: 60),
                 child: isAlarmOnMap[widget.azanName] ?? false
-                    ? Icon(
+                    ? const Icon(
                         Icons.alarm_on,
                         color: Colors.white,
                         size: 20,
                       )
-                    : Icon(
+                    : const Icon(
                         Icons.alarm_off,
                         color: Colors.white,
                         size: 20,
@@ -159,14 +185,14 @@ class _PrayTimeState extends State<PrayTime> {
               ),
             ),
             widget.isNextPrayer
-                ? StreamBuilder(
+                ? StreamBuilder<String>(
                     stream: remainsTime(),
                     builder: (context, snapshot) {
                       return Container(
                         width: 50,
                         child: Text(
                           '${snapshot.data ?? ''}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 10,
                             color: Colors.white,
                           ),
@@ -174,7 +200,7 @@ class _PrayTimeState extends State<PrayTime> {
                       );
                     },
                   )
-                : SizedBox(width: 50),
+                : const SizedBox(width: 50),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(right: 30),
@@ -225,6 +251,7 @@ String getNextPrayerTime(PrayerTimes prayerTimes) {
   } else if (now.isBefore(prayerTimes.isha!)) {
     return timePresenter(prayerTimes.isha!.toLocal());
   } else {
-    return timePresenter(prayerTimes.fajr!.add(const Duration(days: 1)).toLocal());
+    // If it's past Isha, the next prayer time is Fajr the next day
+    return timePresenter(prayerTimes.fajr!.toLocal().add(const Duration(days: 1)));
   }
 }
