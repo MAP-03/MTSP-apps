@@ -8,8 +8,8 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  final Coordinates coordinates =
-      Coordinates(1.5638129487418682, 103.61735116456667); // Coordinates for prayer time calculations
+  final Coordinates coordinates = Coordinates(1.5638129487418682,
+      103.61735116456667); // Coordinates for prayer time calculations
   final CalculationParameters params = CalculationMethod.Malaysia()
     ..madhab = Madhab.shafi;
 
@@ -58,6 +58,18 @@ class NotificationService {
       showWhen: true,
     );
 
+    String formatTime(DateTime dateTime) {
+      int hour = dateTime.hour % 12;
+      if (hour == 0) hour = 12;
+      String minute = dateTime.minute.toString().padLeft(2, '0');
+      String period = dateTime.hour >= 12 ? 'PM' : 'AM';
+
+      return '$hour:$minute $period';
+    }
+
+    String eventTimeRange =
+        '${formatTime(event.startDate)} - ${formatTime(event.endDate)}';
+
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
@@ -67,8 +79,8 @@ class NotificationService {
     if (eventTime.isAfter(now) && isSameDay(now, eventTime)) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
         event.id.hashCode,
-        'Peringatan Acara - Hari Ini',
-        'Acara anda "${event.note}" akan bermula hari ini!',
+        '"${event.note}" akan bermula sekarang dari $eventTimeRange',
+        'Lihat acara di Kalendar.',
         eventTime,
         platformChannelSpecifics,
         androidAllowWhileIdle: true,
@@ -83,8 +95,8 @@ class NotificationService {
     if (notificationTime.isAfter(now) && isSameDay(now, notificationTime)) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
         event.id.hashCode + 1,
-        'Peringatan Acara - Esok',
-        'Acara anda "${event.note}" akan bermula dalam 24 jam!',
+        '"${event.note}" akan bermula esok pada jam $eventTimeRange',
+        'Lihat acara di Kalendar.',
         notificationTime,
         platformChannelSpecifics,
         androidAllowWhileIdle: true,
@@ -94,10 +106,12 @@ class NotificationService {
     }
   }
 
-  Future<void> scheduleAzanNotification(String azanName, DateTime azanTime, bool isAlarmOn) async {
+  Future<void> scheduleAzanNotification(
+      String azanName, DateTime azanTime, bool isAlarmOn) async {
     if (!isAlarmOn) return;
 
-    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
       'azan_channel_id',
       'Azan Notifications',
       importance: Importance.max,
@@ -105,7 +119,8 @@ class NotificationService {
       showWhen: true,
     );
 
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
 
     tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime notificationTime = tz.TZDateTime.from(azanTime, tz.local);
@@ -113,26 +128,29 @@ class NotificationService {
     if (notificationTime.isAfter(now)) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
         azanName.hashCode,
-        'Peringatan Solat',
-        'Sudah tiba masanya untuk solat $azanName.',
+        '$azanName pada $azanTime',
+        'Lihat waktu solat di Pulai.',
         notificationTime,
         platformChannelSpecifics,
         androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.time,
       );
     }
 
-    tz.TZDateTime reminderTime = notificationTime.subtract(const Duration(minutes: 10));
+    tz.TZDateTime reminderTime =
+        notificationTime.subtract(const Duration(minutes: 10));
     if (reminderTime.isAfter(now)) {
       await flutterLocalNotificationsPlugin.zonedSchedule(
         (azanName + '_reminder').hashCode,
-        'Peringatan Solat Akan Datang',
-        'Solat $azanName akan bermula dalam 10 minit.',
+        '$azanName akan bermula dalam 10 minit pada $azanTime',
+        'Lihat waktu solat di Pulai',
         reminderTime,
         platformChannelSpecifics,
         androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.time,
       );
     }
@@ -159,16 +177,23 @@ class NotificationService {
     };
 
     // Schedule notifications based on prayer times
-    await scheduleAzanNotification('Subuh', prayerTimes.fajr!.toLocal(), alarmStates['Subuh']!);
-    await scheduleAzanNotification('Syuruk', prayerTimes.sunrise!.toLocal(), alarmStates['Syuruk']!);
-    await scheduleAzanNotification('Zohor', prayerTimes.dhuhr!.toLocal(), alarmStates['Zohor']!);
-    await scheduleAzanNotification('Asar', prayerTimes.asr!.toLocal(), alarmStates['Asar']!);
-    await scheduleAzanNotification('Maghrib', prayerTimes.maghrib!.toLocal(), alarmStates['Maghrib']!);
-    await scheduleAzanNotification('Isyak', prayerTimes.isha!.toLocal(), alarmStates['Isyak']!);
+    await scheduleAzanNotification(
+        'Subuh', prayerTimes.fajr!.toLocal(), alarmStates['Subuh']!);
+    await scheduleAzanNotification(
+        'Syuruk', prayerTimes.sunrise!.toLocal(), alarmStates['Syuruk']!);
+    await scheduleAzanNotification(
+        'Zohor', prayerTimes.dhuhr!.toLocal(), alarmStates['Zohor']!);
+    await scheduleAzanNotification(
+        'Asar', prayerTimes.asr!.toLocal(), alarmStates['Asar']!);
+    await scheduleAzanNotification(
+        'Maghrib', prayerTimes.maghrib!.toLocal(), alarmStates['Maghrib']!);
+    await scheduleAzanNotification(
+        'Isyak', prayerTimes.isha!.toLocal(), alarmStates['Isyak']!);
 
     // Schedule this function to run daily at midnight
     tz.TZDateTime nowTz = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime nextMidnight = tz.TZDateTime(tz.local, nowTz.year, nowTz.month, nowTz.day + 1);
+    tz.TZDateTime nextMidnight =
+        tz.TZDateTime(tz.local, nowTz.year, nowTz.month, nowTz.day + 1);
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
       'daily_update'.hashCode,
@@ -186,7 +211,8 @@ class NotificationService {
         ),
       ),
       androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
   }
@@ -203,7 +229,7 @@ class NotificationService {
 
   bool isSameDay(tz.TZDateTime dateTime1, tz.TZDateTime dateTime2) {
     return dateTime1.year == dateTime2.year &&
-           dateTime1.month == dateTime2.month &&
-           dateTime1.day == dateTime2.day;
+        dateTime1.month == dateTime2.month &&
+        dateTime1.day == dateTime2.day;
   }
 }
