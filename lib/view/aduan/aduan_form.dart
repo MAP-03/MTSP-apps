@@ -1,11 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mtsp/components/submit_button.dart';
 import 'package:mtsp/global.dart';
+import 'package:mtsp/models/aduan.dart';
 import 'package:mtsp/services/aduan_service.dart';
 
 class AduanForm extends StatefulWidget {
-  const AduanForm({super.key});
+  final Aduan? aduan;
+  final String? aduanDocID;
+
+  const AduanForm({super.key, this.aduan, this.aduanDocID});
   
   @override
   State<AduanForm> createState() => _AduanFormState();
@@ -18,6 +23,16 @@ class _AduanFormState extends State<AduanForm> {
   String aduanType = 'Aduan';
   var aduanTypeList = ['Aduan', 'Cadangan'];
 
+  @override
+  void initState() {
+    super.initState();
+    if (widget.aduan != null) {
+      aduanType = widget.aduan!.type;
+      aduanSubjectController.text = widget.aduan!.subject;
+      aduanDescriptionController.text = widget.aduan!.comment;
+    }
+  }
+
   void submitAduan(bool isDraft) {
     if (aduanSubjectController.text.isNotEmpty && aduanDescriptionController.text.isNotEmpty) {
       String aduanStatus = 'PENDING';
@@ -26,15 +41,34 @@ class _AduanFormState extends State<AduanForm> {
         aduanStatus = 'DRAFT';
       }
 
-      AduanService().addAduan(
-        aduanType,
-        aduanSubjectController.text,
-        aduanDescriptionController.text,
-        aduanStatus,
-      );
+      if (widget.aduanDocID != null) {
+        Aduan updatedAduan = Aduan(
+          userEmail: widget.aduan!.userEmail,
+          type: aduanType,
+          subject: aduanSubjectController.text,
+          comment: aduanDescriptionController.text,
+          reply: widget.aduan?.reply,
+          status: aduanStatus,
+          timestamp: Timestamp.now(),
+        );
+        // Update existing aduan
+        AduanService().updateAduan(
+          widget.aduanDocID!,
+          updatedAduan,
+        );
+      } else {
+        // Add new aduan
+        AduanService().addAduan(
+          aduanType,
+          aduanSubjectController.text,
+          aduanDescriptionController.text,
+          aduanStatus,
+        );
+      }
+
       aduanSubjectController.clear();
       aduanDescriptionController.clear();
-      Navigator.pop(context);
+      Navigator.popUntil(context, ModalRoute.withName('/aduan'));
     }
   }
 
@@ -68,13 +102,11 @@ class _AduanFormState extends State<AduanForm> {
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(15),
-          height: MediaQuery.of(context).size.height,
           child: Column(
             children: [
-              //form body
+              // Form body
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                height: 565,
                 decoration: BoxDecoration(
                   color: primaryColor,
                   borderRadius: BorderRadius.circular(15),
@@ -82,14 +114,13 @@ class _AduanFormState extends State<AduanForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    //Aduan OR Cadangan
+                    // Aduan OR Cadangan
                     Text('Aduan / Cadangan', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
                     const SizedBox(height: 5),
-                    //Aduan OR Cadangan Dropdown
+                    // Aduan OR Cadangan Dropdown
                     Container(
                       width: double.infinity,
                       height: 45,
-                      // padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(15),
@@ -105,7 +136,6 @@ class _AduanFormState extends State<AduanForm> {
                           height: 2,
                           color: Colors.transparent,
                         ),
-                        borderRadius: BorderRadius.circular(15),
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         items: aduanTypeList.map((String type) {
                           return DropdownMenuItem<String>(
@@ -123,10 +153,10 @@ class _AduanFormState extends State<AduanForm> {
               
                     const SizedBox(height: 25),
               
-                    //Aduan Subjek
+                    // Aduan Subjek
                     Text('Subjek', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
                     const SizedBox(height: 5),
-                    //Aduan Subjek TextField
+                    // Aduan Subjek TextField
                     SizedBox(
                       height: 45,
                       child: TextField(
@@ -158,33 +188,33 @@ class _AduanFormState extends State<AduanForm> {
               
                     const SizedBox(height: 25),
               
-                    //Aduan Description
+                    // Aduan Description
                     Text('Komen', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
                     const SizedBox(height: 5),
-                    //Aduan Description TextField
+                    // Aduan Description TextField
                     SizedBox(
                       height: 280,
                       child: TextField(
-                      controller: aduanDescriptionController,
-                      keyboardType: TextInputType.multiline,
-                      style: GoogleFonts.poppins(fontSize: 14, color: Colors.black),
-                      maxLines: null,
-                      expands: true,
-                      textAlignVertical: TextAlignVertical.top,
-                      decoration: InputDecoration(
-                        hintText: 'Nyatakan komen anda disini...',
-                        hintStyle: GoogleFonts.poppins(fontSize: 14, color: Colors.grey),
-                        filled: true,
-                        fillColor: Colors.white,
-                        focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.blue, width: 2),
-                        borderRadius: BorderRadius.circular(15),
+                        controller: aduanDescriptionController,
+                        keyboardType: TextInputType.multiline,
+                        style: GoogleFonts.poppins(fontSize: 14, color: Colors.black),
+                        maxLines: null,
+                        expands: true,
+                        textAlignVertical: TextAlignVertical.top,
+                        decoration: InputDecoration(
+                          hintText: 'Nyatakan komen anda disini...',
+                          hintStyle: GoogleFonts.poppins(fontSize: 14, color: Colors.grey),
+                          filled: true,
+                          fillColor: Colors.white,
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(color: Colors.blue, width: 2),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.white),
-                        borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
                       ),
                     ),
                   ],
@@ -193,7 +223,7 @@ class _AduanFormState extends State<AduanForm> {
           
               const SizedBox(height: 25),
           
-              //Submit Button
+              // Submit Button
               SubmitButton(
                 text: 'Submit', 
                 buttonColor: primaryButtonColor,
@@ -204,7 +234,7 @@ class _AduanFormState extends State<AduanForm> {
           
               const SizedBox(height: 15),
           
-              //Save Draft Button
+              // Save Draft Button
               SubmitButton(
                 text: 'Simpan Draft', 
                 buttonColor: secondaryButtonColor,
@@ -212,7 +242,6 @@ class _AduanFormState extends State<AduanForm> {
                   submitAduan(true);
                 },
               ),
-              
             ],
           ),
         ),

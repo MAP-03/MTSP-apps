@@ -4,11 +4,13 @@ import 'package:mtsp/models/aduan.dart';
 
 class AduanListTile extends StatelessWidget {
   final Aduan aduan;
+  final String aduanDocID;
   final void Function() onTap;
 
   const AduanListTile({
     super.key,
     required this.aduan,
+    required this.aduanDocID,
     required this.onTap,
   });
 
