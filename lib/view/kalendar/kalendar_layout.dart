@@ -325,7 +325,7 @@ class _KalendarState extends State<Kalendar> {
                                   ),
                                 ),
                                 title: Text(
-                                  "${event.startDate.hour.toString().padLeft(2, '0')}:${event.startDate.minute.toString().padLeft(2, '0')} ${event.startDate.hour >= 12 ? 'PM' : 'AM'} - ${event.endDate.hour.toString().padLeft(2, '0')}:${event.endDate.minute.toString().padLeft(2, '0')} ${event.endDate.hour >= 12 ? 'PM' : 'AM'}",
+                                  "${kalendarLogic.formatTime(event.startDate)} - ${kalendarLogic.formatTime(event.endDate)}",
                                   style: GoogleFonts.poppins(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
@@ -378,3 +378,4 @@ class _KalendarState extends State<Kalendar> {
     );
   }
 }
+
