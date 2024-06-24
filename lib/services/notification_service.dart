@@ -47,7 +47,9 @@ class NotificationService {
       }
     }
   }
-
+//
+// EVENT NOTIFICATION
+//
   Future<void> scheduleEventNotification(Event event) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
@@ -105,7 +107,9 @@ class NotificationService {
       );
     }
   }
-
+//
+// AZAN NOTIFICATION
+//
   Future<void> scheduleAzanNotification(
       String azanName, DateTime azanTime, bool isAlarmOn) async {
     if (!isAlarmOn) return;
