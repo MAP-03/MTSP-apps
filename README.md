@@ -14,25 +14,28 @@ The MTSP app is a comprehensive management tool designed to streamline and enhan
 - 🔒 Role-based access for different functionalities.
   
 ## Screenshots 📸
+![Screenshot 1](screenshots/dashboard.png) <br>
+*Screenshot of the MTSP app showing the homepage.*
 
+![Screenshot 2](screenshots/azan.png)  <br>
 Screenshot of the MTSP app showing the prayer times section.
 
-
+![Screenshot 3](screenshots/kalendar.png)  <br>
 Screenshot of the MTSP app showing the event calendar.
 
-
+![Screenshot 4](screenshots/forum.png)  <br>
 Screenshot of the MTSP app showing the forum section.
 
-
+![Screenshot 5](screenshots/ekhairat.png)  <br>
 Screenshot of the MTSP app showing the Ekhairat membership management.
 
-
+![Screenshot 6](screenshots/infaq.png)  <br>
 Screenshot of the MTSP app showing the infaq and donation management.
 
-
+![Screenshot 7](screenshots/aduan.png)  <br>
 Screenshot of the MTSP app showing the complaint submission form.
 
-How to Use 📖
+## How to Use 📖
 Prayer Times and Notifications:
 
 View daily prayer times in the 'Azan' section.
@@ -62,12 +65,12 @@ User Authentication and Roles:
 Log in to access personalized features.
 Ensure your profile information is up-to-date for a seamless experience.
 Role-based access provides different views and functionalities based on the user's role.
-Important Notes ⚠️
+## Important Notes ⚠️
 The app requires an active internet connection to function properly.
 Ensure you have granted the necessary permissions for notifications to receive timely updates and reminders.
 The app is optimized for use on both desktop and mobile devices.
 Data entered in the app is stored securely and is persistent across sessions.
-Feedback and Support 💌
+## Feedback and Support 💌
 Thank you for using the MTSP app. We hope it helps you manage your daily activities and community interactions effectively. If you have any feedback, or suggestions, or encounter any issues, please feel free to contact the developer, Muhammad Adam bin Fazli.
 
 Happy managing! 😊
